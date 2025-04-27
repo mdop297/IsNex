@@ -10,9 +10,6 @@
       "path": "./apps/auth-svc"
     },
     {
-      "path": "./libs/ts-lib"
-    },
-    {
       "path": "./libs/tscommon"
     }
   ]

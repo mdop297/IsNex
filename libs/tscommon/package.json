@@ -2,9 +2,9 @@
   "name": "tscommon",
   "version": "0.0.1",
   "private": true,
-  "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
+  "type": "module",
   "types": "./dist/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
