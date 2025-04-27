@@ -1,4 +1,5 @@
 {
-  "*.ts": ["nx affected:lint --fix --files"],
-  "*": ["nx format:write --files"]
+  "*.ts?(x)": ["nx affected:lint --fix --files"],
+  "*.{js,jsx,ts,tsx,json,css,scss,less,html,md}": ["nx format:write --files"],
+  "*.{spec,test}.ts?(x)": ["nx affected:test --files"]
 }

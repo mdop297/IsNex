@@ -19,10 +19,3 @@ const server = app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}/api`);
 });
 server.on('error', console.error);
-// dummy code to test commit hook.
-const message = 'hello';
-function logMessage(msg: string) {
-  console.log(msg);
-}
-
-logMessage(message);
