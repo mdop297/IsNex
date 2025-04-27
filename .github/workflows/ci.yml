@@ -9,6 +9,8 @@ on:
 permissions:
   actions: read
   contents: read
+  issues: write # Thêm quyền để chỉnh sửa PR
+  pull-requests: write # Thêm quyền để thêm label
 
 jobs:
   main:
@@ -51,3 +53,21 @@ jobs:
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
       - name: Run Nx Affected Tasks
         run: pnpm exec nx affected -t lint test build
+  # block-merge-on-failure:
+  #   runs-on: ubuntu-latest
+  #   needs: main # Chạy sau job main
+  #   if: failure() # Chỉ chạy nếu job main thất bại
+  #   steps:
+  #     - name: Add do-not-merge label
+  #       uses: actions/github-script@v6
+  #       with:
+  #         script: |
+  #           const prNumber = context.payload.pull_request?.number;
+  #           if (prNumber) {
+  #             await github.rest.issues.addLabels({
+  #               owner: context.repo.owner,
+  #               repo: context.repo.repo,
+  #               issue_number: prNumber,
+  #               labels: ['do-not-merge']
+  #             });
+  #           }

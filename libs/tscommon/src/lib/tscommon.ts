@@ -1,3 +1,3 @@
-export function tscommon(): string {
+export const tscommon = (): string => {
   return 'tscommon';
-}
+};
