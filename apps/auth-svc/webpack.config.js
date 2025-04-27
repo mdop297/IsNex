@@ -3,17 +3,18 @@ const { join } = require('path');
 
 module.exports = {
   output: {
-    path: join(__dirname, 'dist'),
+    path: join(__dirname, '../../dist/apps/acme'),
+  },
+  devServer: {
+    port: 4200,
   },
   plugins: [
     new NxAppWebpackPlugin({
-      target: 'node',
-      compiler: 'tsc',
-      main: './src/main.ts',
       tsConfig: './tsconfig.app.json',
-      assets: ['./src/assets'],
-      optimization: false,
-      outputHashing: 'none',
+      compiler: 'swc',
+      main: './src/main.tsx',
+      index: '.src/index.html',
+      styles: ['./src/styles.css'],
       generatePackageJson: true,
     }),
   ],
