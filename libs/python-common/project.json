@@ -1,8 +1,8 @@
 {
-  "name": "libs/python-lib",
+  "name": "libs/python-common",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "sourceRoot": "libs/python-lib/src",
+  "sourceRoot": "libs/python-common/src",
   "targets": {
     "lock": {
       "executor": "@nxlv/python:lock",

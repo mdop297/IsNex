@@ -137,7 +137,7 @@ importers:
 
   apps/auth-svc-e2e: {}
 
-  libs/express-lib:
+  libs/tscommon:
     dependencies:
       tslib:
         specifier: ^2.3.0

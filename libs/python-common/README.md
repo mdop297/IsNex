@@ -1,3 +1,3 @@
-# libs/python-lib
+# libs/python-common
 
 Project description here.

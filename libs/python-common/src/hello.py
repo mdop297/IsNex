@@ -3,4 +3,4 @@
 
 def hello():
     """Return a friendly greeting."""
-    return "Hello libs/python-lib"
+    return "Hello libs/python-common"
