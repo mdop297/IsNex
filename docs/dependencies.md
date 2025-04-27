@@ -1,3 +1,0 @@
-# Dependencies
-
-## lint-staged
