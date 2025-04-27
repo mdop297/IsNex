@@ -8,6 +8,18 @@
 
 ## Installation
 
+Clone this project
+
+```sh
+git clone https://github.com/mdop297/IsNex.git
+```
+
+Install dependencies
+
+```sh
+pnpm install
+```
+
 ## Run tasks
 
 To run the dev server for your app, use:

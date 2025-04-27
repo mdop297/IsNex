@@ -3,9 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "prepare": "husky install",
-    "lint": "nx run-many --target=lint --all",
-    "prettier": "nx run-many --target=format --all"
+    "prepare": "husky install"
   },
   "private": true,
   "type": "module",
@@ -44,6 +42,7 @@
     "jest": "^29.7.0",
     "jest-environment-node": "^29.7.0",
     "jsonc-eslint-parser": "^2.1.0",
+    "lint-staged": "^15.5.1",
     "nx": "20.8.1",
     "prettier": "^2.6.2",
     "react-refresh": "^0.10.0",
