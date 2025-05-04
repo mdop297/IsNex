@@ -1,0 +1,17 @@
+apiVersion: skaffold/v4beta3
+kind: Config
+manifests:
+  rawYaml:
+    - ./infras/k8s/*
+build:
+  local:
+    push: false
+  artifacts:
+    - image: mdop297/isnex-auth
+      context: .
+      docker:
+        dockerfile: apps/auth-svc/Dockerfile
+      sync:
+        manual:
+          - dest: .
+            src: 'apps/auth-svc/src/**/*.ts'

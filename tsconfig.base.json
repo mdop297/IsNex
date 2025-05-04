@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
+    "rootDir": ".",
     "composite": true,
+    "sourceMap": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
     "importHelpers": true,
@@ -16,6 +18,7 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
+    "baseUrl": ".",
     "customConditions": ["development"]
   }
 }

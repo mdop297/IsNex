@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isnex-auth-postgres-depl
+spec:
+  selector:
+    matchLabels:
+      app: isnex-auth-postgres
+  template:
+    metadata:
+      labels:
+        app: isnex-auth-postgres
+    spec:
+      containers:
+        - name: isnex-auth-postgres
+          image: postgres:17
+          resources:
+            limits:
+              memory: '256Mi'
+              cpu: '0.5'
+            requests:
+              memory: '128Mi'
+              cpu: '0.2'
+          ports:
+            - containerPort: 5432 # Corrected to 5432
+          # env:
+          #   - name: POSTGRES_USER
+          #     value: 'mdop297' # Replace with your desired username
+          #   - name: POSTGRES_PASSWORD
+          #     value: 'mdop297' # Replace with your desired password
+          #   - name: POSTGRES_DB
+          #     value: 'isnex_auth' # Replace with your desired database name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: isnex-auth-postgres-svc
+spec:
+  selector:
+    app: isnex-auth-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432

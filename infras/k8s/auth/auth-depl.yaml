@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isnext-auth-depl
+spec:
+  selector:
+    matchLabels:
+      app: isnex-auth
+  template:
+    metadata:
+      labels:
+        app: isnex-auth
+    spec:
+      containers:
+        - name: isnex-auth
+          image: mdop297/isnex-auth
+          resources:
+            limits:
+              memory: '512Mi'
+              cpu: '0.5'
+            requests:
+              memory: '128Mi'
+              cpu: '0.2'
+          env:
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres_host
+            - name: POSTGRES_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres_port
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres_password
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres_db
+            - name: POSTGRES_URL
+              value: >-
+                postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: isnex-auth-svc
+spec:
+  selector:
+    app: isnex-auth
+  ports:
+    - port: 3000
+      targetPort: 3000

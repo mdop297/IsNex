@@ -2,7 +2,7 @@ services:
   auth-db:
     image: postgres:17
     container_name: isnex-auth-postgres
-    # restart: unless-stopped
+    restart: unless-stopped
     ports:
       - 5432:5432
     environment:
@@ -12,7 +12,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
-      - envs/auth.env
+      - ./envs/auth.env
 
 volumes:
   postgres_data:
