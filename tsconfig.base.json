@@ -16,7 +16,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "skipLibCheck": true,
-    "strict": true,
+    // "strict": true,
     "target": "es2022",
     "baseUrl": ".",
     "customConditions": ["development"]

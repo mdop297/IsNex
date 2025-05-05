@@ -71,7 +71,8 @@
       "@prisma/client",
       "@prisma/engines",
       "esbuild",
-      "prisma"
+      "prisma",
+      "bcrypt"
     ]
   },
   "config": {

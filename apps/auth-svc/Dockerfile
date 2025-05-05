@@ -29,12 +29,14 @@ COPY apps/auth-svc ./apps/auth-svc
   # Install dependencies
 ENV CI=true
 RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
-RUN pnpm install 
+RUN apt-get update && apt-get install -y protobuf-compiler
 
-# RUN apt-get update && apt-get install -y protobuf-compiler
+RUN pnpm install
 
 # # Build the app
 RUN pnpx nx build auth-svc
+WORKDIR /workspace/apps/auth-svc
+RUN pnpx prisma generate
 
 # # Runner Stage
 FROM node:20-slim AS runner
@@ -60,7 +62,7 @@ ENV NODE_ENV=production
 RUN pnpm install --frozen-lockfile
 
 # Copy build output and other files
-COPY --from=builder /workspace/apps/auth-svc/node_modules/@prisma-clients/user/ ./apps/auth-svc/node_modules/@prisma-clients/user/
+COPY --from=builder /workspace/apps/auth-svc/node_modules/@prisma-client/user/ ./apps/auth-svc/node_modules/@prisma-client/user/
 COPY --from=builder /workspace/apps/auth-svc/dist ./dist
 
 # Run the application
