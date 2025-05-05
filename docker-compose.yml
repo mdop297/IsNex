@@ -1,4 +1,19 @@
 services:
+  auth:
+    container_name: isnex-auth-svc
+    build:
+      context: .
+      dockerfile: apps/auth-svc/Dockerfile
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    environment:
+      DATABASE_URL: "postgresql://${AUTH_POSTGRES_USER}:${AUTH_POSTGRES_PASSWORD}@auth-db:5432/${AUTH_POSTGRES_DB}"
+    depends_on:
+      - auth-db
+    env_file:
+      - ./envs/auth.env
+
   auth-db:
     image: postgres:17
     container_name: isnex-auth-postgres
