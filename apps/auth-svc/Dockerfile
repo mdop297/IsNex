@@ -1,64 +1,67 @@
 # Builder Stage
-FROM node:18-slim AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /workspace
 
 RUN apt-get update && apt-get install -y openssl
-
 # Copy necessary files for building the app
-COPY package*.json ./
 COPY nx.json ./
 COPY tsconfig*.json ./
 COPY jest.config.ts ./
 COPY jest.preset.js ./
-COPY eslint.config.mjs ./
-COPY apps/auth-svc/webpack*.config.js ./
+COPY eslint*.config.mjs ./
+COPY .npmrc ./
+COPY pnpm*.yaml ./
+COPY package*.json ./
 
 COPY apps/auth-svc ./apps/auth-svc
 # COPY libs/graphql ./libs/graphql
 # COPY libs/grpc ./libs/grpcenv:
-          #   - name: POSTGRES_USER
-          #     value: 'mdop297' # Replace with your desired username
-          #   - name: POSTGRES_PASSWORD
-          #     value: 'mdop297' # Replace with your desired password
-          #   - name: POSTGRES_DB
-          #     value: 'isnex_auth' # Replace with your desired database name
-# COPY libs/nestjs ./libs/nestjs
-# COPY libs/prisma ./libs/prisma
+  #   - name: POSTGRES_USER
+  #     value: 'mdop297' # Replace with your desired username
+  #   - name: POSTGRES_PASSWORD
+  #     value: 'mdop297' # Replace with your desired password
+  #   - name: POSTGRES_DB
+  #     value: 'isnex_auth' # Replace with your desired database name
+  # COPY libs/nestjs ./libs/nestjs
+  # COPY libs/prisma ./libs/prisma
+  
+  # Install dependencies
+ENV CI=true
+RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
+RUN pnpm install 
 
-# Install dependencies
-RUN npm install
+# RUN apt-get update && apt-get install -y protobuf-compiler
 
-RUN apt-get update && apt-get install -y protobuf-compiler
+# # Build the app
+RUN pnpx nx build auth-svc
 
-# Build the app
-RUN npx nx build auth
-
-# Runner Stage
-FROM node:18-slim AS runner
+# # Runner Stage
+FROM node:20-slim AS runner
 
 RUN apt-get update && apt-get install -y openssl
+RUN corepack enable && corepack prepare pnpm@10.7.0 --activate
 
 WORKDIR /app
 
 # Copy necessary files
 COPY --from=builder /workspace/package.json ./
 COPY --from=builder /workspace/apps/auth-svc/package.json ./apps/auth-svc/package.json
+COPY --from=builder /workspace/apps/auth-svc/prisma ./apps/auth-svc/prisma
+COPY --from=builder /workspace/pnpm-*.yaml ./
 # COPY --from=builder /workspace/libs/graphql/package.json ./libs/graphql/package.json
 # COPY --from=builder /workspace/libs/grpc/package.json ./libs/grpc/package.json
-# COPY --from=builder /workspace/apps/auth-svc/prisma ./apps/auth-svc/prisma
 # COPY --from=builder /workspace/libs/prisma/package.json ./libs/prisma/package.json
-COPY --from=builder /workspace/package-lock.json ./
 
 # Set production environment
 ENV NODE_ENV=production
 
-# Install production dependencies
-RUN npm ci
+# # Install production dependencies
+RUN pnpm install --frozen-lockfile
 
 # Copy build output and other files
-# COPY --from=builder /workspace/node_modules/@prisma-clients/auth-svc/ ./node_modules/@prisma-clients/auth-svc/
-COPY --from=builder /workspace/dist ./dist
+COPY --from=builder /workspace/apps/auth-svc/node_modules/@prisma-clients/user/ ./apps/auth-svc/node_modules/@prisma-clients/user/
+COPY --from=builder /workspace/apps/auth-svc/dist ./dist
 
 # Run the application
-CMD ["node", "dist/apps/auth/main"]
+CMD ["node", "dist/main"]

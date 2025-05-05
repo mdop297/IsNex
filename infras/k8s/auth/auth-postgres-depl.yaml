@@ -22,14 +22,23 @@ spec:
               memory: '128Mi'
               cpu: '0.2'
           ports:
-            - containerPort: 5432 # Corrected to 5432
-          # env:
-          #   - name: POSTGRES_USER
-          #     value: 'mdop297' # Replace with your desired username
-          #   - name: POSTGRES_PASSWORD
-          #     value: 'mdop297' # Replace with your desired password
-          #   - name: POSTGRES_DB
-          #     value: 'isnex_auth' # Replace with your desired database name
+            - containerPort: 5432 
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config          
+                  key: postgres_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config          
+                  key: postgres_password
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config          
+                  key: postgres_db
 ---
 apiVersion: v1
 kind: Service

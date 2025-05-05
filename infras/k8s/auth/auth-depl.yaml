@@ -25,27 +25,27 @@ spec:
             - name: POSTGRES_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-config
+                  name: auth-config
                   key: postgres_host
             - name: POSTGRES_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-config
+                  name: auth-config
                   key: postgres_port
             - name: POSTGRES_USER
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-config
+                  name: auth-config
                   key: postgres_user
             - name: POSTGRES_PASSWORD
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-config
+                  name: auth-config
                   key: postgres_password
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-config
+                  name: auth-config
                   key: postgres_db
             - name: POSTGRES_URL
               value: >-
