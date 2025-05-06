@@ -8,7 +8,7 @@ services:
   #   ports:
   #     - 3000:3000
   #   environment:
-  #     DATABASE_URL: "postgresql://${AUTH_POSTGRES_USER}:${AUTH_POSTGRES_PASSWORD}@auth-db:5432/${AUTH_POSTGRES_DB}"
+  #     DATABASE_URL: 'postgresql://${AUTH_POSTGRES_USER}:${AUTH_POSTGRES_PASSWORD}@auth-db:5432/${AUTH_POSTGRES_DB}'
   #   depends_on:
   #     - auth-db
   #   env_file:

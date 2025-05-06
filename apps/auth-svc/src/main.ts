@@ -4,11 +4,15 @@
  */
 
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app/app.module';
+import { JwtAuthGuard } from './app/auth/guards/jwt-auth.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const reflector = app.get(Reflector);
+  //do JwtAuthGuard có constructor cần reflector nên cần truyền refector vào
+  app.useGlobalGuards(new JwtAuthGuard(reflector));
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   // to validate input data before run into controller base on dto
