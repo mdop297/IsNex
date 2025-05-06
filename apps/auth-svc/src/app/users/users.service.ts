@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -36,22 +37,7 @@ export class UsersService {
 
       return result;
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          const target = error?.meta?.target as string[];
-          if (target?.includes('email')) {
-            throw new ConflictException('Email already exists');
-          } else if (target?.includes('username')) {
-            throw new ConflictException('Username already exists');
-          } else {
-            throw new ConflictException('A unique constraint error occurred');
-          }
-        }
-      } else {
-        throw new InternalServerErrorException(
-          'Authentication Service Error. Can not create user.',
-        );
-      }
+      this.handlePrismaError(error);
     }
   }
 
@@ -59,15 +45,58 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(updateUserDto: UpdateUserDto) {
+    try {
+      const { id, ...data } = updateUserDto;
+      const result = await this.prisma.user.update({
+        where: {
+          id: +id,
+        },
+        data: {
+          ...data,
+        },
+      });
+      console.log(result);
+      return result;
+    } catch (error) {
+      this.handlePrismaError(error);
+    }
   }
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  private handlePrismaError(error: any) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        const target = error?.meta?.target as string[];
+        if (target?.includes('email')) {
+          throw new ConflictException('Email already exists');
+        } else if (target?.includes('username')) {
+          throw new ConflictException('Username already exists');
+        } else {
+          throw new ConflictException('A unique constraint error occurred');
+        }
+      }
+    }
+
+    throw new InternalServerErrorException(
+      'Authentication Service Error. Please try again later.',
+    );
   }
 }
