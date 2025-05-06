@@ -1,5 +1,4 @@
 import {
-  Body,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -14,6 +13,11 @@ import { PrismaClientKnownRequestError } from '@prisma-client/user/runtime/libra
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
+
+  isValidId(id: any): boolean {
+    const num = Number(id);
+    return Number.isInteger(num) && num > 0;
+  }
 
   getHashPassword = (password: string) => {
     const salt = genSaltSync(10);
@@ -31,7 +35,7 @@ export class UsersService {
         data: {
           ...data,
           password: this.getHashPassword(data.password),
-          name: data.email.split('@')[0],
+          username: data.email.split('@')[0],
         },
       });
 
@@ -41,8 +45,8 @@ export class UsersService {
     }
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    return await this.prisma.user.findMany();
   }
 
   async findOne(id: number) {
@@ -51,11 +55,21 @@ export class UsersService {
         id: id,
       },
     });
-
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
+    return user;
+  }
 
+  async findOneByEmail(email: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email: email,
+      },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with Email ${email} not found`);
+    }
     return user;
   }
 
@@ -77,8 +91,17 @@ export class UsersService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    try {
+      const result = await this.prisma.user.delete({
+        where: {
+          id: id,
+        },
+      });
+      return result;
+    } catch (error) {
+      this.handlePrismaError(error);
+    }
   }
 
   private handlePrismaError(error: any) {
@@ -94,9 +117,11 @@ export class UsersService {
         }
       }
     }
-
+    if (error.code === 'P2025') {
+      throw new NotFoundException('Record not found');
+    }
     throw new InternalServerErrorException(
-      'Authentication Service Error. Please try again later.',
+      'Authentication Service Error. Please try again later. ',
     );
   }
 }
