@@ -4,13 +4,19 @@ up:
 	docker compose --env-file ./envs/auth.env up -d
 
 up-dev:
-	docker compose --env-file ./envs/auth.env -f docker-compose.yml -f docker-compose.override.yml up -d --build
+	# docker compose --env-file ./envs/auth.env -f docker-compose.yml -f docker-compose.override.yml up -d --build
+	docker compose --env-file ./envs/auth.env up -d --build
+
 
 down:
 	docker compose down
 
 logs:
 	docker compose logs -f --tail=100
+
+exec-auth:
+	docker compose exec auth bash
+
 
 # ------------------ Auth Service Commands ------------------------
 

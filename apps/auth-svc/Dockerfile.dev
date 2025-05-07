@@ -1,0 +1,33 @@
+# Builder Stage
+FROM node:20-slim AS builder
+
+RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
+RUN apt-get update && apt-get install -y protobuf-compiler
+
+WORKDIR /isnex
+
+RUN apt-get update && apt-get install -y openssl
+# Copy necessary files for building the app
+COPY nx.json ./
+COPY tsconfig*.json ./
+COPY jest.config.ts ./
+COPY jest.preset.js ./
+COPY eslint*.config.mjs ./
+COPY .npmrc ./
+COPY pnpm*.yaml ./
+COPY package*.json ./
+
+COPY apps/auth-svc ./apps/auth-svc
+  
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+RUN pnpx nx sync
+
+WORKDIR /isnex/apps/auth-svc
+RUN pnpx prisma generate
+
+# Build the app
+RUN pnpx nx build auth-svc
+
+CMD ["pnpx", "nx", "run", "auth-svc:serve"]

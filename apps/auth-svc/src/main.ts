@@ -10,11 +10,13 @@ import { JwtAuthGuard } from './app/auth/guards/jwt-auth.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const globalPrefix = 'api';
+  app.setGlobalPrefix(globalPrefix);
+
   const reflector = app.get(Reflector);
   //do JwtAuthGuard có constructor cần reflector nên cần truyền refector vào
   app.useGlobalGuards(new JwtAuthGuard(reflector));
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
+
   // to validate input data before run into controller base on dto
   app.useGlobalPipes(new ValidationPipe());
   const port = process.env.PORT || 3000;
