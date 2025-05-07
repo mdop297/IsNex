@@ -1,3 +1,4 @@
 node_modules
 dist
-**/Dockerfile
+./apps/auth-svc/node_modules
+./apps/auth-svc/dist
