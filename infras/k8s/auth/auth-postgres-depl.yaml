@@ -22,23 +22,12 @@ spec:
               memory: '128Mi'
               cpu: '0.2'
           ports:
-            - containerPort: 5432 
-          env:
-            - name: POSTGRES_USER
-              valueFrom:
-                configMapKeyRef:
-                  name: auth-config          
-                  key: postgres_user
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: auth-config          
-                  key: postgres_password
-            - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: auth-config          
-                  key: postgres_db
+            - containerPort: 5432
+          envFrom: # Sử dụng envFrom
+            - configMapRef:
+                name: auth-config
+            - secretRef:
+                name: auth-secret
 ---
 apiVersion: v1
 kind: Service

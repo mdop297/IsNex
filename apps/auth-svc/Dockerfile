@@ -24,8 +24,8 @@ RUN pnpm install --frozen-lockfile
 
 RUN pnpx nx sync
 
-WORKDIR /isnex/apps/auth-svc
-RUN pnpx prisma generate
+# WORKDIR /isnex/apps/auth-svc
+# RUN pnpx prisma generate
 
 # # Build the app
 RUN pnpx nx build auth-svc

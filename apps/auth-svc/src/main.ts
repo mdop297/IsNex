@@ -25,5 +25,5 @@ async function bootstrap() {
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
   );
 }
-console.log('this is from local host. Updated');
+
 bootstrap();

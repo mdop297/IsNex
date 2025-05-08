@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: apps/auth-svc/Dockerfile.dev
     volumes:
-      - ./apps/auth-svc:/isnex/apps/auth-svc
+      - ./apps/auth-svc/src:/isnex/apps/auth-svc/src
       - ./node_modules:/isnex/node_modules
       - ./envs/auth.env:/isnex/envs/auth.env:ro
     ports:

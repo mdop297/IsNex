@@ -3,8 +3,9 @@ kind: ConfigMap
 metadata:
   name: auth-config
 data:
-  postgres_host: isnex-auth-postgres-svc.default.svc.cluster.local
-  postgres_port: '5432'
-  postgres_user: mdop297
-  postgres_password: mdop297
-  postgres_db: isnex_auth
+  PORT: '3000'
+  POSTGRES_HOST: isnex-auth-postgres-svc.default.svc.cluster.local
+  POSTGRES_PORT: '5432'
+  POSTGRES_USER: mdop297
+  POSTGRES_DB: users
+  JWT_ACCESS_EXPIRE: '18000000'

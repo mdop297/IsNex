@@ -120,6 +120,7 @@ export class UsersService {
     if (error.code === 'P2025') {
       throw new NotFoundException('Record not found');
     }
+    console.log(error);
     throw new InternalServerErrorException(
       'Authentication Service Error. Please try again later. ',
     );

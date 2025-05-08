@@ -1,12 +1,14 @@
 # ------------------ Docker Compose Commands ------------------------
 
 up:
-	docker compose --env-file ./envs/auth.env up -d
+	docker compose --env-file ./envs/auth.env -f docker-compose.yml up -d
 
 up-dev:
-	# docker compose --env-file ./envs/auth.env -f docker-compose.yml -f docker-compose.override.yml up -d --build
-	docker compose --env-file ./envs/auth.env up -d --build
+	# docker compose --env-file ./envs/auth.env -f docker-compose.yml -f docker-compose.override.yml up -d
+	docker compose --env-file ./envs/auth.env up -d 
 
+build-dev:
+	docker compose --env-file ./envs/auth.env build
 
 down:
 	docker compose down
