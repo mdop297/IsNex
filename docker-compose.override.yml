@@ -1,0 +1,17 @@
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: apps/auth-svc/Dockerfile.dev
+    volumes:
+      - ./apps/auth-svc/src:/isnex/apps/auth-svc/src
+      - ./node_modules:/isnex/node_modules
+      - ./envs/auth.env:/isnex/envs/auth.env:ro
+    ports:
+      - 3000:3000
+    depends_on:
+      - auth-db
+    environment:
+      DATABASE_URL: 'postgresql://${AUTH_POSTGRES_USER}:${AUTH_POSTGRES_PASSWORD}@auth-db:5432/${AUTH_POSTGRES_DB}'
+    env_file:
+      - ./envs/auth.env
