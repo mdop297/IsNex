@@ -11,6 +11,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   handleLogin(@Request() req) {
+    console.log('Entered Login route. Updated.');
     return this.authService.login(req.user);
   }
 

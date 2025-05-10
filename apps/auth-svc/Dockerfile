@@ -2,11 +2,10 @@
 FROM node:20-slim AS builder
 
 RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
-RUN apt-get update && apt-get install -y protobuf-compiler
+RUN apt-get update && apt-get install -y protobuf-compiler openssl
 
 WORKDIR /isnex
 
-RUN apt-get update && apt-get install -y openssl
 # Copy necessary files for building the app
 COPY nx.json ./
 COPY tsconfig*.json ./
@@ -24,6 +23,7 @@ RUN pnpm install --frozen-lockfile
 
 RUN pnpx nx sync
 
+# # build command in package.json depends on prisma generate command
 # WORKDIR /isnex/apps/auth-svc
 # RUN pnpx prisma generate
 
@@ -31,10 +31,10 @@ RUN pnpx nx sync
 RUN pnpx nx build auth-svc
 
 # # Runner Stage
-FROM node:20-slim AS runner
+FROM node:20-alpine AS runner
 
-RUN apt-get update && apt-get install -y openssl
 RUN corepack enable && corepack prepare pnpm@10.7.0 --activate
+RUN apt-get update && apt-get install -y openssl
 
 WORKDIR /isnex
 
@@ -51,11 +51,12 @@ COPY --from=builder /isnex/pnpm-*.yaml ./
 ENV NODE_ENV=production
 
 # # Install production dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --prod 
 
 # Copy build output and other files
 COPY --from=builder /isnex/apps/auth-svc/node_modules/@prisma-client/user/ ./apps/auth-svc/node_modules/@prisma-client/user/
 COPY --from=builder /isnex/apps/auth-svc/dist ./dist
 
+EXPOSE 3000
 # Run the application
 CMD ["node", "dist/main"]

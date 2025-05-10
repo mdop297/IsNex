@@ -26,4 +26,5 @@ async function bootstrap() {
   );
 }
 
+console.log('Added new code');
 bootstrap();
