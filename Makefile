@@ -6,6 +6,7 @@ ENV_FILE = ./envs/auth.env
 
 # Docker Compose files
 COMPOSE_FILE = docker-compose.yml
+COMPOSE_DB_FILE = docker-compose.db.yml
 COMPOSE_DEV_FILE = docker-compose.override.yml
 
 # Image name for auth service
@@ -16,6 +17,11 @@ IMAGE_NAME = mdop297/isnex-auth
 # Start services in detached mode
 up:
 	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) up -d
+
+# Start database to test in local in detached mode
+up-database:
+	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_DB_FILE) up -d
+
 
 # Start services in development mode with override
 up-dev:
@@ -85,6 +91,11 @@ auth-db-studio:
 # Generate Prisma client
 auth-prisma-generate:
 	docker compose exec auth npx prisma generate
+
+# Run auth-service in localhost with passed env file
+auth-localhost:
+	pnpx env-cmd -f ./envs/auth.env nx run auth-svc:serve
+
 
 
 # ------------------ Utility Commands ------------------------

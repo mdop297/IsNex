@@ -3,7 +3,7 @@ kind: Config
 
 build:
   artifacts:
-    - image: isnex-auth # Tên image chung, sẽ được ánh xạ trong manifest
+    - image: isnex-auth
       context: .
       docker:
         buildArgs:
@@ -26,7 +26,7 @@ profiles:
       artifacts:
         - image: asia.gcr.io/isnex-459400/mdop297/isnex-auth
           docker:
-            dockerfile: apps/auth-svc/Dockerfile.dev
+            dockerfile: apps/auth-svc/Dockerfile.k8s.dev
             buildArgs:
               NODE_ENV: development
           sync:
@@ -48,7 +48,7 @@ profiles:
       artifacts:
         - image: mdop297/isnex-auth
           docker:
-            dockerfile: apps/auth-svc/Dockerfile.dev
+            dockerfile: apps/auth-svc/Dockerfile.k8s.dev
             buildArgs:
               NODE_ENV: development
           sync:
