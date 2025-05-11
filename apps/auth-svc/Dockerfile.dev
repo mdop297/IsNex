@@ -1,12 +1,12 @@
-# Builder Stage
-FROM node:20-slim AS builder
+# build context of this file: isnex/ (../../)
+# location of this file: isnex/apps/auth-svc/Dockerfile.dev
+FROM node:20-slim
 
 RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
-RUN apt-get update && apt-get install -y protobuf-compiler
+RUN apt-get update && apt-get install -y protobuf-compiler openssl psmisc
 
 WORKDIR /isnex
 
-RUN apt-get update && apt-get install -y openssl
 # Copy necessary files for building the app
 COPY nx.json ./
 COPY tsconfig*.json ./
@@ -18,13 +18,15 @@ COPY pnpm*.yaml ./
 COPY package*.json ./
 
 COPY apps/auth-svc ./apps/auth-svc
-  
+
+RUN chmod +x apps/auth-svc/dev.sh
+
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install 
 
 RUN pnpx nx sync
 
-# Build the app
-RUN pnpx nx build auth-svc
+# RUN pnpx nx build auth-svc
 
-CMD ["pnpx", "nx", "run", "auth-svc:serve"]
+# Command to start development server with hot reload
+CMD ["pnpm", "nodemon", "--config", "apps/auth-svc/nodemon.json"]
