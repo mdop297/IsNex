@@ -81,7 +81,10 @@
       "@prisma/engines",
       "esbuild",
       "prisma",
-      "bcrypt"
+      "bcrypt",
+      "@tailwindcss/oxide",
+      "sharp",
+      "unrs-resolver"
     ]
   },
   "config": {
