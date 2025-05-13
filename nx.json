@@ -50,7 +50,7 @@
       "options": {
         "targetName": "test"
       },
-      "exclude": ["apps/auth-svc-e2e/**/*", "apps/auth-svc-e2e/**/*"]
+      "exclude": ["apps/auth-svc-e2e/**/*", "apps/document-svc-e2e/**/*"]
     }
   ],
   "targetDefaults": {

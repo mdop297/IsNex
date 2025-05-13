@@ -8,6 +8,12 @@
     },
     {
       "path": "./libs/tscommon"
+    },
+    {
+      "path": "./apps/document-svc-e2e"
+    },
+    {
+      "path": "./apps/document-svc"
     }
   ]
 }
