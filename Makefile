@@ -70,7 +70,7 @@ skaffold-clean:
 
 # Run auth service in development mode
 auth-run-dev:
-	nx run auth-svc:serve
+	nx run auth-svc:start:dev --no-cache
 
 # Run auth service with hot reload (nodemon)
 auth-run-dev-watch:
