@@ -1,5 +1,4 @@
-import { Transform } from 'class-transformer';
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -9,20 +8,10 @@ export class CreateUserDto {
   @IsNotEmpty()
   password: string;
 
-  @IsNotEmpty()
-  @Transform(
-    ({
-      value,
-      obj,
-    }: {
-      value: string | undefined;
-      obj: Partial<CreateUserDto>;
-    }) => value || obj.email?.split('@')[0] || '',
-    {
-      toClassOnly: true,
-    },
-  )
+  @IsOptional()
   username: string;
 
+  @IsString()
+  @IsOptional()
   address: string;
 }

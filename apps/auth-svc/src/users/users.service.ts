@@ -7,7 +7,6 @@ import {
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
-import { genSaltSync, hashSync } from 'bcryptjs';
 import { FindUserDto } from './dto/find-user.dto';
 import { Prisma, User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -16,17 +15,10 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  hashPassword = (password: string) => {
-    const salt = genSaltSync(10);
-    const hash = hashSync(password, salt);
-    return hash;
-  };
-
   async create(data: Prisma.UserCreateInput): Promise<User> {
     return await this.prisma.user.create({
       data: {
         ...data,
-        password: this.hashPassword(data.password),
       },
     });
   }
@@ -40,11 +32,11 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.prisma.user.findUnique({ where: { email } });
+    return await this.prisma.user.findFirst({ where: { email } });
   }
 
-  async findByUsername(username: string): Promise<User[]> {
-    return this.prisma.user.findMany({
+  async findByUsername(username: string): Promise<User | null> {
+    return await this.prisma.user.findFirst({
       where: { username: { contains: username, mode: 'insensitive' } },
     });
   }

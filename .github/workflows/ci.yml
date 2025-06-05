@@ -9,8 +9,8 @@ on:
 permissions:
   actions: read
   contents: read
-  issues: write # Thêm quyền để chỉnh sửa PR
-  pull-requests: write # Thêm quyền để thêm label
+  issues: write
+  pull-requests: write
 
 jobs:
   main:

@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
@@ -9,7 +8,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '@prisma/client';
 import { FindUserDto } from './dto/find-user.dto';
@@ -17,11 +15,6 @@ import { FindUserDto } from './dto/find-user.dto';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
 
   @Get()
   findAll() {
@@ -35,11 +28,13 @@ export class UsersController {
 
   @Get('by-email/:email')
   async findByEmail(@Param('email') email: string): Promise<User | null> {
-    return this.usersService.findByEmail(email);
+    return await this.usersService.findByEmail(email);
   }
 
   @Get('by-username/:username')
-  async findByUserName(@Param('username') username: string): Promise<User[]> {
+  async findByUserName(
+    @Param('username') username: string,
+  ): Promise<User | null> {
     return await this.usersService.findByUsername(username);
   }
 
