@@ -1,15 +1,23 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
-import { UpdateUserDto } from 'src/users/dto/update-user.dto';
+import { LoginDto } from './dtos/login.dto';
+
+export interface JwtPayload {
+  userId: string;
+  email: string;
+  username: string;
+  role: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -18,12 +26,6 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
-
-  // async isValidPassword(password: string, hashedPassword: string) {
-  //   const [salt, storedHash] = hashedPassword.split('.');
-  //   const hash = (await scrypt(password, salt, 32)) as Buffer;
-  //   return storedHash === hash.toString('hex');
-  // }
 
   getHashPassword = (password: string) => {
     const salt = genSaltSync(10);
@@ -65,18 +67,20 @@ export class AuthService {
     return newUser;
   }
 
-  async login(user: UpdateUserDto, response: Response) {
-    // const validUser = await this.validateUser(body.email, body.password);
+  async login(body: LoginDto, response: Response) {
+    const validUser = await this.validateUser(body.username, body.password);
 
-    // if (!validUser) {
-    //   throw new NotFoundException('Invalid credentials');
-    // }
+    if (!validUser) {
+      throw new NotFoundException('Invalid credentials');
+    }
 
-    const tokens = await this.generateTokens(
-      user.id,
-      user.email,
-      user.username,
-    );
+    const payload: JwtPayload = {
+      userId: validUser.id,
+      email: validUser.email,
+      username: validUser.username,
+      role: validUser.role,
+    };
+    const tokens = await this.generateTokens(payload);
 
     // Set refresh token in HTTP-only cookie
     response.cookie('refreshToken', tokens.refreshToken, {
@@ -89,14 +93,15 @@ export class AuthService {
     return {
       accessToken: tokens.accessToken,
       user: {
-        id: user.id,
-        email: user.email,
-        username: user.username,
+        userId: validUser.id,
+        email: validUser.email,
+        username: validUser.username,
+        role: validUser.role,
       },
     };
   }
 
-  async getProfile(userId: number) {
+  async getProfile(userId: string) {
     const user = await this.userService.findById(userId);
 
     if (!user) {
@@ -106,23 +111,37 @@ export class AuthService {
     return user;
   }
 
-  async refreshToken(
-    userId: number,
-    email: string,
-    username: string,
-    response: Response,
-  ) {
-    const tokens = await this.generateTokens(userId, email, username);
+  async refreshToken(refreshToken: string, response: Response) {
+    try {
+      const payload: JwtPayload = this.jwtService.verify(refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      });
 
-    // Update refresh token in cookie
-    response.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true,
-      secure: this.configService.get('NODE_ENV') === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+      const user = await this.userService.findByEmail(payload.email);
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+      const newPayload: JwtPayload = {
+        userId: user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+      };
+      const tokens = await this.generateTokens(newPayload);
 
-    return { accessToken: tokens.accessToken };
+      // Update refresh token in cookie
+      response.cookie('refreshToken', tokens.refreshToken, {
+        httpOnly: true,
+        secure: this.configService.get('NODE_ENV') === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      return { accessToken: tokens.accessToken };
+    } catch (e) {
+      console.error('Refresh token error:', e);
+      throw new UnauthorizedException('Invalid refresh token 2');
+    }
   }
 
   signOut(response: Response) {
@@ -133,26 +152,16 @@ export class AuthService {
     return { message: 'Logged out successfully' };
   }
 
-  private async generateTokens(
-    userId: number,
-    email: string,
-    username: string,
-  ) {
+  private async generateTokens(payload: JwtPayload) {
     const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(
-        { sub: userId, email, username },
-        {
-          secret: this.configService.get('JWT_ACCESS_SECRET'),
-          expiresIn: '15m',
-        },
-      ),
-      this.jwtService.signAsync(
-        { sub: userId, email, username },
-        {
-          secret: this.configService.get('JWT_REFRESH_SECRET'),
-          expiresIn: '7d',
-        },
-      ),
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get('JWT_ACCESS_SECRET'),
+        expiresIn: '15m',
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
+        expiresIn: '7d',
+      }),
     ]);
 
     return { accessToken, refreshToken };

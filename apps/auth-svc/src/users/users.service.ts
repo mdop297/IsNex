@@ -27,7 +27,7 @@ export class UsersService {
     return await this.prisma.user.findMany();
   }
 
-  async findById(id: number): Promise<User | null> {
+  async findById(id: string): Promise<User | null> {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
@@ -61,11 +61,11 @@ export class UsersService {
     return this.prisma.user.findMany({ where });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  update(id: string, updateUserDto: UpdateUserDto) {
     try {
-      const { id, ...data } = updateUserDto;
+      const { userId, ...data } = updateUserDto;
       const result = this.prisma.user.update({
-        where: { id },
+        where: { id: userId },
         data: { ...data },
       });
       return result;
@@ -74,7 +74,7 @@ export class UsersService {
     }
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} user`;
   }
 
