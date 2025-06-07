@@ -19,9 +19,11 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migrate:dev": "env-cmd -f ../../envs/auth.env npx prisma migrate dev --name update",
+    "prisma-migrate": "prisma migrate dev --name update",
     "generate": "prisma generate"
   },
   "dependencies": {
+    "@nestjs/cli": "11.0.0",
     "@nestjs/common": "11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "11.0.1",
@@ -43,7 +45,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "3.2.0",
     "@eslint/js": "9.18.0",
-    "@nestjs/cli": "11.0.0",
     "@nestjs/schematics": "11.0.0",
     "@nestjs/testing": "11.0.1",
     "@swc/cli": "0.6.0",
@@ -59,6 +60,7 @@
     "eslint-config-prettier": "10.0.1",
     "eslint-plugin-prettier": "5.2.2",
     "globals": "16.0.0",
+    "nodemon": "3.1.10",
     "prettier": "3.4.2",
     "prisma": "6.8.2",
     "source-map-support": "0.5.21",
@@ -68,6 +70,15 @@
     "tsconfig-paths": "4.2.0",
     "typescript": "5.7.3",
     "typescript-eslint": "8.20.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@prisma/client",
+      "@prisma/engines",
+      "@swc/core",
+      "prisma"
+    ]
   },
   "jest": {
     "moduleFileExtensions": [

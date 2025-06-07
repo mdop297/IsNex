@@ -1,0 +1,11 @@
+FROM node:22-alpine AS builder
+
+RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
+RUN apk add --no-cache protobuf openssl
+WORKDIR /isnex/apps/auth-svc
+COPY . .
+RUN chmod +x entrypoint.dev.sh
+RUN pnpm install
+
+EXPOSE 3000
+CMD ["pnpm", "nodemon", "--config", "nodemon.json"]

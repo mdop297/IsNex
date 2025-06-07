@@ -33,8 +33,11 @@ profiles:
             manual:
               - src: 'apps/auth-svc/src/**/*.ts'
                 dest: .
+                strip: 'apps/auth-svc'
               - src: 'apps/auth-svc/prisma/*.prisma'
                 dest: .
+                strip: 'apps/auth-svc'
+
     manifests:
       rawYaml:
         - ./infras/k8s/*

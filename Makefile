@@ -33,7 +33,7 @@ build-dev:
 
 # Build services for production
 build-prod:
-	docker build -f apps/auth-svc/Dockerfile -t $(IMAGE_NAME) .
+	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) build
 
 # Stop and remove services
 down:
