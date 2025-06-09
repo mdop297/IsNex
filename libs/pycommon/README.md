@@ -1,3 +1,0 @@
-# pycommon
-
-Project description here.

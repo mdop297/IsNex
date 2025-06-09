@@ -1,7 +1,8 @@
 {
-  "watch": ["apps/auth-svc/src", "apps/auth-svc/prisma"],
+  "watch": ["./src", "./prisma"],
+
   "ext": "ts,json,prisma",
-  "exec": "apps/auth-svc/dev.sh",
+  "exec": "./entrypoint.dev.sh",
   "legacyWatch": true,
   "verbose": true
 }

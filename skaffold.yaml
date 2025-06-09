@@ -1,22 +1,6 @@
 apiVersion: skaffold/v4beta3
 kind: Config
 
-build:
-  artifacts:
-    - image: isnex-auth
-      context: .
-      docker:
-        buildArgs:
-          POSTEQRES_USER: '{{.POSTGRES_USER}}'
-          POSTGRES_PASSWORD: '{{.POSTGRES_PASSWORD}}'
-          POSTGRES_HOST: '{{.POSTGRES_HOST}}'
-          POSTGRES_PORT: '{{.DB_PORT}}'
-          POSTGRES_DB: '{{.POSTGRES_DB}}'
-
-manifests:
-  rawYaml:
-    - ./infras/k8s/*
-
 profiles:
   # Profile cho dev với build trên Google Cloud Build
   - name: dev-cloud
@@ -25,52 +9,43 @@ profiles:
         projectId: isnex-459400
       artifacts:
         - image: asia.gcr.io/isnex-459400/mdop297/isnex-auth
+          context: ./apps/auth-svc/
           docker:
-            dockerfile: apps/auth-svc/Dockerfile.dev
+            dockerfile: Dockerfile.dev
             buildArgs:
               NODE_ENV: development
+              POSTGRES_USER: '{{.POSTGRES_USER}}'
+              POSTGRES_PASSWORD: '{{.POSTGRES_PASSWORD}}'
+              POSTGRES_HOST: '{{.POSTGRES_HOST}}'
+              POSTGRES_PORT: '{{.DB_PORT}}'
+              POSTGRES_DB: '{{.POSTGRES_DB}}'
           sync:
             manual:
-              - src: 'apps/auth-svc/src/**/*.ts'
-                dest: .
-              - src: 'apps/auth-svc/prisma/*.prisma'
-                dest: .
-    manifests:
-      rawYaml:
-        - ./infras/k8s/*
-        - ./infras/k8s-dev/*
-
-  # Profile cho dev với build local
-  - name: dev-local
-    build:
-      local:
-        push: false
-      artifacts:
-        - image: mdop297/isnex-auth
-          docker:
-            dockerfile: apps/auth-svc/Dockerfile.dev
-            buildArgs:
-              NODE_ENV: development
-          sync:
-            manual:
-              - src: 'apps/auth-svc/src/**/*.ts'
-                dest: .
-              - src: 'apps/auth-svc/prisma/*.prisma'
-                dest: .
+              - src: 'src/**/*.ts' # ✅ Relative to context
+                dest: . # ✅ Relative to WORKDIR
+              - src: 'prisma/*.prisma' # ✅ Relative to context
+                dest: . # ✅ Relative to WORKDIR
     manifests:
       rawYaml:
         - ./infras/k8s/*
         - ./infras/k8s-dev/*
 
   # Profile cho prod với build trên Google Cloud Build
-  - name: prod-cloud
+  - name: prod
     build:
       googleCloudBuild:
         projectId: isnex-459400
       artifacts:
         - image: asia.gcr.io/isnex-459400/mdop297/isnex-auth
+          context: ./apps/auth-svc/
           docker:
-            dockerfile: apps/auth-svc/Dockerfile
+            dockerfile: Dockerfile
+            buildArgs:
+              POSTGRES_USER: '{{.POSTGRES_USER}}'
+              POSTGRES_PASSWORD: '{{.POSTGRES_PASSWORD}}'
+              POSTGRES_HOST: '{{.POSTGRES_HOST}}'
+              POSTGRES_PORT: '{{.DB_PORT}}'
+              POSTGRES_DB: '{{.POSTGRES_DB}}'
     manifests:
       rawYaml:
         - ./infras/k8s-dev/*

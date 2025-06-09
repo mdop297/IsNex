@@ -2,9 +2,9 @@ services:
   auth:
     container_name: isnex-auth-svc
     build:
-      context: .
-      dockerfile: apps/auth-svc/Dockerfile
-    # restart: unless-stopped
+      context: ./apps/auth-svc/
+      dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
       - 3000:3000
     environment:

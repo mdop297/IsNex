@@ -33,7 +33,7 @@ build-dev:
 
 # Build services for production
 build-prod:
-	docker build -f apps/auth-svc/Dockerfile -t $(IMAGE_NAME) .
+	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) build
 
 # Stop and remove services
 down:
@@ -48,10 +48,6 @@ exec-auth:
 	docker compose exec auth bash
 
 # ------------------ Kubernetes Commands ------------------------
-
-# Run Skaffold in development mode (hot reload)
-skaffold-dev-local:
-	skaffold dev --profile=dev-local
 
 # Run Skaffold in development mode (hot reload)
 skaffold-dev-cloud:
@@ -70,7 +66,7 @@ skaffold-clean:
 
 # Run auth service in development mode
 auth-run-dev:
-	nx run auth-svc:serve
+	nx run auth-svc:start:dev --no-cache
 
 # Run auth service with hot reload (nodemon)
 auth-run-dev-watch:

@@ -13,23 +13,23 @@ spec:
     spec:
       imagePullSecrets:
         - name: auth-secret
-      initContainers:
-        - name: prisma-migrate
-          image: asia.gcr.io/isnex-459400/mdop297/isnex-auth
-          # image: mdop297/isnex-auth
-          command: ['/bin/sh', '-c']
-          args:
-            - |
-              set -e
-              pnpx prisma migrate deploy --schema=apps/auth-svc/prisma/schema.prisma
-          envFrom:
-            - configMapRef:
-                name: auth-config
-            - secretRef:
-                name: auth-secret
-          env:
-            - name: DATABASE_URL
-              value: postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)
+      # initContainers:
+      #   - name: prisma-migrate
+      #     image: asia.gcr.io/isnex-459400/mdop297/isnex-auth
+      #     # image: mdop297/isnex-auth
+      #     command: ['/bin/sh', '-c']
+      #     args:
+      #       - |
+      #         set -e
+      #         pnpx prisma migrate deploy --schema=apps/auth-svc/prisma/schema.prisma
+      #     envFrom:
+      #       - configMapRef:
+      #           name: auth-config
+      #       - secretRef:
+      #           name: auth-secret
+      #     env:
+      #       - name: DATABASE_URL
+      #         value: postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)
       containers:
         - name: isnex-auth-kub
           image: asia.gcr.io/isnex-459400/mdop297/isnex-auth
@@ -37,11 +37,11 @@ spec:
           imagePullPolicy: Always
           resources:
             limits:
-              memory: '3G'
+              memory: '4G'
               cpu: '2'
             requests:
-              memory: '512Mi'
-              cpu: '0.5'
+              memory: '2G'
+              cpu: '1'
           envFrom:
             - configMapRef:
                 name: auth-config

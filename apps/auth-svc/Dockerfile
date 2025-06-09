@@ -1,62 +1,40 @@
-# Builder Stage
-FROM node:20-slim AS builder
+FROM node:22-alpine AS builder
 
 RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
-RUN apt-get update && apt-get install -y protobuf-compiler openssl
-
-WORKDIR /isnex
-
-# Copy necessary files for building the app
-COPY nx.json ./
-COPY tsconfig*.json ./
-COPY jest.config.ts ./
-COPY jest.preset.js ./
-COPY eslint*.config.mjs ./
-COPY .npmrc ./
-COPY pnpm*.yaml ./
+RUN apk add --no-cache protobuf openssl
+WORKDIR /isnex/apps/auth-svc/
 COPY package*.json ./
+RUN pnpm install 
+COPY . .
+RUN pnpx prisma generate
+RUN pnpm run build
 
-COPY apps/auth-svc ./apps/auth-svc
-  
-# Install dependencies
-RUN pnpm install --frozen-lockfile
 
-RUN pnpx nx sync
+FROM node:22-alpine AS runner
 
-# # build command in package.json depends on prisma generate command
-# WORKDIR /isnex/apps/auth-svc
-# RUN pnpx prisma generate
+RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
+RUN apk add --no-cache protobuf openssl
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nodejs -u 1001
 
-# # Build the app
-RUN pnpx nx build auth-svc
+WORKDIR /isnex/apps/auth-svc/
+COPY package*.json ./
+COPY --from=builder --chown=nodejs:nodejs /isnex/apps/auth-svc/pnpm-lock.yaml /isnex/apps/auth-svc/
+RUN pnpm install --frozen-lockfile --prod && \
+    pnpm store prune && \
+    rm -rf ~/.pnpm-store
 
-# # Runner Stage
-FROM node:20-alpine AS runner
-
-RUN corepack enable && corepack prepare pnpm@10.7.0 --activate
-RUN apt-get update && apt-get install -y openssl
-
-WORKDIR /isnex
-
-# Copy necessary files
-COPY --from=builder /isnex/package.json ./
-COPY --from=builder /isnex/apps/auth-svc/package.json ./apps/auth-svc/package.json
-COPY --from=builder /isnex/apps/auth-svc/prisma ./apps/auth-svc/prisma
-COPY --from=builder /isnex/pnpm-*.yaml ./
-# COPY --from=builder /workspace/libs/graphql/package.json ./libs/graphql/package.json
-# COPY --from=builder /workspace/libs/grpc/package.json ./libs/grpc/package.json
-# COPY --from=builder /workspace/libs/prisma/package.json ./libs/prisma/package.json
-
-# Set production environment
-ENV NODE_ENV=production
-
-# # Install production dependencies
-RUN pnpm install --frozen-lockfile --prod 
-
-# Copy build output and other files
-COPY --from=builder /isnex/apps/auth-svc/node_modules/@prisma-client/user/ ./apps/auth-svc/node_modules/@prisma-client/user/
-COPY --from=builder /isnex/apps/auth-svc/dist ./dist
+COPY --from=builder --chown=nodejs:nodejs /isnex/apps/auth-svc/dist ./dist
+COPY --from=builder --chown=nodejs:nodejs /isnex/apps/auth-svc/node_modules ./node_modules
+COPY --from=builder --chown=nodejs:nodejs /isnex/apps/auth-svc/prisma ./prisma
+COPY --chown=nodejs:nodejs ./entrypoint.prod.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+USER nodejs
 
 EXPOSE 3000
-# Run the application
-CMD ["node", "dist/main"]
+
+# ENTRYPOINT ["dumb-init", "./entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
+
+
+
