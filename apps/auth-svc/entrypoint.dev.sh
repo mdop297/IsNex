@@ -1,7 +1,7 @@
 #!/bin/sh
 
-SCHEMA_PATH="apps/auth-svc/prisma/schema.prisma"
-HASH_FILE="apps/auth-svc/.schema_checksum"
+SCHEMA_PATH="./prisma/schema.prisma"
+HASH_FILE="./.schema_checksum"
 
 generate_hash() {
   sha256sum "$SCHEMA_PATH" | awk '{print $1}'
@@ -23,4 +23,4 @@ echo "Stopping any existing process on port 3000..."
 fuser -k 3000/tcp || true
 
 echo "Starting the app..."
-nest start
+pnpm run start:dev

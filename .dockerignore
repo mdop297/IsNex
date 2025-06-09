@@ -1,4 +1,4 @@
-node_modules
-dist
+**/node_modules
+**/dist
 ./apps/auth-svc/node_modules
 ./apps/auth-svc/dist

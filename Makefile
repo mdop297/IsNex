@@ -50,10 +50,6 @@ exec-auth:
 # ------------------ Kubernetes Commands ------------------------
 
 # Run Skaffold in development mode (hot reload)
-skaffold-dev-local:
-	skaffold dev --profile=dev-local
-
-# Run Skaffold in development mode (hot reload)
 skaffold-dev-cloud:
 	skaffold dev --profile=dev-cloud
 
