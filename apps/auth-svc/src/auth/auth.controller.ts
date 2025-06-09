@@ -9,12 +9,12 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
-import { Public, CurrentUser } from 'src/decorators/customize';
+import { Public, CurrentUser } from '../decorators/customize';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { IUser } from 'src/users/user.interface';
+import { IUser } from '../users/user.interface';
 import { LoginDto } from './dtos/login.dto';
 
 @Controller('auth')

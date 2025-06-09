@@ -22,16 +22,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       }),
       inject: [ConfigService],
     }),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_REFRESH_SECRET'),
-        signOptions: {
-          expiresIn: configService.get<string>('JWT_REFRESH_EXPIRE'),
-        },
-      }),
-      inject: [ConfigService],
-    }),
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
