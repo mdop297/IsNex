@@ -27,7 +27,7 @@ spec:
             - configMapRef:
                 name: auth-config
             - secretRef:
-                name: auth-secret
+                name: isnex-secret
 ---
 apiVersion: v1
 kind: Service

@@ -46,7 +46,7 @@ spec:
             - configMapRef:
                 name: auth-config
             - secretRef:
-                name: auth-secret
+                name: isnex-secret
           env:
             - name: DATABASE_URL
               value: postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)

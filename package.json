@@ -9,6 +9,7 @@
     "@commitlint/config-conventional": "19.8.0",
     "@eslint/js": "9.26.0",
     "@next/eslint-plugin-next": "^15.3.3",
+    "@nxlv/python": "^21.0.3",
     "@types/jest": "^29.5.14",
     "commitizen": "4.3.1",
     "cz-conventional-changelog": "3.3.0",
@@ -31,7 +32,10 @@
       "@prisma/client",
       "@prisma/engines",
       "@swc/core",
-      "prisma"
+      "esbuild",
+      "nx",
+      "prisma",
+      "unrs-resolver"
     ]
   },
   "config": {
