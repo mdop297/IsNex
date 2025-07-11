@@ -81,7 +81,7 @@ const Footer = ({
   legalLinks = defaultLegalLinks,
 }: FooterProps) => {
   return (
-    <section className="py-20 pb-0 bg-zinc-200">
+    <section className="py-10 bg-zinc-200">
       <div className="container m-auto w-5/6">
         <div className="flex w-full flex-col justify-between gap-5 lg:flex-row lg:items-start lg:text-left">
           <div className="flex w-full flex-col justify-between gap-6 lg:items-start">

@@ -62,9 +62,10 @@ const Navbar = () => {
   ];
 
   return (
-    <section className="py-3 fixed top-0 w-full z-50 bg-white/60 backdrop-blur-md border-b">
-      <div className="m-auto container w-5/6">
+    <section className="py-3 fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b">
+      <div className="mx-auto container w-5/6">
         <nav className="flex items-center justify-between">
+          {/* left section */}
           <Link href="/" className="flex items-center gap-2">
             <img
               src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg"
@@ -72,9 +73,10 @@ const Navbar = () => {
               alt="Shadcn UI Navbar"
             />
             <span className="text-lg font-semibold tracking-tighter">
-              Shadcnblocks
+              ISNEX
             </span>
           </Link>
+          {/* middle section */}
           <NavigationMenu className="hidden lg:block">
             <NavigationMenuList>
               <NavigationMenuItem>
@@ -126,9 +128,18 @@ const Navbar = () => {
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
+          {/* right section */}
           <div className="hidden items-center gap-4 lg:flex">
-            <Button variant="outline">Sign in</Button>
-            <Button>Start for free</Button>
+            <Button
+              variant="outline"
+              asChild
+              className="hover:border-blue-500 hover:text-blue-500"
+            >
+              <Link href="/login">Sign in</Link>
+            </Button>
+            <Button asChild>
+              <Link href="/signup">Start for free</Link>
+            </Button>
           </div>
           <Sheet>
             <SheetTrigger asChild className="lg:hidden">
@@ -146,7 +157,7 @@ const Navbar = () => {
                       alt="Shadcn UI Navbar"
                     />
                     <span className="text-lg font-semibold tracking-tighter">
-                      Shadcnblocks
+                      ISNEX
                     </span>
                   </Link>
                 </SheetTitle>

@@ -61,7 +61,7 @@ const Pricing = () => {
             </div>
           </div>
           <div className="flex w-full flex-col items-stretch gap-6 md:flex-row">
-            <div className="flex w-full flex-col rounded-lg border p-6 text-left">
+            <div className="flex w-full flex-col rounded-lg border p-6 text-left bg-white">
               <Badge className="mb-8 block w-fit">FREE</Badge>
               <span className="text-4xl font-medium">$0</span>
               <p className="text-muted-foreground invisible">Per month</p>
@@ -88,7 +88,7 @@ const Pricing = () => {
                 <Button className="w-full">Get Started</Button>
               </div>
             </div>
-            <div className="flex w-full flex-col rounded-lg border p-6 text-left">
+            <div className="flex w-full flex-col rounded-lg border p-6 text-left bg-white">
               <Badge className="mb-8 block w-fit">PRO</Badge>
               {isAnnually ? (
                 <>

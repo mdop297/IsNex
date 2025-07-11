@@ -79,7 +79,7 @@ const Hero = ({
     <section className="">
       <div className="container m-auto">
         <div className="border-border border-x py-20">
-          <div className="relative mx-auto max-w-2xl p-2">
+          <div className="relative top-16 mx-auto max-w-2xl p-2">
             <h1 className="mx-1 mt-6 text-center text-5xl font-bold tracking-tighter md:text-7xl">
               {title}
             </h1>
@@ -120,7 +120,7 @@ const Hero = ({
                       key={tab.title}
                       value={tab.title}
                       className={cn(
-                        'bg-zinc-200 transition-opacity duration-500 rounded-lg p-2.5 ',
+                        'bg-zinc-100 border-2 transition-opacity duration-500 rounded-lg p-2.5',
                         {
                           'animate-in fade-in opacity-100':
                             activeTab === tab.title,

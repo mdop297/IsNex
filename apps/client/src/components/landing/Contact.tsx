@@ -2,7 +2,7 @@ import { MailIcon, MapPinIcon, MessageCircle, PhoneIcon } from 'lucide-react';
 import Link from 'next/link';
 
 const Contact = () => (
-  <div className="w-5/6 max-w-screen-xl mx-auto px-6 pb-6 xl:px-0">
+  <div className="mb-10 w-5/6 max-w-screen-xl mx-auto px-6 pb-6 xl:px-0">
     <b className="text-muted-foreground">Contact Us</b>
     <h2 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight">
       We&apos;d love to hear from you
@@ -10,7 +10,7 @@ const Contact = () => (
     <p className="mt-4 text-base sm:text-lg">
       Our friendly team is always here to chat.
     </p>
-    <div className="mt-14 md:mt-24 grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+    <div className="mt-10 md:mt-14 grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       <div className="bg-accent p-6 pb-10 rounded-lg">
         <div className="h-12 w-12 flex items-center justify-center bg-primary/10 text-primary rounded-full">
           <MailIcon />
