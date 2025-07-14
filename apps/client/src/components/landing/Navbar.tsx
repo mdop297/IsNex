@@ -26,8 +26,14 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import Link from 'next/link';
+import ModeToggleButton from './ModeToggleButton';
 
-const Navbar = () => {
+interface NavbarProps {
+  signUpRoute: string;
+  signInRoute: string;
+}
+
+const Navbar = (props: NavbarProps) => {
   const features = [
     {
       title: 'Dashboard',
@@ -62,7 +68,7 @@ const Navbar = () => {
   ];
 
   return (
-    <section className="py-3 fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b">
+    <section className="py-3 sticky top-0 w-full z-50 bg-white/70 backdrop-blur-md border-b dark:bg-black ">
       <div className="mx-auto container w-5/6">
         <nav className="flex items-center justify-between">
           {/* left section */}
@@ -77,7 +83,7 @@ const Navbar = () => {
             </span>
           </Link>
           {/* middle section */}
-          <NavigationMenu className="hidden lg:block">
+          <NavigationMenu className="hidden lg:block bg-none">
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuTrigger>Features</NavigationMenuTrigger>
@@ -129,24 +135,28 @@ const Navbar = () => {
             </NavigationMenuList>
           </NavigationMenu>
           {/* right section */}
-          <div className="hidden items-center gap-4 lg:flex">
+          <div className="hidden items-center gap-4 lg:flex ">
+            <ModeToggleButton />
             <Button
               variant="outline"
               asChild
               className="hover:border-blue-500 hover:text-blue-500"
             >
-              <Link href="/login">Sign in</Link>
+              <Link href={props.signInRoute}>Sign in</Link>
             </Button>
             <Button asChild>
-              <Link href="/signup">Start for free</Link>
+              <Link href={props.signUpRoute}>Start for free</Link>
             </Button>
           </div>
           <Sheet>
-            <SheetTrigger asChild className="lg:hidden">
-              <Button variant="outline" size="icon">
-                <MenuIcon className="h-4 w-4" />
-              </Button>
-            </SheetTrigger>
+            <div className="lg:hidden flex items-center gap-4">
+              <ModeToggleButton />
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <MenuIcon className="h-4 w-4" />
+                </Button>
+              </SheetTrigger>
+            </div>
             <SheetContent side="top" className="max-h-screen overflow-auto">
               <SheetHeader>
                 <SheetTitle>

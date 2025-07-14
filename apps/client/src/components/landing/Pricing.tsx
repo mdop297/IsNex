@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator';
 const Pricing = () => {
   const [isAnnually, setIsAnnually] = useState(false);
   return (
-    <section className="py-20">
+    <section className="py-16">
       <div className="container m-auto">
         <div className="mx-auto flex max-w-4xl flex-col gap-6 w-4/6">
           <h2 className="text-pretty text-4xl font-bold lg:text-6xl">

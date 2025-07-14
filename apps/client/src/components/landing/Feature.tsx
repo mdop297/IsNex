@@ -16,8 +16,8 @@ import {
 
 const Features = () => {
   return (
-    <section className="py-20 pb-0">
-      <div className="container m-auto">
+    <section className="py-16 bg-gradient-to-b from-white via-cyan-100 to-white">
+      <div className="container m-auto ">
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 text-center w-5/6">
           <h1 className="mb-6 text-4xl font-semibold text-pretty lg:text-5xl">
             This is where your feature goes

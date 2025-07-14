@@ -30,7 +30,7 @@ const formSchema = z.object({
   email: emailSchema,
 });
 
-export default function ForgetPasswordPreview() {
+export default function ForgetPassword() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

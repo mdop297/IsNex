@@ -4,8 +4,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Image from 'next/image';
+import Link from 'next/link';
 
-export function LoginForm({
+export function SignInForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
@@ -33,12 +34,12 @@ export function LoginForm({
               <div className="grid gap-3">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
+                  <Link
+                    href="/auth/forgot_password"
                     className="ml-auto text-sm underline-offset-2 hover:underline"
                   >
                     Forgot your password?
-                  </a>
+                  </Link>
                 </div>
                 <Input id="password" type="password" required />
               </div>
@@ -76,9 +77,12 @@ export function LoginForm({
               </div>
               <div className="text-center text-sm">
                 Don&apos;t have an account?{' '}
-                <a href="#" className="underline underline-offset-4">
+                <Link
+                  href="/auth/signup"
+                  className="underline underline-offset-4"
+                >
                   Sign up
-                </a>
+                </Link>
               </div>
             </div>
           </form>
@@ -87,7 +91,7 @@ export function LoginForm({
               src="/login_img.jpg"
               fill
               alt="abtract blue image as login background"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.8] "
             />
           </div>
         </CardContent>

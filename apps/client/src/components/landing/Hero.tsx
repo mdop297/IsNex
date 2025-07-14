@@ -78,9 +78,9 @@ const Hero = ({
   return (
     <section className="">
       <div className="container m-auto">
-        <div className="border-border border-x py-20">
-          <div className="relative top-16 mx-auto max-w-2xl p-2">
-            <h1 className="mx-1 mt-6 text-center text-5xl font-bold tracking-tighter md:text-7xl">
+        <div className="border-border ">
+          <div className="relative top-16 mx-auto max-w-2xl p-8">
+            <h1 className="pt-[10vh] mt-6 text-center text-5xl font-bold tracking-tighter md:text-7xl">
               {title}
             </h1>
             <p className="text-muted-foreground mx-2 mt-6 max-w-xl text-center text-lg font-medium md:text-xl">
@@ -97,7 +97,7 @@ const Hero = ({
               )}
             </div>
           </div>
-          <div className="mt-16 md:mt-20">
+          <div className="p-16 ">
             <Tabs defaultValue={tabs[0]?.title} onValueChange={setActiveTab}>
               <div className="px-2">
                 <TabsList className="mx-auto mb-6 flex h-auto w-fit max-w-xs flex-wrap justify-center gap-2 md:max-w-none">
@@ -135,16 +135,17 @@ const Hero = ({
                       />
                       <BorderBeam
                         duration={6}
-                        size={400}
+                        size={600}
                         borderWidth={3}
                         initialOffset={50}
                       />
                       <BorderBeam
                         duration={6}
-                        size={400}
+                        size={600}
                         borderWidth={3}
                         initialOffset={0}
-                        className="from-transparent via-blue-500 to-transparent"
+                        colorFrom="#0d1dff"
+                        colorTo="#16c736"
                       />
                     </TabsContent>
                   ))}
