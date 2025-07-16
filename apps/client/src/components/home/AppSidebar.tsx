@@ -2,7 +2,6 @@
 
 import {
   SquarePen,
-  Search,
   Settings,
   LayoutDashboard,
   LibraryBig,
@@ -32,7 +31,6 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,40 +38,40 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { Badge } from '../ui/badge';
 import { useState } from 'react';
+import ChatSearch from '../SearchModal';
 
 // Menu items.
 const items = [
   {
     title: 'Ask AI',
-    url: '#',
+    url: '/home/chats',
     icon: SquarePen,
     cn: '',
   },
   {
     title: 'Dashboard',
-    url: '#',
+    url: '/home/dashboard',
     icon: LayoutDashboard,
     cn: '',
   },
   {
     title: 'Documents',
-    url: '#',
+    url: '/home/documents',
     icon: LibraryBig,
     cn: '',
   },
   {
     title: 'Workspace',
-    url: '#',
+    url: '/home/workspace',
     icon: FolderOpenDot,
   },
-  { title: 'Tasks', url: '#', icon: ClipboardCheck },
-  { title: 'Summerizer', url: '#', icon: Text, cn: '' },
-  { title: 'Scanner', url: '#', icon: ScanText },
+  { title: 'Tasks', url: '/home/tasks', icon: ClipboardCheck },
+  { title: 'Summerizer', url: '/home/summerizer', icon: Text, cn: '' },
+  { title: 'Scanner', url: '/home/scanner', icon: ScanText },
   {
     title: 'History',
-    url: '#',
+    url: '/home/history',
     icon: HistoryIcon,
   },
 ];
@@ -83,6 +81,12 @@ const user = {
   username: 'Le Nhat Minh',
   email: 'lenhatminh297@gmail.com',
 };
+
+const menuItems = [
+  { icon: CircleUserRound, label: 'Profile' },
+  { icon: Settings, label: 'Setting' },
+  { icon: LogOut, label: 'Logout', destructive: true },
+];
 
 export default function AppSidebar() {
   const { state, isMobile, toggleSidebar } = useSidebar();
@@ -133,17 +137,7 @@ export default function AppSidebar() {
             <SidebarMenu onClick={(e) => e.stopPropagation()}>
               {/* SEARCH AREA */}
               <SidebarMenuItem>
-                <Button asChild variant={'outline'}>
-                  <SidebarMenuButton
-                    className={cn('flex justify-between rounded-full px-3')}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Search className="text-muted-foreground w-4 h-4" />
-                      <span className="text-sm">Search</span>
-                    </div>
-                    <Badge variant={'outline'}>Ctrl+K</Badge>
-                  </SidebarMenuButton>
-                </Button>
+                <ChatSearch />
               </SidebarMenuItem>
               {/* MENU ITEMS */}
               {items.map((item) => (
@@ -183,20 +177,21 @@ export default function AppSidebar() {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? 'bottom' : 'right'}
+            side={isMobile ? 'bottom' : 'top'}
             align="end"
             sideOffset={4}
           >
-            <DropdownMenuItem>
-              <CircleUserRound className="h-4 w-4" /> Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="h-4 w-4" /> Setting
-            </DropdownMenuItem>
-            <DropdownMenuItem variant="destructive">
-              <LogOut className="h-4 w-4" />
-              <span> Logout</span>
-            </DropdownMenuItem>
+            {menuItems.map(({ icon: Icon, label, destructive }) => (
+              <DropdownMenuItem
+                key={label}
+                variant={destructive ? 'destructive' : undefined}
+              >
+                <Icon className="h-4 w-4" />
+                <span className={label === 'Logout' ? 'ml-1' : 'ml-2'}>
+                  {label}
+                </span>
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarFooter>
