@@ -124,3 +124,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .no-focus-styles:focus,
+  .no-focus-styles:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    --tw-ring-offset-width: 0px;
+    --tw-ring-width: 0px;
+  }
+}

@@ -66,10 +66,10 @@ export default function ChatSearch() {
         className={cn(buttonVariants({ variant, size, className }))}
         {...props}
       >
-        <SidebarMenuButton className="flex justify-between rounded-full px-3">
+        <SidebarMenuButton className="flex justify-between rounded-full px-3 bg-accent hover:bg-accent hover:cursor-pointer font-normal">
           <div className="flex items-center gap-2">
-            <Search className="text-muted-foreground w-4 h-4" />
-            <span className="text-muted-foreground text-sm">Search</span>
+            <Search className="text-foreground w-4 h-4" />
+            <span className="text-foreground ">Search</span>
           </div>
           <Badge variant="outline">Ctrl+K</Badge>
         </SidebarMenuButton>

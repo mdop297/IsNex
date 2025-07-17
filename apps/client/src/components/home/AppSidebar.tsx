@@ -65,6 +65,12 @@ const items = [
     title: 'Workspace',
     url: '/home/workspace',
     icon: FolderOpenDot,
+    subitems: [
+      { label: 'Workspace 1' },
+      { label: 'Workspace 2' },
+      { label: 'Workspace 3' },
+      { label: 'Workspace 4' },
+    ],
   },
   { title: 'Tasks', url: '/home/tasks', icon: ClipboardCheck },
   { title: 'Summerizer', url: '/home/summerizer', icon: Text, cn: '' },
@@ -73,6 +79,12 @@ const items = [
     title: 'History',
     url: '/home/history',
     icon: HistoryIcon,
+    subitems: [
+      { label: 'Chat session 1' },
+      { label: 'Chat session 2' },
+      { label: 'Chat session 3' },
+      { label: 'Chat session 4' },
+    ],
   },
 ];
 
@@ -94,16 +106,16 @@ export default function AppSidebar() {
   return (
     <Sidebar
       collapsible="icon"
-      className="hover:cursor-e-resize"
+      className="hover:cursor-e-resize "
       onClick={toggleSidebar}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <SidebarHeader className="flex-row justify-between items-center">
+      <SidebarHeader className=" flex flex-row justify-between items-center">
         <Avatar
           className={cn(
             'rounded-md items-center justify-center',
-            'hover:bg-muted-foreground/30 hover:ring-3 ring-muted-foreground/30 cursor-pointer',
+            'hover:bg-muted-foreground hover:ring-3 ring-muted-foreground/30 cursor-pointer',
           )}
           onClick={(e) => {
             if (state === 'expanded') {
