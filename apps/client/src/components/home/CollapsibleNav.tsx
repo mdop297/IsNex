@@ -1,12 +1,10 @@
 'use client';
 import React from 'react';
 import {
-  SidebarMenu,
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-  SidebarMenuSubAction,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '../ui/sidebar';
@@ -15,15 +13,10 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '../ui/collapsible';
-import {
-  ChevronRight,
-  FolderOpenDot,
-  HistoryIcon,
-  MoreHorizontal,
-  Plus,
-} from 'lucide-react';
+import { ChevronRight, FolderOpenDot, HistoryIcon, Plus } from 'lucide-react';
 import Link from 'next/link';
-import { DropdownMenu, DropdownMenuTrigger } from '../ui/dropdown-menu';
+
+import DropdownMenuSubItem from './DropdownSubItem';
 
 const items = [
   {
@@ -56,7 +49,7 @@ const items = [
 
 const CollapsibleNav = () => {
   return (
-    <SidebarMenu>
+    <>
       {items.map((item) => (
         <Collapsible key={item.title}>
           <SidebarMenuItem>
@@ -86,13 +79,10 @@ const CollapsibleNav = () => {
                         <span>{subitem.label}</span>
                       </Link>
                     </SidebarMenuSubButton>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <SidebarMenuSubAction showOnHover>
-                          <MoreHorizontal />
-                        </SidebarMenuSubAction>
-                      </DropdownMenuTrigger>
-                    </DropdownMenu>
+                    {/* <SidebarMenuSubAction showOnHover>
+                      <EllipsisVertical />
+                    </SidebarMenuSubAction> */}
+                    <DropdownMenuSubItem />
                   </SidebarMenuSubItem>
                 ))}
               </SidebarMenuSub>
@@ -100,7 +90,7 @@ const CollapsibleNav = () => {
           </SidebarMenuItem>
         </Collapsible>
       ))}
-    </SidebarMenu>
+    </>
   );
 };
 

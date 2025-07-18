@@ -89,36 +89,38 @@ export default function AppSidebar() {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <SidebarHeader className=" flex flex-row justify-between items-center">
-        <Avatar
-          className={cn(
-            'rounded-md items-center justify-center',
-            'hover:bg-muted-foreground hover:ring-3 ring-muted-foreground/30 cursor-pointer',
-          )}
-          onClick={(e) => {
-            if (state === 'expanded') {
-              e.stopPropagation();
-            }
-          }}
-        >
-          {state === 'collapsed' ? (
-            hovered ? (
-              <ChevronsRight />
+      <SidebarHeader>
+        <div className=" flex flex-row justify-between items-center">
+          <Avatar
+            className={cn(
+              'rounded-md items-center justify-center',
+              'hover:bg-muted-foreground hover:ring-3 ring-muted-foreground/30 cursor-pointer',
+            )}
+            onClick={(e) => {
+              if (state === 'expanded') {
+                e.stopPropagation();
+              }
+            }}
+          >
+            {state === 'collapsed' ? (
+              hovered ? (
+                <ChevronsRight />
+              ) : (
+                <AvatarImage src="/logo.svg" />
+              )
             ) : (
               <AvatarImage src="/logo.svg" />
-            )
-          ) : (
-            <AvatarImage src="/logo.svg" />
-          )}
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-        <ChevronsLeft
-          className="hover:cursor-pointer hover:bg-muted-foreground/30 rounded-md"
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleSidebar();
-          }}
-        />
+            )}
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+          <ChevronsLeft
+            className="hover:cursor-pointer hover:bg-muted-foreground/30 rounded-md"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleSidebar();
+            }}
+          />
+        </div>
       </SidebarHeader>
       {/* SIDEBAR CONTENT */}
       <SidebarContent>
@@ -129,7 +131,6 @@ export default function AppSidebar() {
               <SidebarMenuItem>
                 <ChatSearch />
               </SidebarMenuItem>
-
               {/* MENU ITEMS */}
 
               {items.map((item) => (
