@@ -5,8 +5,6 @@ import {
   Settings,
   LayoutDashboard,
   LibraryBig,
-  History as HistoryIcon,
-  FolderOpenDot,
   Text,
   ScanText,
   CircleUserRound,
@@ -41,6 +39,8 @@ import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import ChatSearch from '../SearchModal';
 
+import CollapsibleNav from './CollapsibleNav';
+
 // Menu items.
 const items = [
   {
@@ -61,31 +61,9 @@ const items = [
     icon: LibraryBig,
     cn: '',
   },
-  {
-    title: 'Workspace',
-    url: '/home/workspace',
-    icon: FolderOpenDot,
-    subitems: [
-      { label: 'Workspace 1' },
-      { label: 'Workspace 2' },
-      { label: 'Workspace 3' },
-      { label: 'Workspace 4' },
-    ],
-  },
-  { title: 'Tasks', url: '/home/tasks', icon: ClipboardCheck },
   { title: 'Summerizer', url: '/home/summerizer', icon: Text, cn: '' },
   { title: 'Scanner', url: '/home/scanner', icon: ScanText },
-  {
-    title: 'History',
-    url: '/home/history',
-    icon: HistoryIcon,
-    subitems: [
-      { label: 'Chat session 1' },
-      { label: 'Chat session 2' },
-      { label: 'Chat session 3' },
-      { label: 'Chat session 4' },
-    ],
-  },
+  { title: 'Tasks', url: '/home/tasks', icon: ClipboardCheck },
 ];
 
 const user = {
@@ -151,7 +129,9 @@ export default function AppSidebar() {
               <SidebarMenuItem>
                 <ChatSearch />
               </SidebarMenuItem>
+
               {/* MENU ITEMS */}
+
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild className={item.cn}>
@@ -162,6 +142,8 @@ export default function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {/* COLLAPSIBLE ITEMS */}
+              <CollapsibleNav />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
