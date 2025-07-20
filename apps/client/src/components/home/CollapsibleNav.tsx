@@ -32,17 +32,23 @@ const items = [
   },
   {
     title: 'History',
-    url: '/home/history',
+    url: '#',
     icon: HistoryIcon,
     subitems: [
-      { label: 'This is a very long name of chat session 1', url: '#' },
-      { label: 'Chat session 2', url: '#' },
-      { label: 'Chat session 3', url: '#' },
-      { label: 'Chat session 4', url: '#', isActive: false },
-      { label: 'This is a very long name of chat session 5', url: '#' },
-      { label: 'Chat session 6', url: '#' },
-      { label: 'Chat session 7', url: '#' },
-      { label: 'Chat session 8', url: '#', isActive: false },
+      {
+        label: 'This is a very long name of chat session 1',
+        url: '/home/chats/1',
+      },
+      { label: 'Chat session 2', url: '/home/chats/2' },
+      { label: 'Chat session 3', url: '/home/chats/3' },
+      { label: 'Chat session 4', url: '/home/chats/4', isActive: false },
+      {
+        label: 'This is a very long name of chat session 5',
+        url: '/home/chats/5',
+      },
+      { label: 'Chat session 6', url: '/home/chats/6' },
+      { label: 'Chat session 7', url: '/home/chats/7' },
+      { label: 'Chat session 8', url: '/home/chats/8', isActive: false },
     ],
   },
 ];
@@ -50,8 +56,8 @@ const items = [
 const CollapsibleNav = () => {
   return (
     <>
-      {items.map((item) => (
-        <Collapsible key={item.title}>
+      {items.map((item, index) => (
+        <Collapsible key={item.title} defaultOpen={index === 1}>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href={item.url}>

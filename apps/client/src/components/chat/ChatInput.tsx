@@ -34,9 +34,18 @@ import {
 } from '../ui/select';
 import { SelectGroup } from '@radix-ui/react-select';
 
-export const ChatInput = () => {
+interface ChatInputProps {
+  className?: string;
+}
+
+export const ChatInput = ({ className }: ChatInputProps) => {
   return (
-    <div className="bg-accent flex flex-col container max-w-2xl min-w-72 rounded-2xl shadow-2xl p-2 gap-2 border-1">
+    <div
+      className={cn(
+        'bg-accent flex flex-col container max-w-3xl min-w-72 rounded-2xl shadow-2xl p-2 gap-2 border-1',
+        className,
+      )}
+    >
       <AutosizeTextarea
         className={cn(
           'bg-accent resize-none border-none text-md h-4',

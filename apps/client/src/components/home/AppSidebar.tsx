@@ -94,7 +94,7 @@ export default function AppSidebar() {
           <Avatar
             className={cn(
               'rounded-md items-center justify-center',
-              'hover:bg-muted-foreground hover:ring-3 ring-muted-foreground/30 cursor-pointer',
+              'hover:bg-sidebar-accent hover:ring-3 ring-accent cursor-pointer',
             )}
             onClick={(e) => {
               if (state === 'expanded') {
@@ -153,13 +153,8 @@ export default function AppSidebar() {
       <SidebarFooter onClick={(e) => e.stopPropagation()}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton size={'lg'}>
-              <Avatar
-                className={cn(
-                  'h-8 w-8',
-                  'hover:ring-3 ring-blue-500/50 cursor-pointer',
-                )}
-              >
+            <SidebarMenuButton size={'lg'} className="cursor-pointer">
+              <Avatar className={cn('h-8 w-8')}>
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
