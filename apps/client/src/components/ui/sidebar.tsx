@@ -572,10 +572,9 @@ function SidebarMenuAction({
         showOnHover &&
           cn(
             'peer-data-[active=true]/menu-button:text-sidebar-accent-foreground',
-            'group-focus-within/menu-item:opacity-100 ',
+            // 'group-focus-within/menu-item:opacity-100 ',
             'group-hover/menu-item:opacity-100',
-
-            'data-[state=open]:opacity-100 ',
+            // 'data-[state=open]:opacity-100 ',
             'md:opacity-0',
           ),
         className,
@@ -611,9 +610,9 @@ function SidebarMenuSubAction({
         showOnHover &&
           cn(
             'peer-data-[active=true]/menu-sub-button:text-sidebar-accent-foreground',
-            'group-focus-within/menu-sub-item:opacity-100 ',
+            // 'group-focus-within/menu-sub-item:opacity-100 ',
             'group-hover/menu-sub-item:opacity-100',
-            'data-[state=open]:opacity-100 ',
+            // 'data-[state=open]:opacity-100 ',
             'md:opacity-0',
           ),
         className,

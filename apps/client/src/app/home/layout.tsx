@@ -6,7 +6,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <AppSidebar />
       {/* Vì sao thêm h-full thì lại fail */}
-      <main className="w-full">
+      <main className="w-full bg-secondary">
         <SidebarTrigger className={'md:hidden '} />
         {children}
       </main>

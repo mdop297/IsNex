@@ -1,6 +1,12 @@
 import React from 'react';
 import { Button } from '../ui/button';
-import { Copy, NotebookPen, ThumbsDown, ThumbsUp } from 'lucide-react';
+import {
+  ArrowRightFromLine,
+  Copy,
+  NotebookPen,
+  ThumbsDown,
+  ThumbsUp,
+} from 'lucide-react';
 import { MarkdownRenderer } from './MarkdownRenderer';
 
 interface AIMessageProps {
@@ -37,6 +43,9 @@ export const AIMessage = ({ content }: AIMessageProps) => {
         </Button>
         <Button variant={'ghost'} className="size-8">
           <NotebookPen />
+        </Button>
+        <Button variant={'ghost'} className="size-8">
+          <ArrowRightFromLine />
         </Button>
       </div>
     </div>

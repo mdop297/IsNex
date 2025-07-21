@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   SidebarMenuAction,
   SidebarMenuButton,
@@ -13,12 +13,30 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '../ui/collapsible';
-import { ChevronRight, FolderOpenDot, HistoryIcon, Plus } from 'lucide-react';
+
+import {
+  ChevronRight,
+  FolderOpenDot,
+  HistoryIcon,
+  LibraryBig,
+  Plus,
+} from 'lucide-react';
 import Link from 'next/link';
 
 import DropdownMenuSubItem from './DropdownSubItem';
 
 const items = [
+  {
+    title: 'Library',
+    url: '/home/lib',
+    icon: LibraryBig,
+    subitems: [
+      { label: 'Notes', url: '/home/lib/notes' },
+      { label: 'Documents', url: '/home/lib/docs' },
+      { label: 'Annotations', url: '/home/lib/annos' },
+    ],
+    subaction: false,
+  },
   {
     title: 'Workspace',
     url: '/home/workspace',
@@ -29,6 +47,7 @@ const items = [
       { label: 'Workspace 3', url: '#' },
       { label: 'Workspace 4', url: '#' },
     ],
+    subaction: true,
   },
   {
     title: 'History',
@@ -50,32 +69,62 @@ const items = [
       { label: 'Chat session 7', url: '/home/chats/7' },
       { label: 'Chat session 8', url: '/home/chats/8', isActive: false },
     ],
+    subaction: true,
   },
 ];
 
 const CollapsibleNav = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <>
       {items.map((item, index) => (
-        <Collapsible key={item.title} defaultOpen={index === 1}>
+        <Collapsible key={item.title} defaultOpen={index === 2}>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href={item.url}>
-                <item.icon />
-                <span> {item.title}</span>
-              </Link>
-            </SidebarMenuButton>
-            <CollapsibleTrigger asChild>
-              <SidebarMenuAction
-                className="bg-sidebar-accent text-sidebar-accent-foreground left-2 data-[state=open]:rotate-90"
-                showOnHover
-              >
-                <ChevronRight />
+            {item.subaction ? (
+              <>
+                <SidebarMenuButton asChild>
+                  <Link href={item.url}>
+                    <item.icon />
+                    <span> {item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuAction
+                    className="bg-sidebar-accent text-sidebar-accent-foreground left-2 data-[state=open]:rotate-90"
+                    showOnHover
+                  >
+                    <ChevronRight />
+                  </SidebarMenuAction>
+                </CollapsibleTrigger>
+              </>
+            ) : (
+              <>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton
+                    asChild
+                    onClick={() => setIsOpen((prev) => !prev)}
+                  >
+                    <Link href={item.url}>
+                      <item.icon />
+                      <span> {item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <SidebarMenuAction
+                  className={`bg-sidebar-accent text-sidebar-accent-foreground left-2 ${isOpen ? 'rotate-90' : ''}`}
+                  showOnHover
+                >
+                  <ChevronRight />
+                </SidebarMenuAction>
+              </>
+            )}
+
+            {item.subaction && (
+              <SidebarMenuAction showOnHover>
+                <Plus />
               </SidebarMenuAction>
-            </CollapsibleTrigger>
-            <SidebarMenuAction showOnHover>
-              <Plus />
-            </SidebarMenuAction>
+            )}
             <CollapsibleContent>
               <SidebarMenuSub className="p-0 mr-0">
                 {item.subitems.map((subitem) => (
@@ -88,7 +137,7 @@ const CollapsibleNav = () => {
                     {/* <SidebarMenuSubAction showOnHover>
                       <EllipsisVertical />
                     </SidebarMenuSubAction> */}
-                    <DropdownMenuSubItem />
+                    {item.subaction && <DropdownMenuSubItem />}
                   </SidebarMenuSubItem>
                 ))}
               </SidebarMenuSub>

@@ -10,7 +10,7 @@ const ChatSession = async () =>
 
     return (
       <>
-        <div className=" relative z-50 flex flex-col items-center h-full bg-background p-4">
+        <div className=" relative z-50 flex flex-col items-center h-full px-4">
           {/* MESSAGE BOX */}
           <div className="flex-1  overflow-y-auto p-4 w-full max-w-3xl">
             {sampleMessages.map((message) => (
@@ -35,7 +35,7 @@ const ChatSession = async () =>
           </div>
 
           {/* CHAT INPUT */}
-          <div className="sticky bottom-0 z-50 flex justify-center items-center w-full pb-3 bg-background">
+          <div className="sticky bottom-0 z-50 flex justify-center items-center w-full pb-3 bg-secondary">
             <ChatInput className="" />
           </div>
         </div>

@@ -3,13 +3,10 @@
 import {
   SquarePen,
   Settings,
-  LayoutDashboard,
-  LibraryBig,
   Text,
   ScanText,
   CircleUserRound,
   LogOut,
-  ClipboardCheck,
   ChevronsLeft,
   ChevronsRight,
   ChevronsUpDown,
@@ -49,21 +46,16 @@ const items = [
     icon: SquarePen,
     cn: '',
   },
-  {
-    title: 'Dashboard',
-    url: '/home/dashboard',
-    icon: LayoutDashboard,
-    cn: '',
-  },
-  {
-    title: 'Documents',
-    url: '/home/documents',
-    icon: LibraryBig,
-    cn: '',
-  },
+  // {
+  //   title: 'Dashboard',
+  //   url: '/home/dashboard',
+  //   icon: LayoutDashboard,
+  //   cn: '',
+  // },
+
   { title: 'Summerizer', url: '/home/summerizer', icon: Text, cn: '' },
   { title: 'Scanner', url: '/home/scanner', icon: ScanText },
-  { title: 'Tasks', url: '/home/tasks', icon: ClipboardCheck },
+  // { title: 'Tasks', url: '/home/tasks', icon: ClipboardCheck },
 ];
 
 const user = {
