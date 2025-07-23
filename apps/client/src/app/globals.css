@@ -184,4 +184,10 @@
     overflow-x: auto;
     padding: 0.5em 0;
   }
+
+  .resizable-sidebar {
+    min-width: 240px !important;
+    max-width: 480px !important ;
+    /* flex: 0 0 240px !important; */
+  }
 }
