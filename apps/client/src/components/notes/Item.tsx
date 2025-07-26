@@ -10,42 +10,49 @@ import {
 import Link from 'next/link';
 
 interface ItemProps {
-  id?: string;
+  id: string;
   parentId?: string;
   title: string;
   icon: string;
   level?: number;
   hasChildren: boolean;
   expanded?: boolean;
+  selectedId: string;
   onToggle?: () => void;
+  onClick?: () => void;
+  onSelect: (pageId: string) => void;
 }
 
 /*
 TODO:
   Item: 
    - input: level, icon, title, hasChild 
-   - actions: select, expand/collapse, (edit, delete), add  
-On Going: expand/ collapse
-  - icon
-  - level
-  - children pages
-  - onToggle()
+   - actions: select, (edit, delete), add  
+On Going: select
+  - isActive 
 DONE: hover, expand/collapse
 */
 
 const Item = ({
+  id,
   title,
   icon,
   level,
   hasChildren,
   expanded,
   onToggle,
+  onClick,
+  onSelect,
+  selectedId,
 }: ItemProps) => {
   const handleExpand = () => {
-    console.log('toggle button clicked');
     onToggle?.();
   };
 
+  function handleClick(id: string) {
+    onSelect(id);
+    onClick?.();
+  }
   return (
     <>
       <div className="select-none">
@@ -67,8 +74,10 @@ const Item = ({
             asChild
             className="px-2 py-1"
             style={{ paddingLeft: level ? `${level + 0.5}rem` : undefined }}
+            onClick={() => handleClick(id)}
+            isActive={selectedId === id}
           >
-            <Link href={'#'}>
+            <Link href={'#'} className="text-sm">
               <span>{icon}</span>
               <span>{title}</span>
             </Link>
