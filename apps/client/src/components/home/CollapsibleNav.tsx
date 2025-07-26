@@ -85,7 +85,7 @@ const CollapsibleNav = () => {
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild tooltip={item.title}>
                   <Link href={item.url}>
                     <item.icon />
                     <span> {item.title}</span>
@@ -113,9 +113,6 @@ const CollapsibleNav = () => {
                           <span>{subitem.label}</span>
                         </Link>
                       </SidebarMenuSubButton>
-                      {/* <SidebarMenuSubAction showOnHover>
-                      <EllipsisVertical />
-                      </SidebarMenuSubAction> */}
                       {item.subaction && <DropdownMenuSubItem />}
                     </SidebarMenuSubItem>
                   ))}

@@ -10,4 +10,4 @@ export const PreviewGridMode = () => {
 
 export const UploadPreview = () => {};
 
-export const SidebarPreview = () => {};
+export const SidebarDocsPreview = () => {};
