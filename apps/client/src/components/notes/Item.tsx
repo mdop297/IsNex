@@ -1,13 +1,27 @@
 'use client';
-import { ChevronDown, ChevronRight, MoreHorizontal, Plus } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  Edit,
+  MoreHorizontal,
+  Plus,
+  Trash,
+} from 'lucide-react';
 import React from 'react';
 import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '../ui/sidebar';
 
 import Link from 'next/link';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 
 interface ItemProps {
   id: string;
@@ -45,6 +59,7 @@ const Item = ({
   onSelect,
   selectedId,
 }: ItemProps) => {
+  const { isMobile } = useSidebar();
   const handleExpand = () => {
     onToggle?.();
   };
@@ -53,6 +68,19 @@ const Item = ({
     onSelect(id);
     onClick?.();
   }
+  const handleAddChild = () => {
+    // TODO: Add logic for adding child
+    console.log('This will add a child note');
+  };
+  const handleEdit = () => {
+    // TODO: Add logic for Editing name
+    console.log('This will edit note name');
+  };
+
+  const handleDelete = () => {
+    // TODO: Add logic for deleting note
+    console.log('This will delete the note');
+  };
   return (
     <>
       <div className="select-none">
@@ -83,15 +111,33 @@ const Item = ({
             </Link>
           </SidebarMenuButton>
           {/* Action Buttons - chỉ hiển thị khi hover */}
-          <SidebarMenuAction
-            showOnHover
-            className="bg-sidebar-accent text-sidebar-accent-foreground right-7"
-          >
-            <MoreHorizontal />
-          </SidebarMenuAction>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <SidebarMenuAction
+                showOnHover
+                className="bg-sidebar-accent text-sidebar-accent-foreground right-7"
+              >
+                <MoreHorizontal />
+              </SidebarMenuAction>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side={isMobile ? 'bottom' : 'right'}
+              align={isMobile ? 'end' : 'start'}
+            >
+              <DropdownMenuItem onClick={handleEdit}>
+                <Edit className="text-muted-foreground" />
+                <span>Edit</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+                <Trash className="text-muted-foreground" />
+                <span>Delete</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <SidebarMenuAction
             showOnHover
             className="bg-sidebar-accent text-sidebar-accent-foreground"
+            onClick={handleAddChild}
           >
             <Plus />
           </SidebarMenuAction>

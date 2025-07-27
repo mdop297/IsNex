@@ -31,7 +31,7 @@ const PageList = ({
   };
 
   return (
-    <div className="space-y-0.5">
+    <div>
       {pages.map((page) => (
         <div key={page.id}>
           <Item
