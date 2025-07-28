@@ -43,29 +43,31 @@
   --radius-xl: calc(var(--radius) + 4px);
 
   /* Custom style */
-}
 
+  --color-base-100: var(--base-100);
+  --color-base-200: var(--base-200);
+  --color-base-300: var(--base-300);
+}
 :root {
-  --radius: 0.625rem;
-  --background: oklch(0.97 0 0);
+  --radius: 0.65rem;
+  --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.141 0.005 285.823);
-  /* --primary: oklch(0.21 0.006 285.885); */
-  --primary: var(--color-blue-500);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.92 0.001 286.375);
+  --primary: oklch(0.623 0.214 259.815);
+  --primary-foreground: oklch(0.97 0.014 254.604);
+  --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.85 0.001 286.375);
+  --muted: oklch(0.967 0.001 286.375);
   --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.99 0.001 286.375);
+  --accent: oklch(0.967 0.001 286.375);
   --accent-foreground: oklch(0.21 0.006 285.885);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.92 0.004 286.32);
   --input: oklch(0.92 0.004 286.32);
-  --ring: var(--color-blue-400);
+  --ring: oklch(0.623 0.214 259.815);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -73,12 +75,12 @@
   --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.21 0.006 285.885);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.623 0.214 259.815);
+  --sidebar-primary-foreground: oklch(0.97 0.014 254.604);
   --sidebar-accent: oklch(0.967 0.001 286.375);
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.705 0.015 286.067);
+  --sidebar-ring: oklch(0.623 0.214 259.815);
 }
 
 .dark {
@@ -88,22 +90,18 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
-  /* --primary: oklch(0.92 0.004 286.32); */
-  --primary: var(--color-blue-500);
-  --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.24 0.006 286.033);
-
+  --primary: oklch(0.546 0.245 262.881);
+  --primary-foreground: oklch(0.379 0.146 265.522);
+  --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
-  /* --muted: oklch(0.274 0.006 286.033); */
-  --muted: oklch(0.3 0.004 286.033); /* tối hơn 1 chút */
+  --muted: oklch(0.274 0.006 286.033);
   --muted-foreground: oklch(0.705 0.015 286.067);
-  /* --accent: oklch(0.274 0.006 286.033); */
-  --accent: oklch(0.36 0.008 286.033); /* sáng hơn 1 chút */
+  --accent: oklch(0.274 0.006 286.033);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: var(--color-blue-500);
+  --ring: oklch(0.488 0.243 264.376);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -111,12 +109,128 @@
   --chart-5: oklch(0.645 0.246 16.439);
   --sidebar: oklch(0.21 0.006 285.885);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.546 0.245 262.881);
+  --sidebar-primary-foreground: oklch(0.379 0.146 265.522);
   --sidebar-accent: oklch(0.274 0.006 286.033);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.552 0.016 285.938);
+  --sidebar-ring: oklch(0.488 0.243 264.376);
+  --base-100: oklch(0.2739 0.0055 286.03);
+  --base-200: oklch(0.2915 0.0117 254.09);
+  --base-300: oklch(0.2326 0.0138 253.1);
+}
+
+.dark,
+[data-theme='dark'] {
+  .yoopta-toolbar-root {
+    background-color: var(--color-base-100) !important;
+    border-color: color-mix(
+      in oklab,
+      var(--color-foreground) 30%,
+      transparent
+    ) !important;
+  }
+
+  .yoopta-toolbar-separator {
+    background-color: color-mix(
+      in oklab,
+      var(--color-foreground) 30%,
+      transparent
+    ) !important;
+  }
+
+  .yoopta-toolbar-item:hover,
+  .yoopta-toolbar-item-mark:hover {
+    background-color: var(--color-base-300) !important;
+  }
+
+  .yoopta-mark-code {
+    background-color: var(--color-base-300) !important;
+  }
+
+  .yoopta-extended-block-actions {
+    background-color: var(--color-base-100) !important;
+  }
+
+  .yoopta-block-options-menu-content {
+    background-color: var(--color-base-100) !important;
+    border-color: color-mix(
+      in oklab,
+      var(--color-foreground) 30%,
+      transparent
+    ) !important;
+  }
+
+  .yoopta-block-options-button:hover {
+    background-color: var(--color-base-300) !important;
+  }
+
+  .yoo-code-text-popover-foreground {
+    background-color: var(--color-base-200) !important;
+  }
+
+  .yoo-code-text-popover-foreground > * > .yoopta-button:hover {
+    background-color: var(--color-base-300) !important;
+  }
+
+  .yoopta-action-menu-list-content {
+    background-color: var(--color-base-100) !important;
+    border-color: color-mix(
+      in oklab,
+      var(--color-foreground) 30%,
+      transparent
+    ) !important;
+  }
+
+  .yoopta-action-menu-list-content > * > * > .yoopta-button:hover {
+    background-color: var(--color-base-300) !important;
+  }
+
+  .yoopta-action-menu-list-content
+    > *
+    > *
+    > .yoopta-button[aria-selected='true'] {
+    background-color: var(--color-base-300) !important;
+  }
+
+  .yoopta-action-menu-list-content
+    > *
+    > *
+    > .yoopta-button
+    > .yoo-action-menu-flex {
+    background-color: var(--color-base-200) !important;
+  }
+
+  .yoopta-block-actions-plus,
+  .yoopta-block-actions-drag {
+    color: color-mix(
+      in oklab,
+      var(--color-foreground) 30%,
+      transparent
+    ) !important;
+  }
+
+  .yoopta-block-actions-plus:hover,
+  .yoopta-block-actions-drag:hover {
+    color: color-mix(
+      in oklab,
+      var(--color-foreground) 60%,
+      transparent
+    ) !important;
+  }
+
+  .yoopta-link-preview {
+    background-color: var(--color-base-100) !important;
+    border-color: color-mix(
+      in oklab,
+      var(--color-foreground) 30%,
+      transparent
+    ) !important;
+  }
+
+  .yoopta-table-data-cell-head {
+    background-color: var(--color-base-200);
+  }
 }
 
 @layer base {

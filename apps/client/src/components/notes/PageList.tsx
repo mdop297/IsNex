@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Item from './Item';
 import { PageService } from './utils';
 import { Page } from './types';
@@ -11,15 +11,22 @@ interface pageListProps {
   onSelect: (pageId: string) => void;
 }
 
-const service = await PageService.createFromPath('/notes-data.json');
-
 const PageList = ({
   selectedId,
   onSelect,
   parentId = 'root',
   level = 0,
 }: pageListProps) => {
-  const [pages] = useState<Page[]>(service.getPagesByParentId(parentId));
+  const [pages, setPages] = useState<Page[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      const service = await PageService.createFromPath('/notes-data.json');
+      const result = service.getPagesByParentId(parentId);
+      setPages(result);
+    };
+    load();
+  }, [parentId]);
 
   const [isExpanded, setIsExpanded] = useState<Record<string, boolean>>({});
 
