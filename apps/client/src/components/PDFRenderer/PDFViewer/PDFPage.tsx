@@ -17,20 +17,17 @@ function PDFPage() {
     setPageNumber(1);
     console.log(pageNumber);
   }
-
   return (
-    <>
-      <Document file="/temp/48.pdf" onLoadSuccess={onDocumentLoadSuccess}>
-        {Array.from(new Array(numPages), (el, index) => (
-          <Page
-            key={`page_${index + 1}`}
-            pageNumber={index + 1}
-            renderTextLayer={true}
-            renderAnnotationLayer={false}
-          />
-        ))}
-      </Document>
-    </>
+    <Document file="/temp/4.pdf" onLoadSuccess={onDocumentLoadSuccess}>
+      {Array.from(new Array(numPages), (el, index) => (
+        <Page
+          key={`page_${index + 1}`}
+          pageNumber={index + 1}
+          renderTextLayer={true}
+          renderAnnotationLayer={false}
+        />
+      ))}
+    </Document>
   );
 }
 
