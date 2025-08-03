@@ -31,9 +31,9 @@ const items = [
     url: '#',
     icon: LibraryBig,
     subitems: [
-      { label: 'Notes', url: '/home/lib/notes' },
-      { label: 'Documents', url: '/home/lib/docs' },
-      { label: 'Annotations', url: '/home/lib/annos' },
+      { label: 'Notes', url: '/home/library/notes' },
+      { label: 'Documents', url: '/home/library/docs' },
+      { label: 'Annotations', url: '/home/library/annos' },
     ],
     subaction: false,
   },

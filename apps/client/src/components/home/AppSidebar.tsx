@@ -4,7 +4,6 @@ import {
   SquarePen,
   Settings,
   Text,
-  ScanText,
   CircleUserRound,
   LogOut,
   ChevronsLeft,
@@ -53,8 +52,8 @@ const items = [
   //   cn: '',
   // },
 
-  { title: 'Summerizer', url: '/home/summerizer', icon: Text, cn: '' },
-  { title: 'Scanner', url: '/home/scanner', icon: ScanText },
+  { title: 'Summarizer', url: '/home/summarizer', icon: Text, cn: '' },
+  // { title: 'Scanner', url: '/home/scanner', icon: ScanText },
   // { title: 'Tasks', url: '/home/tasks', icon: ClipboardCheck },
 ];
 

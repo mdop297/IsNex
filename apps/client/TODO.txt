@@ -1,0 +1,11 @@
+TODO: pdf viewer sidebar
+  - description: click menu button on top bar (first button), a sidebar in the below area will appear, pdf will be rerender in the rest area.
+  - Steps:
+    1. Access Document page
+      - Wrap viewer component in PDFProvider to provide context
+        - Toolbar, Canvas, hidden sidebar
+    2. user click menu button in toolbar
+    3. Update UI of Document page
+      3.1 Display sidebar
+      3.2 Update Canvas
+

@@ -118,7 +118,7 @@ function SearchModal() {
         <SearchIcon className="text-muted-foreground" />
         <Input
           type="text"
-          className="w-[90%] border-0 bg-amber-500"
+          className="w-[90%] border-0 "
           placeholder="Search..."
         />
         <span>Source: </span>
@@ -127,14 +127,14 @@ function SearchModal() {
 
       {/* <!-- Main Content --> */}
       <div className="grid grid-cols-[2fr_3fr] gap-0.5">
-        <div className="bg-red-400/50 p-4">
+        <div className="bg-red-400 p-4">
           <ChatComponents />
         </div>
-        <div className="bg-blue-400/50 p-4">03</div>
+        <div className="bg-blue-400 p-4">03</div>
       </div>
 
       {/* <!-- Footer --> */}
-      <div className="bg-pink-400/50 p-4">04</div>
+      <div className="bg-pink-400 p-4">04</div>
     </div>
   );
 }
