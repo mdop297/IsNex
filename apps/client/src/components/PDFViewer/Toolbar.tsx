@@ -20,12 +20,15 @@ import {
   Search,
 } from 'lucide-react';
 import React from 'react';
+import { useViewer } from './PDFProvider';
 
-interface ToolbarProps {
-  onToggleSidebar: () => void;
-}
+const Toolbar = () => {
+  const { isSidebarOpen, setIsSidebarOpen } = useViewer();
 
-const Toolbar = ({ onToggleSidebar }: ToolbarProps) => {
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className=" p-2 border-b bg-muted-foreground rounded-t-md flex-none ">
       <div className="w-full flex items-center justify-between">
@@ -34,7 +37,7 @@ const Toolbar = ({ onToggleSidebar }: ToolbarProps) => {
           <div
             className="rounded-full hover:bg-neutral-500 aspect-square p-1.5 transition-colors"
             aria-label="Toggle sidebar"
-            onClick={onToggleSidebar}
+            onClick={toggleSidebar}
           >
             <Menu className="size-5" />
           </div>
