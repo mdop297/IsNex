@@ -1,8 +1,7 @@
-import { PDFDocumentProxy } from 'pdfjs-dist';
-import { PDFOutlineItem } from './Outline';
-import { useViewer } from './PDFProvider';
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
+import type { PDFOutlineItem } from './Outline';
+import { PDFDocumentProxy } from 'pdfjs-dist';
 
 export class Ref {
   num: number;
@@ -22,8 +21,17 @@ export class Ref {
   }
 }
 
-const TreeOutlineItem = ({ item }: { item: PDFOutlineItem }) => {
-  const { pdf, setCurrentPageNumber } = useViewer();
+interface TreeOutlineItemProps {
+  item: PDFOutlineItem;
+  pdfDocument: PDFDocumentProxy;
+  onNavigation: (pageNumber: number) => void;
+}
+
+const TreeOutlineItem = ({
+  item,
+  pdfDocument,
+  onNavigation,
+}: TreeOutlineItemProps) => {
   const [expanded, setExpanded] = useState(false);
 
   const getDestination = async (
@@ -43,36 +51,25 @@ const TreeOutlineItem = ({ item }: { item: PDFOutlineItem }) => {
     setExpanded((prev) => !prev);
   };
 
-  const handleClick = async () => {
-    if (!pdf || !setCurrentPageNumber) return;
+  const getPageNumber = async () => {
+    if (!pdfDocument) return;
 
-    const destination = await getDestination(pdf, item);
+    const destination = await getDestination(pdfDocument, item);
     if (!destination) return;
 
     // const [ref, zoom, x, y, z] = destination;
-    const [ref, , , y] = destination;
-    const pageIndex = await pdf.getPageIndex(new Ref(ref));
+    const [ref] = destination;
+    const pageIndex = await pdfDocument.getPageIndex(new Ref(ref));
     const pageNumber = pageIndex + 1;
 
-    setCurrentPageNumber(pageNumber);
+    return pageNumber;
+  };
 
-    // Wait for the page to render (hacky delay or observer in prod)
-    setTimeout(() => {
-      const pageEl = document.querySelector(
-        `[data-page-number="${pageNumber}"]`,
-      ) as HTMLElement;
-      if (pageEl) {
-        pageEl.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-
-        // Optionally scroll to Y-offset within page (PDFs are bottom-up in coords)
-        if (typeof y === 'number') {
-          pageEl.scrollTop = pageEl.scrollHeight - y;
-        }
-      }
-    }, 300);
+  const handleNavigation = async () => {
+    const pageNumber = await getPageNumber();
+    if (pageNumber) {
+      onNavigation(pageNumber);
+    }
   };
 
   return (
@@ -88,15 +85,20 @@ const TreeOutlineItem = ({ item }: { item: PDFOutlineItem }) => {
         )}
         <button
           className="text-left text-sm  hover:underline"
-          onClick={handleClick}
+          onClick={handleNavigation}
         >
           {item.title}
         </button>
       </div>
-      {expanded && item.items?.length > 0 && (
+      {expanded && (
         <div className="ml-2">
           {item.items.map((child, idx) => (
-            <TreeOutlineItem key={idx} item={child} />
+            <TreeOutlineItem
+              key={idx}
+              item={child}
+              pdfDocument={pdfDocument}
+              onNavigation={onNavigation}
+            />
           ))}
         </div>
       )}
