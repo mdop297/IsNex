@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ListFilter } from 'lucide-react';
 
 type SearchResult = {
   page: number;
@@ -77,11 +77,16 @@ const SearchTab = () => {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           placeholder="Search..."
-          className="flex-1"
+          className="flex-1 !bg-foreground"
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
         />
-        <Button variant="outline" size="icon" onClick={handleSearch}>
-          <Search className="size-4" />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleSearch}
+          className="bg-foreground"
+        >
+          <ListFilter className="size-4" />
         </Button>
       </div>
 
@@ -92,6 +97,7 @@ const SearchTab = () => {
             id="case"
             checked={caseSensitive}
             onCheckedChange={(checked) => setCaseSensitive(Boolean(checked))}
+            className="!bg-foreground"
           />
           <label htmlFor="case" className="text-xs">
             Case sensitive
@@ -102,6 +108,7 @@ const SearchTab = () => {
             id="whole"
             checked={wholeWord}
             onCheckedChange={(checked) => setWholeWord(Boolean(checked))}
+            className="!bg-foreground"
           />
           <label htmlFor="whole" className="text-xs">
             Whole word

@@ -30,6 +30,7 @@ interface ToolbarProps {
   toggleSidebar: () => void;
   currentPage: number;
   totalPages: number;
+  isSidebarOpen: boolean;
   searchTabOpen: boolean;
   toggleSearchBar: () => void;
   onPageChange: (page: number) => void;
@@ -41,6 +42,7 @@ const Toolbar = ({
   toggleSidebar,
   currentPage,
   totalPages,
+  isSidebarOpen,
   searchTabOpen,
   toggleSearchBar,
   onPageChange,
@@ -109,7 +111,7 @@ const Toolbar = ({
   };
 
   return (
-    <div className=" px-1 py-1 border-b bg-neutral-700 rounded-xs flex flex-row text-neutral-200">
+    <div className="px-1 py-1 border-b bg-neutral-700 rounded-xs flex flex-row text-neutral-200">
       <div className="w-full flex items-center justify-between">
         {/* Left section */}
         <div className="flex items-center space-x-3 text-sm">
@@ -149,7 +151,15 @@ const Toolbar = ({
             />
             <span>/ {totalPages}</span>
           </div>
-          <div className="toolbar-button" onClick={toggleSearchBar}>
+          <div
+            className="toolbar-button"
+            onClick={() => {
+              toggleSearchBar();
+              if (!isSidebarOpen) {
+                toggleSidebar();
+              }
+            }}
+          >
             <Search
               className={`size-4 ${searchTabOpen ? 'text-purple-500' : ''} `}
             />
@@ -167,8 +177,8 @@ const Toolbar = ({
             <Plus className="size-4 aspect-square" />
           </Button>
           <Select defaultValue="auto" onValueChange={zoomByOption}>
-            <SelectTrigger className="toolbar-button border-none focus:border-none w-fit ">
-              <SelectValue placeholder="auto" />
+            <SelectTrigger className="border-none toolbar-button text-sm ">
+              <SelectValue placeholder="auto" className="text-sm" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="auto">Auto</SelectItem>
@@ -193,7 +203,7 @@ const Toolbar = ({
 
           <Separator orientation="vertical" className="mx-3 bg-foreground " />
           <Button
-            className={` toolbar-button font-normal HighlightButton ${
+            className={`toolbar-button font-normal HighlightButton ${
               isHighlightPen ? 'active' : ''
             }`}
             aria-label="zoom"

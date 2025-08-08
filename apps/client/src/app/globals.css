@@ -307,7 +307,3 @@
     max-width: 480px !important ;
   }
 }
-
-.toolbar-button {
-  @apply gap-1 !p-1.5 h-fit rounded-xs hover:bg-neutral-500 hover:text-neutral-200;
-}

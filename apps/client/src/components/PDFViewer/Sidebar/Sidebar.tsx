@@ -39,25 +39,28 @@ export function Sidebar({
   return (
     // isSidebarOpen && (
     <>
-      <div className="flex flex-col gap-6 h-full w-[280px]">
+      <div className="flex flex-col gap-6 h-full w-[280px] border-r-2 border-neutral-700">
         {!searchTabOpen ? (
           <Tabs
             defaultValue="toc"
-            className="w-full h-full flex flex-row justify-center-safe items-start gap-0"
+            className="w-full h-full flex flex-row justify-center-safe items-start gap-0 bg-neutral-700"
           >
             <TabsList className="data flex flex-col gap-1 h-fit m-0.5 bg-transparent">
-              <TabsTrigger value="toc" className="px-1">
-                <TableOfContents className="aspect-square size-5" />
+              <TabsTrigger value="toc" className="px-1 hover:cursor-pointer">
+                <TableOfContents className="size-5" />
               </TabsTrigger>
-              <TabsTrigger value="thumbnails" className="px-1">
-                <Image className="aspect-square size-5" />
+              <TabsTrigger
+                value="thumbnails"
+                className="px-1 hover:cursor-pointer"
+              >
+                <Image className="size-5" />
               </TabsTrigger>
-              <TabsTrigger value="annos" className="px-1">
-                <LayoutList className="aspect-square size-5" />
+              <TabsTrigger value="annos" className="px-1 hover:cursor-pointer">
+                <LayoutList className="size-5" />
               </TabsTrigger>
             </TabsList>
             {/* Table of content */}
-            <TabsContent value="toc" className="h-full w-full overflow-y-auto">
+            <TabsContent value="toc" className="h-full w-full bg-neutral-200">
               <TreeOutline
                 pdfDocument={pdfDocument}
                 onNavigation={onNavigation}
@@ -65,7 +68,10 @@ export function Sidebar({
               {/* tree outline */}
             </TabsContent>
             {/* Thumbnails */}
-            <TabsContent value="thumbnails" className="h-full w-full">
+            <TabsContent
+              value="thumbnails"
+              className="h-full w-full bg-neutral-200"
+            >
               <Thumbnail
                 pdfDocument={pdfDocument}
                 viewerRef={viewerRef}
@@ -74,7 +80,7 @@ export function Sidebar({
             </TabsContent>
             <TabsContent
               value="annos"
-              className="h-full w-full overflow-y-auto"
+              className="h-full w-full bg-neutral-200 overflow-y-auto hide-scrollbar"
             >
               {/* <TreeOutline /> */}
               <AnntationSidebar
@@ -85,7 +91,9 @@ export function Sidebar({
             </TabsContent>
           </Tabs>
         ) : (
-          <SearchTab />
+          <div className="bg-neutral-200 h-full">
+            <SearchTab />
+          </div>
         )}
       </div>
     </>

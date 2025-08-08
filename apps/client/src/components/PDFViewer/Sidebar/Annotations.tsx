@@ -21,7 +21,7 @@ const AnntationSidebar = ({
     <div className="sidebar w-full max-w-[400px]">
       {/* Highlights list */}
       {highlights && (
-        <ul className="sidebar__highlights">
+        <ul className="sidebar__highlights ">
           {highlights.map((highlight, index) => (
             <li
               key={index}

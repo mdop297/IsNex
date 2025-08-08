@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import type { PDFDocumentProxy } from 'pdfjs-dist';
 import TreeOutlineItem from './OutlineItem';
+import '../style/Sidebar.css';
 
 type PDFOutline = Awaited<ReturnType<PDFDocumentProxy['getOutline']>>;
 
@@ -25,7 +26,7 @@ const TreeOutline = ({ pdfDocument, onNavigation }: TreeOutlineProps) => {
   }, [pdfDocument]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full h-full overflow-auto hide-scrollbar">
       {outline.map((item, i) => (
         <TreeOutlineItem
           key={i}

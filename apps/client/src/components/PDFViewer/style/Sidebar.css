@@ -117,3 +117,10 @@ blockquote:after {
   background-color: #d32f2f;
   border-color: #d32f2f;
 }
+
+.hide-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  scrollbar-width: none;
+}

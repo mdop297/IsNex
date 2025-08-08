@@ -1,6 +1,7 @@
 import { PDFDocumentProxy, RenderTask } from 'pdfjs-dist';
 import { PDFViewer } from 'pdfjs-dist/web/pdf_viewer.mjs';
 import React, { useEffect, useRef } from 'react';
+import '../style/Sidebar.css';
 
 interface ThumbnailsProps {
   pdfDocument: PDFDocumentProxy;
@@ -69,7 +70,7 @@ const Thumbnail = ({
   };
 
   return (
-    <div className="overflow-y-auto max-h-full bg-gray-200 p-12 w-full space-y-2">
+    <div className="overflow-y-auto max-h-full p-12 w-full space-y-2 hide-scrollbar">
       {Array.from({ length: pdfDocument.numPages }).map((_, i) => (
         <div
           key={i}

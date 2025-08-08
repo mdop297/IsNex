@@ -31,7 +31,7 @@ import { PDFViewer } from 'pdfjs-dist/web/pdf_viewer.mjs';
 
 const TEST_HIGHLIGHTS = _testHighlights;
 export const PRIMARY_PDF_URL = 'https://arxiv.org/pdf/2203.11115';
-export const SECONDARY_PDF_URL = 'https://arxiv.org/pdf/1604.02480';
+export const SECONDARY_PDF_URL = '/temp/428.pdf';
 
 const getNextId = () => String(Math.random()).slice(2);
 
@@ -58,9 +58,8 @@ const PdfViewer = () => {
   const highlighterUtilsRef = useRef<PdfHighlighterUtils>(null);
   const pdfDocumentRef = useRef<PDFDocumentProxy>(null);
   const viewerRef = useRef<PDFViewer>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
-
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   const [searchTabOpen, setSearchTabOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -193,7 +192,7 @@ const PdfViewer = () => {
   }, [getHighlightById]);
 
   return (
-    <div className="App flex flex-col h-dvh">
+    <div className="App flex flex-col h-full">
       <PdfLoader document={url}>
         {(pdfDocument) => {
           pdfDocumentRef.current = pdfDocument;
@@ -207,13 +206,14 @@ const PdfViewer = () => {
                   setCurrentPage(page);
                   handleNavigation(page);
                 }}
+                isSidebarOpen={isSidebarOpen}
                 searchTabOpen={searchTabOpen}
                 toggleSearchBar={toggleSearchBar}
                 toggleSidebar={toggleSidebar}
                 setPdfScaleValue={(value) => setPdfScaleValue(value)}
                 toggleHighlightPen={() => setHighlightPen(!highlightPen)}
               />
-              <div className="flex overflow-hidden h-full pb-4">
+              <div className="flex overflow-hidden h-full">
                 {isSidebarOpen && (
                   <Sidebar
                     pdfDocument={pdfDocumentRef.current}
@@ -226,6 +226,7 @@ const PdfViewer = () => {
                     onNavigation={handleNavigation}
                   />
                 )}
+
                 <div className=" flex-1 relative ">
                   <PdfHighlighter
                     enableAreaSelection={(event) => event.altKey}
