@@ -1,7 +1,7 @@
 import React from 'react';
 
-const AnnotationPage = () => {
-  return <div>AnnotationPage</div>;
+const Annotations = () => {
+  return <div>Annotations</div>;
 };
 
-export default AnnotationPage;
+export default Annotations;
