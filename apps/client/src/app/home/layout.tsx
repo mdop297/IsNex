@@ -1,5 +1,5 @@
 // 'use client';
-import AppSidebar from '@/components/home/AppSidebar';
+import AppSidebar from '@/components/AppSidebar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 // import { usePathname } from 'next/navigation';
 

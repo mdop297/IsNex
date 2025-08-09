@@ -5,7 +5,6 @@ import type { CommentedHighlight } from '../types';
 interface AnntationSidebarProps {
   highlights: Array<CommentedHighlight>;
   resetHighlights: () => void;
-  toggleDocument: () => void;
 }
 
 const updateHash = (highlight: Highlight) => {
@@ -14,7 +13,6 @@ const updateHash = (highlight: Highlight) => {
 
 const AnntationSidebar = ({
   highlights,
-  toggleDocument,
   resetHighlights,
 }: AnntationSidebarProps) => {
   return (
@@ -62,12 +60,6 @@ const AnntationSidebar = ({
           ))}
         </ul>
       )}
-
-      <div style={{ padding: '0.5rem' }}>
-        <button onClick={toggleDocument} className="sidebar__toggle">
-          Toggle PDF document
-        </button>
-      </div>
 
       {highlights && highlights.length > 0 && (
         <div style={{ padding: '0.5rem' }}>

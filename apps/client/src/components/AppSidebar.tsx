@@ -24,16 +24,16 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
-import ChatSearch from '../SearchModal';
+import ChatSearch from './SearchModal';
 
 import CollapsibleNav from './CollapsibleNav';
 
@@ -114,7 +114,7 @@ export default function AppSidebar() {
         </div>
       </SidebarHeader>
       {/* SIDEBAR CONTENT */}
-      <SidebarContent>
+      <SidebarContent className="hide-scrollbar">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu onClick={(e) => e.stopPropagation()}>

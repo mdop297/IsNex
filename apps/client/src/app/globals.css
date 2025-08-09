@@ -306,4 +306,11 @@
     min-width: 240px !important;
     max-width: 480px !important ;
   }
+
+  .hide-scrollbar {
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    scrollbar-width: none;
+  }
 }

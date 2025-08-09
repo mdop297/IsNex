@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Edit, EllipsisVertical, Trash } from 'lucide-react';
-import { SidebarMenuSubAction, useSidebar } from '../ui/sidebar';
+import { SidebarMenuSubAction, useSidebar } from './ui/sidebar';
 
 export default function DropdownMenuSubItem() {
   const { isMobile } = useSidebar();

@@ -20,7 +20,6 @@ interface SidebarProps {
   highlights: Array<CommentedHighlight>;
   searchTabOpen: boolean;
   resetHighlights: () => void;
-  toggleDocument: () => void;
   onNavigation: (pageNumber: number) => void;
 }
 
@@ -31,7 +30,6 @@ export function Sidebar({
   highlights,
   searchTabOpen,
   resetHighlights,
-  toggleDocument,
   onNavigation,
 }: SidebarProps) {
   // const { isSidebarOpen } = useViewer();
@@ -86,7 +84,6 @@ export function Sidebar({
               <AnntationSidebar
                 highlights={highlights}
                 resetHighlights={resetHighlights}
-                toggleDocument={toggleDocument}
               />
             </TabsContent>
           </Tabs>

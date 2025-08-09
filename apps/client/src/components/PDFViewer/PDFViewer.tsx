@@ -23,13 +23,13 @@ import {
 } from './react-pdf-highlighter';
 
 import './style/App.css';
-import { testHighlights as _testHighlights } from './utils/test-highlights';
 import type { CommentedHighlight } from './types';
 import Sidebar from './Sidebar/Sidebar';
 import { PDFDocumentProxy } from 'pdfjs-dist';
 import { PDFViewer } from 'pdfjs-dist/web/pdf_viewer.mjs';
+// import { testHighlights as _testHighlights } from './utils/test-highlights';
 
-const TEST_HIGHLIGHTS = _testHighlights;
+// const TEST_HIGHLIGHTS = _testHighlights;
 export const PRIMARY_PDF_URL = 'https://arxiv.org/pdf/2203.11115';
 export const SECONDARY_PDF_URL = '/temp/428.pdf';
 
@@ -42,13 +42,12 @@ const parseIdFromHash = () => {
 const resetHash = () => {
   document.location.hash = '';
 };
+interface PdfViewerProps {
+  fileUrl: string;
+}
 
-const PdfViewer = () => {
-  const [url, setUrl] = useState(PRIMARY_PDF_URL);
-  const [highlights, setHighlights] = useState<Array<CommentedHighlight>>(
-    TEST_HIGHLIGHTS[PRIMARY_PDF_URL] ?? [],
-  );
-  const currentPdfIndexRef = useRef(0);
+const PdfViewer = ({ fileUrl }: PdfViewerProps) => {
+  const [highlights, setHighlights] = useState<Array<CommentedHighlight>>([]);
   const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null);
   const [pdfScaleValue, setPdfScaleValue] = useState<PdfScaleValue | undefined>(
     1,
@@ -59,22 +58,14 @@ const PdfViewer = () => {
   const pdfDocumentRef = useRef<PDFDocumentProxy>(null);
   const viewerRef = useRef<PDFViewer>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [searchTabOpen, setSearchTabOpen] = useState(false);
-
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
   };
 
   const toggleSearchBar = () => {
     setSearchTabOpen((prev) => !prev);
-  };
-
-  const toggleDocument = () => {
-    const urls = [PRIMARY_PDF_URL, SECONDARY_PDF_URL];
-    currentPdfIndexRef.current = (currentPdfIndexRef.current + 1) % urls.length;
-    setUrl(urls[currentPdfIndexRef.current]);
-    setHighlights(TEST_HIGHLIGHTS[urls[currentPdfIndexRef.current]] ?? []);
   };
 
   // Click listeners for context menu
@@ -193,7 +184,7 @@ const PdfViewer = () => {
 
   return (
     <div className="App flex flex-col h-full">
-      <PdfLoader document={url}>
+      <PdfLoader document={fileUrl}>
         {(pdfDocument) => {
           pdfDocumentRef.current = pdfDocument;
 
@@ -222,7 +213,6 @@ const PdfViewer = () => {
                     highlights={highlights}
                     searchTabOpen={searchTabOpen}
                     resetHighlights={resetHighlights}
-                    toggleDocument={toggleDocument}
                     onNavigation={handleNavigation}
                   />
                 )}
