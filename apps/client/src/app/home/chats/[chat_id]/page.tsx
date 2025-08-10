@@ -10,9 +10,9 @@ const ChatSession = async () =>
 
     return (
       <>
-        <div className=" relative z-50 flex flex-col items-center h-full px-4">
+        <div className="relative flex flex-col items-center px-4 w-full">
           {/* MESSAGE BOX */}
-          <div className="flex-1  overflow-y-auto p-4 w-full max-w-3xl">
+          <div className="flex-1 overflow-y-auto p-4 max-w-3xl">
             {sampleMessages.map((message) => (
               <div key={message.id}>
                 {message.type === 'bot' ? (

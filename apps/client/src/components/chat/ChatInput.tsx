@@ -42,7 +42,7 @@ export const ChatInput = ({ className }: ChatInputProps) => {
   return (
     <div
       className={cn(
-        'bg-accent flex flex-col container max-w-3xl min-w-72 rounded-2xl shadow-2xl p-2 gap-2 border-1',
+        'bg-accent flex flex-col container max-w-2xl min-w-72 rounded-2xl shadow-2xl p-2 gap-2 border-1',
         className,
       )}
     >
