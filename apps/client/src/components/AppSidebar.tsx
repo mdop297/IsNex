@@ -35,7 +35,7 @@ import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import ChatSearch from './SearchModal';
 
-import CollapsibleNav from './CollapsibleNav';
+import CollapsibleNav from '@/components/CollapsibleNav';
 
 // Menu items.
 const items = [

@@ -59,7 +59,7 @@ const Thumbnail = ({
     const canvas = thumbnailRefs.current[currentPage - 1];
     if (canvas) {
       canvas.scrollIntoView({
-        behavior: 'smooth',
+        behavior: 'instant',
         block: 'center',
       });
     }
@@ -70,7 +70,7 @@ const Thumbnail = ({
   };
 
   return (
-    <div className="overflow-y-auto max-h-full p-12 w-full space-y-2 hide-scrollbar">
+    <div className="overflow-y-auto max-h-screen h-full p-12 w-full space-y-2 hide-scrollbar">
       {Array.from({ length: pdfDocument.numPages }).map((_, i) => (
         <div
           key={i}

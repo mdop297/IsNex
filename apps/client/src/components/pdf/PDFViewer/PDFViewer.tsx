@@ -183,7 +183,7 @@ const PdfViewer = ({ fileUrl }: PdfViewerProps) => {
   }, [getHighlightById]);
 
   return (
-    <div className="App flex flex-col h-full">
+    <div className="App flex flex-col h-full max-h-screen">
       <PdfLoader document={fileUrl}>
         {(pdfDocument) => {
           pdfDocumentRef.current = pdfDocument;

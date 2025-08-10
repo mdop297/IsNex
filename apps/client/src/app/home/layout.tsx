@@ -10,12 +10,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      {/* {!isWorkspace && <AppSidebar />} */}
-      <AppSidebar />
-      <main className="w-full bg-secondary">
-        <SidebarTrigger className={'md:hidden '} />
-        {children}
-      </main>
+      <div className="flex h-screen w-screen">
+        <AppSidebar />
+        <main className="flex-1 bg-secondary overflow-auto">
+          <SidebarTrigger className="md:hidden" />
+          {children}
+        </main>
+      </div>
     </SidebarProvider>
   );
 }

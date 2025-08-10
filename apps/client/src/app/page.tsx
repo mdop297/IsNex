@@ -18,8 +18,8 @@ export default function Home() {
           <Hero
             title="Beautiful blocks for Shadcn UI."
             description="Shadcnblocks.com offers the best collection of components and blocks for shadcn/ui."
-            primaryButtonText="Download"
-            primaryButtonUrl="/auth/signup"
+            primaryButtonText="Go to HomePage"
+            primaryButtonUrl="/home"
           />
         </div>
         <div className="relative ">
