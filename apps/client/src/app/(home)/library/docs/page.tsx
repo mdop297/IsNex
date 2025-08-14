@@ -124,7 +124,7 @@ const DocumentPage = () => {
     <div className="flex-1 flex flex-row gap-4 h-full min-w-0 w-full">
       {/* Left Panel */}
       <div
-        className={`flex flex-col gap-4 border rounded p-3 shadow-sm transition-all duration-300  ${
+        className={`flex flex-col gap-4 border rounded p-3 shadow-sm transition-all  ${
           openPreview || selectedFiles.size > 0
             ? 'w-[500px] shrink-0'
             : 'flex-1 '

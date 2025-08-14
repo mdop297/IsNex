@@ -41,7 +41,7 @@ import CollapsibleNav from '@/components/CollapsibleNav';
 const items = [
   {
     title: 'Ask AI',
-    url: '/home/chats',
+    url: '/chats',
     icon: SquarePen,
     cn: '',
   },
@@ -52,7 +52,7 @@ const items = [
   //   cn: '',
   // },
 
-  { title: 'Summarizer', url: '/home/summarizer', icon: Text, cn: '' },
+  { title: 'Summarizer', url: '/summarizer', icon: Text, cn: '' },
   // { title: 'Scanner', url: '/home/scanner', icon: ScanText },
   // { title: 'Tasks', url: '/home/tasks', icon: ClipboardCheck },
 ];
