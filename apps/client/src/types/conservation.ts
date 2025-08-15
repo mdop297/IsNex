@@ -1,18 +1,18 @@
 export interface MessageReference {
-  documentId: number;
+  documentId: string;
   page: number;
   section?: string;
   text?: string;
 }
 
 export interface MessageSource {
-  documentId: number;
+  documentId: string;
   page: number;
   confidence: number;
 }
 
 export interface Message {
-  id: number;
+  id: string;
   sender: 'user' | 'assistant' | string;
   content: string;
   timestamp: string;
@@ -21,7 +21,7 @@ export interface Message {
 }
 
 export interface Conversation {
-  id: number;
+  id: string;
   name: string;
   type: 'chat' | 'thread' | string;
   documentIds: number[];

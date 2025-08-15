@@ -206,12 +206,12 @@ const DocumentPage = () => {
                     📄 {fileInfo.name}
                   </p>
 
-                  {/* Date - hidden on hover, replaced by Preview button */}
+                  {/* Date */}
                   <p className="text-xs text-muted-foreground whitespace-nowrap group-hover:hidden shrink-0">
                     {formatDate(fileInfo.uploadedDate)}
                   </p>
 
-                  {/* Preview button - only visible on hover */}
+                  {/* Preview button */}
                   <Button
                     size="sm"
                     variant="ghost"
@@ -262,7 +262,7 @@ const DocumentPage = () => {
             </div>
           )}
 
-          {/* Selected Files Panel - chỉ hiện khi không preview */}
+          {/* Selected Files Panel */}
           {!openPreview && selectedFiles.size > 0 && (
             <div className="flex-1 border rounded shadow-sm p-3 lg:p-4 flex flex-col max-h-screen">
               <h3 className="font-semibold text-base lg:text-lg mb-4">
@@ -271,16 +271,13 @@ const DocumentPage = () => {
 
               <div className="overflow-auto mb-4 ">
                 {Array.from(selectedFiles).map((fileName) => {
-                  // Find the file info for this fileName
                   const findFileInfo = (
                     folder: Folder,
                     name: string,
                   ): FileInfo | null => {
-                    // Check files in current folder
                     const fileInfo = folder.files.find((f) => f.name === name);
                     if (fileInfo) return fileInfo;
 
-                    // Recursively check subfolders
                     for (const subfolder of folder.folders) {
                       const found = findFileInfo(subfolder, name);
                       if (found) return found;
@@ -331,7 +328,7 @@ const DocumentPage = () => {
                             className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs px-2 py-1 h-auto"
                             onClick={(e) => {
                               e.stopPropagation();
-                              onFileSelect(fileName); // Toggle to remove
+                              onFileSelect(fileName);
                             }}
                           >
                             Remove

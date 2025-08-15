@@ -23,7 +23,7 @@ export function MarkdownRenderer({
 }: MarkdownRendererProps) {
   return (
     <div
-      className={`markdown-content ${className}`}
+      className={`markdown ${className}`}
       style={{
         maxHeight: maxHeight || 'none',
         overflowY: maxHeight ? 'auto' : 'visible',
@@ -38,10 +38,7 @@ export function MarkdownRenderer({
 
             if (match) {
               return (
-                <div
-                  className="code-block-wrapper"
-                  style={{ maxHeight: '400px', overflow: 'auto' }}
-                >
+                <div className="code-block-wrapper">
                   <SyntaxHighlighter
                     style={dracula}
                     language={match[1]}
@@ -72,89 +69,28 @@ export function MarkdownRenderer({
               </code>
             );
           },
-          // Thêm styling cho các elements khác
-          p: ({ children, ...props }) => (
-            <p
-              {...props}
-              style={{
-                marginBottom: '1em',
-                lineHeight: '1.6',
-                wordWrap: 'break-word',
-              }}
-            >
-              {children}
-            </p>
-          ),
-          ul: ({ children, ...props }) => (
-            <ul
-              {...props}
-              style={{ marginBottom: '1em', paddingLeft: '1.5em' }}
-            >
-              {children}
-            </ul>
-          ),
-          ol: ({ children, ...props }) => (
-            <ol
-              {...props}
-              style={{ marginBottom: '1em', paddingLeft: '1.5em' }}
-            >
-              {children}
-            </ol>
-          ),
+          p: ({ children, ...props }) => <p {...props}>{children}</p>,
+          ul: ({ children, ...props }) => <ul {...props}>{children}</ul>,
+          ol: ({ children, ...props }) => <ol {...props}>{children}</ol>,
           blockquote: ({ children, ...props }) => (
             <blockquote
               {...props}
-              style={{
-                borderLeft: '4px solid',
-                paddingLeft: '1em',
-                marginLeft: '0',
-                marginBottom: '1em',
-                fontStyle: 'italic',
-              }}
-              className="text-accent-foreground !border-l-item-selected-indicator"
+              className="text-accent-foreground !border-l-item-selected-indicator border-l-2 pl-2.5"
             >
               {children}
             </blockquote>
           ),
           table: ({ children, ...props }) => (
-            <div style={{ overflowX: 'auto', marginBottom: '1em' }}>
-              <table
-                {...props}
-                style={{
-                  width: '100%',
-                  borderCollapse: 'collapse',
-                  border: '1px solid',
-                }}
-              >
-                {children}
-              </table>
+            <div>
+              <table {...props}>{children}</table>
             </div>
           ),
           th: ({ children, ...props }) => (
-            <th
-              {...props}
-              style={{
-                border: '1px solid ',
-                padding: '8px 12px',
-                fontWeight: 'bold',
-                textAlign: 'left',
-              }}
-              className="bg-input"
-            >
+            <th {...props} className="bg-input">
               {children}
             </th>
           ),
-          td: ({ children, ...props }) => (
-            <td
-              {...props}
-              style={{
-                border: '1px solid',
-                padding: '8px 12px',
-              }}
-            >
-              {children}
-            </td>
-          ),
+          td: ({ children, ...props }) => <td {...props}>{children}</td>,
         }}
       >
         {markdown}

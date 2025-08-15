@@ -25,9 +25,9 @@ interface UserMessageProps {
 
 export const AIMessage = ({ content }: AIMessageProps) => {
   return (
-    <div className="space-y-0.5 ">
+    <div className="space-y-0.5  ">
       {/* CONTENT */}
-      <div className="w-full markdown">
+      <div className="w-full bg-border rounded-lg p-2">
         <MarkdownRenderer>{content}</MarkdownRenderer>
       </div>
       {/* ACTION BUTTONS */}
@@ -55,9 +55,9 @@ export const AIMessage = ({ content }: AIMessageProps) => {
 export const UserMessage = ({ content }: UserMessageProps) => {
   return (
     <div className="flex justify-end ">
-      <div className="max-w-[70%] p-3 space-y-0.5">
+      <div className="max-w-[80%] p-3 space-y-0.5">
         {/* CONTENT */}
-        <div className="w-full bg-primary rounded-lg p-2">
+        <div className="w-full bg-blue-500 rounded-lg p-2">
           <MarkdownRenderer>{content}</MarkdownRenderer>
         </div>
         {/* ACTION BUTTONS */}
