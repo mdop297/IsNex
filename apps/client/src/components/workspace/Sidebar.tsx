@@ -2,6 +2,7 @@
 
 import {
   ArrowLeftFromLine,
+  BookOpenText,
   LayoutList,
   PanelLeftClose,
   PanelLeftOpen,
@@ -36,9 +37,15 @@ import {
 
 interface WorkspaceSidebarProps {
   href: string;
+  isOpenViewer: boolean;
+  setOpenViewer: (isOpen: boolean) => void;
 }
 
-export default function WorkspaceSidebar({ href }: WorkspaceSidebarProps) {
+export default function WorkspaceSidebar({
+  href,
+  isOpenViewer,
+  setOpenViewer,
+}: WorkspaceSidebarProps) {
   const { state, toggleSidebar } = useSidebar();
 
   const handleConfirmExit = () => {
@@ -108,6 +115,16 @@ export default function WorkspaceSidebar({ href }: WorkspaceSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        {!isOpenViewer && (
+          <SidebarMenuItem className="list-none">
+            <SidebarMenuButton onClick={() => setOpenViewer(true)}>
+              <BookOpenText />
+              <span className={`${state === 'collapsed' ? 'hidden' : null}`}>
+                Open Viewer
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        )}
         <SidebarMenuItem className="list-none">
           <SidebarMenuButton className="flex items-center justify-center gap-2 bg-blue-500 hover:bg-item-selected-indicator hover:cursor-pointer">
             <Plus />
