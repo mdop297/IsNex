@@ -112,16 +112,16 @@ export default function AppSidebar() {
             }}
           />
         </div>
+        {/* SEARCH AREA */}
+        <SidebarMenuItem className="list-none">
+          <ChatSearch />
+        </SidebarMenuItem>
       </SidebarHeader>
       {/* SIDEBAR CONTENT */}
       <SidebarContent className="hide-scrollbar">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu onClick={(e) => e.stopPropagation()}>
-              {/* SEARCH AREA */}
-              <SidebarMenuItem>
-                <ChatSearch />
-              </SidebarMenuItem>
               {/* MENU ITEMS */}
 
               {items.map((item) => (

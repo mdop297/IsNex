@@ -16,12 +16,12 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
-  SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleTrigger } from '@/components/ui/collapsible';
+import Link from 'next/link';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,9 +32,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import Link from 'next/link';
-import { useState } from 'react';
+} from '../ui/alert-dialog';
 
 interface WorkspaceSidebarProps {
   href: string;
@@ -42,15 +40,8 @@ interface WorkspaceSidebarProps {
 
 export default function WorkspaceSidebar({ href }: WorkspaceSidebarProps) {
   const { state, toggleSidebar } = useSidebar();
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-
-  const handleExitClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setShowConfirmDialog(true);
-  };
 
   const handleConfirmExit = () => {
-    setShowConfirmDialog(false);
     window.location.href = href;
   };
 
@@ -60,20 +51,15 @@ export default function WorkspaceSidebar({ href }: WorkspaceSidebarProps) {
         <div
           className={`flex justify-between transition-all align-top ${state === 'expanded' ? 'flex-row items-center ' : 'flex-col gap-2 items-start'}`}
         >
-          <AlertDialog
-            open={showConfirmDialog}
-            onOpenChange={setShowConfirmDialog}
-          >
+          <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button onClick={handleExitClick}>
+              <button>
                 <ArrowLeftFromLine className="icon-button" />
               </button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-foreground">
-                  Exit workspace?
-                </AlertDialogTitle>
+                <AlertDialogTitle>Exit workspace?</AlertDialogTitle>
                 <AlertDialogDescription>
                   Exit workspace? Unsaved changes will be lost.
                 </AlertDialogDescription>
@@ -81,12 +67,11 @@ export default function WorkspaceSidebar({ href }: WorkspaceSidebarProps) {
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction onClick={handleConfirmExit}>
-                  Exit
+                  Continue
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-
           {state === 'expanded' ? (
             <PanelLeftClose className="icon-button" onClick={toggleSidebar} />
           ) : (
@@ -107,20 +92,18 @@ export default function WorkspaceSidebar({ href }: WorkspaceSidebarProps) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
-              <Collapsible>
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton asChild>
-                      <Link href={'#'}>
-                        <LayoutList />
-                        <span> Choose document </span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                </SidebarMenuItem>
-              </Collapsible>
-            </SidebarMenu>
+            <Collapsible>
+              <SidebarMenuItem className="list-none">
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton asChild>
+                    <Link href={'#'}>
+                      <LayoutList />
+                      <span> Choose document </span>
+                    </Link>
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+              </SidebarMenuItem>
+            </Collapsible>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
