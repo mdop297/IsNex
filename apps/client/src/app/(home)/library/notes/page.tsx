@@ -28,15 +28,15 @@ const NotesPage = () => {
     console.log('This will add note at root level');
   };
   return (
-    <ResizablePanelGroup direction="horizontal" className="max-w-full">
+    <ResizablePanelGroup direction="horizontal" className="max-w-full flex-1">
       <ResizablePanel
         defaultSize={10}
         className="resizable-sidebar"
         minSize={10}
       >
-        <SidebarMenu>
+        <SidebarMenu className="h-full">
           <SidebarContent>
-            <SidebarGroup>
+            <SidebarGroup className="h-full overflow-auto hide-scrollbar">
               <SidebarGroupLabel>All Notes</SidebarGroupLabel>
               <SidebarGroupAction onClick={handleAddNote} role="button">
                 <Plus />
