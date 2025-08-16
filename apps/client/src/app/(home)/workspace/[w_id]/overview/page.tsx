@@ -19,6 +19,7 @@ import {
   Plus,
   SlidersVertical,
 } from 'lucide-react';
+import Link from 'next/link';
 import React, { use, useEffect, useState } from 'react';
 
 function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
@@ -107,9 +108,14 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
                   <DropdownMenuItem>Upload New Files</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Button>
-                New Session
-                <ExternalLink />
+              <Button asChild>
+                <Link
+                  href={`/workspace/${w_id}`}
+                  className="flex items-center justify-center"
+                >
+                  New Session
+                  <ExternalLink />
+                </Link>
               </Button>
             </div>
           </div>
@@ -238,8 +244,13 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
               </div>
               <div className="flex justify-center items-center h-1/14 ">
                 <Button className="w-80">
-                  Open in workspace
-                  <ExternalLink />
+                  <Link
+                    href={`/workspace/${w_id}`}
+                    className="flex items-center justify-center"
+                  >
+                    Open in workspace
+                    <ExternalLink />
+                  </Link>
                 </Button>
               </div>
             </>
