@@ -45,12 +45,6 @@ const items = [
     icon: SquarePen,
     cn: '',
   },
-  // {
-  //   title: 'Dashboard',
-  //   url: '/home/dashboard',
-  //   icon: LayoutDashboard,
-  //   cn: '',
-  // },
 
   { title: 'Summarizer', url: '/summarizer', icon: Text, cn: '' },
   // { title: 'Scanner', url: '/home/scanner', icon: ScanText },

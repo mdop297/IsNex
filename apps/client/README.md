@@ -20,17 +20,74 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+## Folder structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+.
+├── public                      # Static assets (ảnh, font, file tĩnh)
+│   └── temp                    # Thư mục tạm cho file pdf PdfViewer
+└── src                         # Code chính của app
+    ├── app                     # Next.js App Router (routes + pages)
+    │   ├── api                 # API routes (serverless functions)
+    │   │   └── fake-data       # Mock/fake API để test
+    │   ├── auth                # Nhóm route authentication
+    │   │   ├── forgotpassword  # Trang quên mật khẩu
+    │   │   ├── resetpassword   # Trang reset mật khẩu
+    │   │   ├── signin          # Trang đăng nhập
+    │   │   └── signup          # Trang đăng ký
+    │   ├── (home)              # Layout + routes chính sau khi login
+    │   │   ├── chats           # Chat feature
+    │   │   │   └── [chat_id]   # Chat detail (dynamic route)
+    │   │   ├── home            # Trang dashboard/home
+    │   │   ├── library         # Quản lý tài liệu & notes
+    │   │   │   ├── annos       # Annotation (sẽ bỏ đi, hiện tại dùng để test ui)
+    │   │   │   ├── docs        # Documents
+    │   │   │   └── notes       # Notes (sẽ migrate sang Blocknote, và refactor tree note folder )
+    │   │   ├── scanner         # Scanner (có thể OCR / file scan, bây giờ chưa có gì, ui nhẹ)
+    │   │   ├── setting         # User setting trong home (chưa có gì)
+    │   │   ├── summarizer      # Tóm tắt tài liệu (chưa có gì, ui nhẹ)
+    │   │   └── workspace       # Trang workspace
+    │   │       └── [w_id]      # Dynamic workspace id
+    │   │           └── overview # Overview của workspace
+    │   ├── user                # Routes liên quan đến user profile
+    │   │   └── setting         # User settings
+    │   └── (workspace)         # Layout riêng cho workspace
+    │       └── workspace
+    │           └── [w_id]      # Dynamic workspace id
+    │               ├── @chat   # Parallel route cho chat panel
+    │               ├── @note   # Parallel route cho note panel
+    │               └── @pdf    # Parallel route cho pdf panel
+    ├── components              # Reusable React components
+    │   ├── auth                # UI cho auth (login/signup)
+    │   ├── chat                # UI cho chat box
+    │   ├── documents           # UI cho document viewer
+    │   ├── file-upload         # UI + logic upload file
+    │   ├── landing             # Components cho landing page
+    │   ├── magicui             # UI effects/animation đặc biệt
+    │   ├── notes               # UI cho notes
+    │   ├── pdf                 # PDF viewer & highlighter
+    │   │   ├── pdfhighlighter  # Custom pdf highlighter
+    │   │   │   ├── components  # Component con cho highlighter
+    │   │   │   ├── contexts    # Context provider
+    │   │   │   ├── lib         # Helper/lib cho highlighter
+    │   │   │   └── style       # CSS/style
+    │   │   └── PDFViewer       # Viewer chính cho PDF
+    │   │       ├── contexts    # Context PDF viewer
+    │   │       ├── Sidebar     # Sidebar của PDF viewer
+    │   │       ├── style       # CSS/style
+    │   │       ├── Toolbar     # Toolbar PDF viewer
+    │   │       └── utils       # Utility functions
+    │   ├── providers           # Global providers (theme, auth, etc.)
+    │   ├── ui                  # UI shared components (button, input,…) shadcn ui
+    │   └── workspace           # Components cho workspace
+    ├── data                    # Data mẫu / static data
+    ├── hooks                   # Custom React hooks
+    ├── lib                     # Helper functions, util library
+    ├── schemas                 # Validation schemas (Zod/Yup, etc.)
+    └── types                   # TypeScript types/interfaces
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Hiện tại data trong ứng dụng là fake và còn nằm nhiều chỗ, sau khi có backend sẽ refactor lại.
+- phần types trong project sẽ chỉnh lại cho nằm trong folder types.
+- Đừng đọc code kỹ quá, hiểu nó cho output gì là ok.
