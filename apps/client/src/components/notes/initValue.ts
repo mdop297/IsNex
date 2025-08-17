@@ -1017,74 +1017,6 @@ export const WITH_BASIC_INIT_VALUE: any = {
       },
     ],
   },
-  '78c8e461-d7cd-474d-97c9-773550bd2ca9': {
-    id: '78c8e461-d7cd-474d-97c9-773550bd2ca9',
-    value: [
-      {
-        id: 'c734ccd2-38f1-4f7b-9c84-45098100f901',
-        type: 'image',
-        children: [
-          {
-            text: '',
-          },
-        ],
-        props: {
-          nodeType: 'void',
-          src: 'https://res.cloudinary.com/ench-app/image/upload/v1713028758/Cheems_doge_fx8yvq.jpg',
-          alt: 'cloudinary',
-          srcSet: null,
-          fit: 'contain',
-          sizes: {
-            width: 334,
-            height: 368,
-          },
-        },
-      },
-    ],
-    type: 'Image',
-    meta: {
-      order: 43,
-      depth: 0,
-    },
-  },
-  'cec531df-cb6a-473e-807b-26be460cb391': {
-    id: 'cec531df-cb6a-473e-807b-26be460cb391',
-    value: [
-      {
-        id: 'cd8eb268-836f-4148-a965-49f2f12b065e',
-        type: 'heading-three',
-        children: [
-          {
-            text: 'Do you like it? Please star ',
-          },
-          {
-            type: 'link',
-            children: [
-              {
-                text: 'our repo in Github',
-              },
-            ],
-            props: {
-              url: 'https://github.com/Darginec05/Yoopta-Editor',
-              target: '_blank',
-              rel: 'noreferrer',
-            },
-          },
-          {
-            text: ' ',
-          },
-        ],
-        props: {
-          nodeType: 'block',
-        },
-      },
-    ],
-    type: 'HeadingThree',
-    meta: {
-      order: 42,
-      depth: 0,
-    },
-  },
   '8ec75789-e8b1-4bb4-8561-e30f0ee0cddb': {
     id: '8ec75789-e8b1-4bb4-8561-e30f0ee0cddb',
     value: [
@@ -1148,36 +1080,6 @@ export const WITH_BASIC_INIT_VALUE: any = {
     type: 'BulletedList',
     meta: {
       order: 6,
-      depth: 0,
-    },
-  },
-  'ea205e9e-2a9e-4a99-ab52-6d713d423860': {
-    id: 'ea205e9e-2a9e-4a99-ab52-6d713d423860',
-    value: [
-      {
-        id: '269a9bf3-34e9-4def-98e7-5ecd94110cd4',
-        type: 'image',
-        children: [
-          {
-            text: '',
-          },
-        ],
-        props: {
-          nodeType: 'void',
-          src: 'https://res.cloudinary.com/ench-app/image/upload/v1713029072/ImageTransformer_hlr9eo.jpg',
-          alt: 'cloudinary',
-          srcSet: null,
-          fit: 'contain',
-          sizes: {
-            width: 448,
-            height: 379,
-          },
-        },
-      },
-    ],
-    type: 'Image',
-    meta: {
-      order: 45,
       depth: 0,
     },
   },

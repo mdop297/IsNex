@@ -1,3 +1,4 @@
+'use client';
 import YooptaEditor, {
   createYooptaEditor,
   YooptaContentValue,
@@ -94,7 +95,7 @@ const TOOLS = {
 
 const MARKS = [Bold, Italic, CodeMark, Underline, Strike, Highlight];
 
-function WithBaseFullSetup() {
+function NoteEditor() {
   const [value, setValue] = useState(WITH_BASIC_INIT_VALUE);
   const editor = useMemo(() => createYooptaEditor(), []);
   const selectionRef = useRef(null);
@@ -107,9 +108,9 @@ function WithBaseFullSetup() {
   };
 
   return (
-    <div className="flex justify-center w-full h-screen" ref={selectionRef}>
+    <div className="flex justify-center w-full h-full " ref={selectionRef}>
       <ScrollArea className="w-full h-full overflow-y-auto">
-        <div className="h-max flex justify-center">
+        <div className="flex justify-center text-foreground">
           <YooptaEditor
             editor={editor}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -133,4 +134,4 @@ function WithBaseFullSetup() {
   );
 }
 
-export default WithBaseFullSetup;
+export default NoteEditor;

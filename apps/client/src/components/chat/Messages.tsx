@@ -27,7 +27,7 @@ export const AIMessage = ({ content }: AIMessageProps) => {
   return (
     <div className="space-y-0.5  ">
       {/* CONTENT */}
-      <div className="w-full bg-border rounded-lg p-2">
+      <div className="w-full bg-border rounded-lg p-2 text-foreground">
         <MarkdownRenderer>{content}</MarkdownRenderer>
       </div>
       {/* ACTION BUTTONS */}

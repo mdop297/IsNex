@@ -2,7 +2,7 @@
 
 import {
   ArrowLeftFromLine,
-  BookOpenText,
+  Ellipsis,
   LayoutList,
   PanelLeftClose,
   PanelLeftOpen,
@@ -38,13 +38,13 @@ import {
 interface WorkspaceSidebarProps {
   href: string;
   isOpenViewer: boolean;
-  setOpenViewer: (isOpen: boolean) => void;
+  toggleViewer: () => void;
 }
 
 export default function WorkspaceSidebar({
   href,
   isOpenViewer,
-  setOpenViewer,
+  toggleViewer,
 }: WorkspaceSidebarProps) {
   const { state, toggleSidebar } = useSidebar();
 
@@ -53,7 +53,7 @@ export default function WorkspaceSidebar({
   };
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" className="!border-0">
       <SidebarHeader>
         <div
           className={`flex justify-between transition-all align-top ${state === 'expanded' ? 'flex-row items-center ' : 'flex-col gap-2 items-start'}`}
@@ -66,13 +66,17 @@ export default function WorkspaceSidebar({
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Exit workspace?</AlertDialogTitle>
+                <AlertDialogTitle className="text-foreground">
+                  Exit workspace?
+                </AlertDialogTitle>
                 <AlertDialogDescription>
                   Exit workspace? Unsaved changes will be lost.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel className="text-white">
+                  Cancel
+                </AlertDialogCancel>
                 <AlertDialogAction onClick={handleConfirmExit}>
                   Continue
                 </AlertDialogAction>
@@ -115,16 +119,14 @@ export default function WorkspaceSidebar({
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        {!isOpenViewer && (
-          <SidebarMenuItem className="list-none">
-            <SidebarMenuButton onClick={() => setOpenViewer(true)}>
-              <BookOpenText />
-              <span className={`${state === 'collapsed' ? 'hidden' : null}`}>
-                Open Viewer
-              </span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        )}
+        <SidebarMenuItem className="list-none">
+          <SidebarMenuButton onClick={toggleViewer}>
+            <Ellipsis />
+            <span className={`${state === 'collapsed' ? 'hidden' : null}`}>
+              {!isOpenViewer ? 'Open Viewer' : 'Close Viewer'}
+            </span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
         <SidebarMenuItem className="list-none">
           <SidebarMenuButton className="flex items-center justify-center gap-2 bg-blue-500 hover:bg-item-selected-indicator hover:cursor-pointer">
             <Plus />

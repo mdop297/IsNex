@@ -113,7 +113,10 @@ export default function AppSidebar() {
           />
         </div>
         {/* SEARCH AREA */}
-        <SidebarMenuItem className="list-none">
+        <SidebarMenuItem
+          className="list-none"
+          onClick={(e) => e.stopPropagation()}
+        >
           <ChatSearch />
         </SidebarMenuItem>
       </SidebarHeader>

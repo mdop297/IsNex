@@ -176,7 +176,7 @@ const Toolbar = ({
           >
             <Plus className="size-4 aspect-square" />
           </Button>
-          <Select defaultValue="auto" onValueChange={zoomByOption}>
+          <Select defaultValue="page-width" onValueChange={zoomByOption}>
             <SelectTrigger className="border-none toolbar-button text-sm ">
               <SelectValue placeholder="auto" className="text-sm" />
             </SelectTrigger>

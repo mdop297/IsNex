@@ -118,7 +118,7 @@ export const ChatInput = ({ className }: ChatInputProps) => {
         <div className="flex gap-2">
           {/* MODEL SELECTOR */}
           <Select defaultValue="model-1">
-            <SelectTrigger className="w-auto bg-accent border-none">
+            <SelectTrigger className="w-auto border-none">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="">
