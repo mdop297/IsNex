@@ -2,32 +2,32 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-svc
-  annotations:
-    nginx.ingress.kubernetes.io/use-regex: 'true'
   labels:
     name: ingress-svc
+  annotations:
+    konghq.com/strip-path: 'false'
 spec:
-  ingressClassName: nginx
+  ingressClassName: kong
   rules:
     - host: isnex.mdop297.vn
       http:
         paths:
-          - path: /api/users/?(.*)
-            pathType: ImplementationSpecific
+          - path: /api/users
+            pathType: Prefix
             backend:
               service:
                 name: isnex-auth-svc
                 port:
                   number: 3000
-          - path: /api/auth/?(.*)
-            pathType: ImplementationSpecific
+          - path: /api/auth
+            pathType: Prefix
             backend:
               service:
                 name: isnex-auth-svc
                 port:
                   number: 3000
-          - path: /api/?(.*)
-            pathType: ImplementationSpecific
+          - path: /api
+            pathType: Prefix
             backend:
               service:
                 name: isnex-auth-svc

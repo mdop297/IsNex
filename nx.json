@@ -15,10 +15,22 @@
     ],
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
   },
-  "plugins": [],
+  "plugins": [
+    {
+      "plugin": "@nxlv/python",
+      "options": {
+        "packageManager": "uv"
+      }
+    }
+  ],
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"]
+    }
+  },
+  "generators": {
+    "@nxlv/python:uv-project": {
+      "useNxReleaseLegacyVersioning": false
     }
   }
 }

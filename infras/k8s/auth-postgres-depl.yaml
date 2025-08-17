@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isnex-auth-postgres-depl
+spec:
+  selector:
+    matchLabels:
+      app: isnex-auth-postgres
+  template:
+    metadata:
+      labels:
+        app: isnex-auth-postgres
+    spec:
+      containers:
+        - name: isnex-auth-postgres
+          image: postgres:17
+          resources:
+            limits:
+              memory: '256Mi'
+              cpu: '0.5'
+            requests:
+              memory: '128Mi'
+              cpu: '0.2'
+          ports:
+            - containerPort: 5432
+          envFrom: # Sử dụng envFrom
+            - configMapRef:
+                name: auth-config
+            - secretRef:
+                name: isnex-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: isnex-auth-postgres-svc
+spec:
+  selector:
+    app: isnex-auth-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
