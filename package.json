@@ -32,10 +32,11 @@
       "@prisma/client",
       "@prisma/engines",
       "@swc/core",
+      "@tailwindcss/oxide",
       "esbuild",
       "nx",
       "prisma",
-      "unrs-resolver"
+      "sharp"
     ]
   },
   "config": {

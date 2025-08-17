@@ -67,7 +67,7 @@ export default function NotFound() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></span>
-                  <span>It could be a broken or outdated link</span>
+                  <span>It could be a outdated link</span>
                 </li>
               </ul>
             </div>
