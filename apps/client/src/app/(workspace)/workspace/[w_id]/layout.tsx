@@ -48,23 +48,24 @@ const WorkspaceMode = ({
                   {pdf}
                 </div>
               </ResizablePanel>
-              <ResizableHandle withHandle className="" />
+              <ResizableHandle withHandle className="bg-ring" />
               <ResizablePanel>
                 <Tabs
                   defaultValue={openTab}
                   onValueChange={(value) => {
                     setOpenTab(value as 'note' | 'chat');
                   }}
-                  className=" flex-col justify-center items-center gap-0 h-screen "
+                  className="flex flex-col h-screen !gap-0.5 bg-secondary"
                 >
-                  <div className="flex flex-row w-full bg-neutral-700">
+                  {/* Header có h-fit - tự động điều chỉnh theo nội dung */}
+                  <div className="flex flex-row h-fit w-full bg-neutral-700 flex-shrink-0 p-0.5">
                     <Button
                       variant={'ghost'}
                       className="hover:bg-item-hover hover:cursor-pointer rounded-md"
                     >
                       <ArrowLeft className="text-white" />
                     </Button>
-                    <TabsList className="w-full ">
+                    <TabsList className="w-full">
                       <TabsTrigger value="chat">Conversation</TabsTrigger>
                       <TabsTrigger value="note">Note Editor</TabsTrigger>
                     </TabsList>
@@ -75,15 +76,22 @@ const WorkspaceMode = ({
                       <Maximize2 />
                     </Button>
                   </div>
-                  <TabsContent value="chat" className="w-full h-full ">
-                    {/* chat panel */}
-                    <div className="flex-1 bg-secondary overflow-auto h-full w-full flex justify-center items-center">
+
+                  {/* Content sẽ chiếm phần còn lại của màn hình do flex-1 */}
+                  <TabsContent
+                    value="chat"
+                    className="flex-1 w-full overflow-hidden"
+                  >
+                    <div className="h-full bg-secondary overflow-auto w-full flex justify-center items-center">
                       {chat}
                     </div>
                   </TabsContent>
-                  <TabsContent value="note" className="w-full h-full">
-                    {/* note editor */}
-                    <div className="flex-1 h-full bg-secondary w-full flex justify-center items-center">
+
+                  <TabsContent
+                    value="note"
+                    className="flex-1 w-full overflow-hidden"
+                  >
+                    <div className="h-full bg-secondary w-full flex justify-center items-center">
                       {note}
                     </div>
                   </TabsContent>

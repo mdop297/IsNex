@@ -111,7 +111,7 @@ const Toolbar = ({
   };
 
   return (
-    <div className="px-1 py-1 border-b bg-neutral-700 rounded-xs flex flex-row text-neutral-200">
+    <div className="px-1 py-1.5 border-b bg-neutral-700 rounded-xs flex flex-row text-neutral-200">
       <div className="w-full flex items-center justify-between">
         {/* Left section */}
         <div className="flex items-center space-x-3 text-sm">
@@ -177,7 +177,7 @@ const Toolbar = ({
             <Plus className="size-4 aspect-square" />
           </Button>
           <Select defaultValue="page-width" onValueChange={zoomByOption}>
-            <SelectTrigger className="border-none toolbar-button text-sm ">
+            <SelectTrigger className="toolbar-button border-none">
               <SelectValue placeholder="auto" className="text-sm" />
             </SelectTrigger>
             <SelectContent>
@@ -201,11 +201,9 @@ const Toolbar = ({
             <Minus className="size-4" />
           </Button>
 
-          <Separator orientation="vertical" className="mx-3 bg-foreground " />
+          <Separator orientation="vertical" className="bg-foreground " />
           <Button
-            className={`toolbar-button font-normal HighlightButton ${
-              isHighlightPen ? 'active' : ''
-            }`}
+            className={`toolbar-button HighlightButton font-normal ${isHighlightPen ? 'active' : ''}`}
             aria-label="zoom"
             variant="ghost"
             title="Highlight"
