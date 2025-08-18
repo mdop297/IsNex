@@ -359,4 +359,5 @@ docs/
 *secret.yaml
 
 next-env.d.ts
-
+proj_docs/
+**/temp/*
