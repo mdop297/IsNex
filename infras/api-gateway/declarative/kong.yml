@@ -1,0 +1,8 @@
+_format_version: '3.0'
+services:
+  - name: auth-svc
+    url: http://localhost:5000
+    routes:
+      - name: auth-route
+        paths:
+          - /sample
