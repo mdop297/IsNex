@@ -16,3 +16,13 @@ services:
       DATABASE_URL: 'postgresql://${AUTH_POSTGRES_USER}:${AUTH_POSTGRES_PASSWORD}@auth-db:5432/${AUTH_POSTGRES_DB}'
     env_file:
       - ./envs/auth.env
+
+  client:
+    build:
+      context: .
+      dockerfile: ./apps/client/Dockerfile.dev
+    ports:
+      - 5000:5000
+    volumes:
+      - ./apps/client:/isnex/apps/client
+      - /isnex/apps/client/node_modules

@@ -2,3 +2,6 @@
 **/dist
 ./apps/auth-svc/node_modules
 ./apps/auth-svc/dist
+
+./apps/client/node_modules
+./apps/client/.next
