@@ -1,8 +1,26 @@
 _format_version: '3.0'
 services:
-  - name: auth-svc
-    url: http://localhost:5000
+  - name: auth-service
+    url: http://auth-svc:3000
     routes:
       - name: auth-route
         paths:
-          - /sample
+          - /auth
+        strip_path: true
+    plugins:
+      - name: rate-limiting
+        config:
+          second: 5
+          minute: 100
+  - name: client-service
+    url: http://client:5000
+    routes:
+      - name: client-route
+        paths:
+          - /
+        strip_path: false
+    plugins:
+      - name: rate-limiting
+        config:
+          second: 10
+          minute: 200

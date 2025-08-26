@@ -19,7 +19,7 @@ services:
     container_name: isnex-auth-postgres
     restart: unless-stopped
     ports:
-      - 5432:5432
+      - 3001:5432
     environment:
       POSTGRES_USER: ${AUTH_POSTGRES_USER}
       POSTGRES_PASSWORD: ${AUTH_POSTGRES_PASSWORD}
@@ -31,3 +31,8 @@ services:
 
 volumes:
   postgres_data:
+
+networks:
+  default:
+    name: isnex-net
+    external: true
