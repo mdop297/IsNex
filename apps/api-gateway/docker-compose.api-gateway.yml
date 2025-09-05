@@ -11,12 +11,12 @@ volumes:
       type: tmpfs
       device: tmpfs
 
-networks:
-  isnex-net:
-    external: false
-    ipam:
-      config:
-        - subnet: 172.1.1.0/24
+# networks:
+#   isnex-net:
+#     external: false
+#     ipam:
+#       config:
+#         - subnet: 172.1.1.0/24
 
 services:
   kong:
@@ -34,8 +34,7 @@ services:
     #   KONG_PROXY_ERROR_LOG: /dev/stderr
     #   KONG_PREFIX: ${KONG_PREFIX:-/var/run/kong}
     #   KONG_TRACING_INSTRUMENTATIONS: 'request'
-    networks:
-      - isnex-net
+
     environment:
       KONG_PROMETHEUS_ENABLED: 'on'
       KONG_PREFIX: /var/run/kong
@@ -64,7 +63,7 @@ services:
     restart: on-failure
     read_only: true
     volumes:
-      - ./infras/api-gateway/declarative/:/kong/declarative/
+      - ./apps/api-gateway/declarative/:/kong/declarative/
       - kong_prefix_vol:${KONG_PREFIX:-/var/run/kong}
       - kong_tmp_vol:/tmp
     security_opt:
@@ -75,25 +74,20 @@ services:
     container_name: zipkin
     ports:
       - 9411:9411
-    networks:
-      - isnex-net
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
     ports:
       - '9090:9090'
     volumes:
-      - ./infras/api-gateway/config/prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - isnex-net
+      - ./apps/api-gateway/config/prometheus.yml:/etc/prometheus/prometheus.yml
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
       - '9000:3000'
-    networks:
-      - isnex-net
 
   # keycloak:
   #   image: quay.io/keycloak/keycloak:latest
@@ -160,3 +154,8 @@ services:
   #   networks:
   #     isnex-net:
   #       ipv4_address: 172.1.1.23
+
+networks:
+  default:
+    name: isnex-net
+    external: true

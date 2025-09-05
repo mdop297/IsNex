@@ -17,8 +17,8 @@ async function bootstrap() {
   //do JwtAuthGuard có constructor cần reflector nên cần truyền refector vào
   app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.useGlobalPipes(new ValidationPipe());
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
+  const port = process.env.PORT || 3001;
+  await app.listen(port, '0.0.0.0');
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
   );

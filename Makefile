@@ -7,7 +7,7 @@ ENV_FILE = ./envs/auth.env
 # Docker Compose files
 COMPOSE_FILE = docker-compose.yml
 COMPOSE_DEV_FILE = docker-compose.override.yml
-COMPOSE_API_GATEWAY = infras/api-gateway/docker-compose.api-gateway.yml
+COMPOSE_API_GATEWAY = apps/api-gateway/docker-compose.api-gateway.yml
 COMPOSE_MONITORING = infras/monitoring/docker-compose.monitoring.yml
 
 # Image names

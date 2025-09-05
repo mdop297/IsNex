@@ -1,0 +1,37 @@
+_format_version: '3.0'
+services:
+  - name: client-service
+    url: http://client:5000
+    routes:
+      - name: client-route
+        paths:
+          - /
+        strip_path: false
+    plugins:
+      - name: rate-limiting
+        config:
+          second: 10
+          minute: 200
+
+  - name: auth-service
+    url: http://auth:3001
+    routes:
+      - name: auth-route
+        paths:
+          - /auth
+        strip_path: true
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - http://localhost:5000
+          methods:
+            - GET
+            - POST
+            - OPTIONS
+          headers:
+            - Accept
+            - Authorization
+            - Content-Type
+          credentials: true
+          max_age: 3600
