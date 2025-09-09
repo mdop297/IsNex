@@ -177,15 +177,18 @@ auth-db-reset:
 		echo "Database reset cancelled."; \
 	fi
 
+
 # Open Prisma Studio
 auth-db-studio:
 	@echo "🎨 Opening Prisma Studio..."
 	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) exec auth npx prisma studio
 
+ 
 # Generate Prisma client
 auth-prisma-generate:
 	@echo "⚙️  Generating Prisma client..."
 	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) exec auth npx prisma generate
+
 
 # Run auth-service in localhost with passed env file
 auth-localhost:
