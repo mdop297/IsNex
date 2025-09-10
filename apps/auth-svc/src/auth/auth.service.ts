@@ -8,7 +8,7 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 import { LoginDto } from './dtos/login.dto';
 
@@ -56,7 +56,7 @@ export class AuthService {
     if (user) {
       throw new BadRequestException('Email in use');
     }
-
+    console.log('Register reached!!!');
     const result = this.getHashPassword(userDto.password);
     userDto.password = result;
     if (!userDto.username) {

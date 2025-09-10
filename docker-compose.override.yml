@@ -26,7 +26,7 @@ services:
       - 5000:5000
     volumes:
       - ./apps/client:/isnex/apps/client
-      - /isnex/apps/client/node_modules
+      - ./apps/client/node_modules:/isnex/apps/client/node_modules
 
 networks:
   default:
