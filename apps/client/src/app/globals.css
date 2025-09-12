@@ -403,8 +403,8 @@
 
   body,
   html {
-    overflow: hidden;
-    height: 100%;
+    overflow-x: hidden;
+    height: auto;
   }
 
   .icon-button {

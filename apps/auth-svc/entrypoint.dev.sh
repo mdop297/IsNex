@@ -12,15 +12,15 @@ LAST_HASH=$(cat "$HASH_FILE" 2>/dev/null)
 
 if [ "$CURRENT_HASH" != "$LAST_HASH" ]; then
   echo "schema.prisma changed. Running migrate & generate..."
-  pnpx prisma migrate dev --skip-seed --schema=$SCHEMA_PATH
-  pnpx prisma generate --schema=$SCHEMA_PATH
+  npx prisma migrate dev --skip-seed --schema=$SCHEMA_PATH
+  npx prisma generate --schema=$SCHEMA_PATH
   echo "$CURRENT_HASH" > "$HASH_FILE"
 else
   echo "schema.prisma unchanged. Skipping migrate & generate."
 fi
 
-echo "Stopping any existing process on port 3000..."
-fuser -k 3000/tcp || true
+echo "Stopping any existing process on port 3001..."
+fuser -k 3001/tcp || true
 
 echo "Starting the app..."
 pnpm run start:dev

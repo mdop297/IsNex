@@ -21,14 +21,15 @@ import { LoginDto } from './dtos/login.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
   @Public()
-  @Post('/register')
-  signUp(@Body() body: CreateUserDto) {
-    return this.authService.register(body);
+  @Post('/signup')
+  async signUp(@Body() body: CreateUserDto, @Res() res: Response) {
+    const result = await this.authService.register(body, res);
+    return res.json(result);
   }
 
   @Public()
   @UseGuards(LocalAuthGuard)
-  @Post('login')
+  @Post('/signin')
   async login(@Body() body: LoginDto, @Res() res: Response) {
     const result = await this.authService.login(body, res);
     return res.json(result);

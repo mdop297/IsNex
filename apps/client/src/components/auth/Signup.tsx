@@ -12,27 +12,36 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { LoginResponse, RegisterRequestSchema } from '@/lib/api/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
-const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8, 'Password must be at least 8 characters long'),
-});
+import { authApi } from '@/lib/api/auth';
+import { useRouter } from 'next/navigation';
 
 const SignUpForm = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof RegisterRequestSchema>>({
     defaultValues: {
       email: '',
       password: '',
     },
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(RegisterRequestSchema),
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+  const onSubmit = async (data: z.infer<typeof RegisterRequestSchema>) => {
+    try {
+      const res: LoginResponse = await authApi.register(data);
+      console.log(res); // debug
+
+      if (res.accessToken) {
+        router.push('/home'); // redirect
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

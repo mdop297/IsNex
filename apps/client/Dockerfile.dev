@@ -1,0 +1,21 @@
+FROM node:22-alpine 
+
+RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
+RUN apk add --no-cache protobuf openssl
+
+WORKDIR /isnex/apps/client
+COPY ./apps/client/package.json ./  
+
+WORKDIR /isnex
+# because the context is at root level
+COPY ./pnpm-workspace.yaml ./pnpm-lock.yaml ./package.json ./
+
+RUN pnpm install --frozen-lockfile --filter client...
+
+WORKDIR /isnex/apps/client
+# Don't need to copy source from host, because we mounted it in docker-compose.override.yml file
+# COPY ./apps/client /isnex/apps/client/
+
+EXPOSE 5000
+
+CMD ["pnpm", "run", "dev"]
