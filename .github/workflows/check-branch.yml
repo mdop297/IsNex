@@ -1,6 +1,10 @@
 name: Check branch source
 
-on: [pull_request]
+on:
+  pull_request:
+    branches:
+      - main
+      - release
 
 jobs:
   check-source-branch:
