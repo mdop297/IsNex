@@ -2,7 +2,8 @@
 
 # ------------------ Variables ------------------------
 # Environment file for Docker Compose
-ENV_FILE = ./envs/auth.env
+ENV_FILE = ./envs/.env.dev
+AUTH_ENV_FILE = ./apps/auth-svc/.env.dev
 
 # Docker Compose files
 COMPOSE_FILE = docker-compose.yml
@@ -83,7 +84,8 @@ up: up-network
 # Start services in development mode with code sync
 up-dev: up-network
 	@echo "🔧 Starting all services in development mode (single stack)..."
-	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) up -d
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) up -d
+# docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) up -d
 	@echo "✅ All development services started in single stack!"
 
 
@@ -100,7 +102,8 @@ up-monitoring: up-network
 # Build services for development
 build-dev:
 	@echo "🏗️  Building development images..."
-	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) build
+# docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) build
+	docker compose --env-file $(ENV_FILE) --env-file $(AUTH_ENV_FILE) -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) build
 	@echo "✅ Development build completed!"
 
 # Apply Kong config manually
@@ -183,7 +186,7 @@ auth-db-studio:
 	@echo "🎨 Opening Prisma Studio..."
 	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) exec auth npx prisma studio
 
- 
+
 # Generate Prisma client
 auth-prisma-generate:
 	@echo "⚙️  Generating Prisma client..."
