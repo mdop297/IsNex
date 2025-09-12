@@ -1,0 +1,14 @@
+name: Check branch source
+
+on: [pull_request]
+
+jobs:
+  check-source-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify source branch
+        run: |
+          if [[ "${{ github.head_ref }}" != "dev" ]]; then
+            echo "Pull request must come from dev branch."
+            exit 1
+          fi
