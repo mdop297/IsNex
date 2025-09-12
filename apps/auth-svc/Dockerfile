@@ -31,7 +31,7 @@ COPY --chown=nodejs:nodejs ./entrypoint.prod.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 USER nodejs
 
-EXPOSE 3000
+EXPOSE 3001
 
 # ENTRYPOINT ["dumb-init", "./entrypoint.sh"]
 ENTRYPOINT ["./entrypoint.sh"]
