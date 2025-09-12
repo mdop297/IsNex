@@ -15,7 +15,7 @@ export const RegisterRequestSchema = z.object({
 
 // Response schemas
 export const UserSchema = z.object({
-  id: z.string().uuid(),
+  userId: z.string().uuid(),
   email: z.string().email(),
   username: z.string(),
   role: z.string(),
@@ -24,8 +24,8 @@ export const UserSchema = z.object({
 export type User = z.infer<typeof UserSchema>;
 
 export const LoginResponseSchema = z.object({
-  access_token: z.string(),
-  refresh_token: z.string().optional(),
+  accessToken: z.string(),
+  refreshToken: z.string().optional(),
   user: UserSchema,
 });
 
@@ -50,10 +50,10 @@ export const authApi = {
   // Public: register
   register: async (
     payload: z.infer<typeof RegisterRequestSchema>,
-  ): Promise<RegisterResponse> => {
+  ): Promise<LoginResponse> => {
     const body = RegisterRequestSchema.parse(payload);
     const response = await api.post('/api/auth/signup', body);
-    return RegisterResponseSchema.parse(response.data);
+    return LoginResponseSchema.parse(response.data);
   },
 
   // Protected: get current user

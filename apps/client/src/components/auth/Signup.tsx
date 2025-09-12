@@ -12,14 +12,17 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { RegisterRequestSchema } from '@/lib/api/auth';
+import { LoginResponse, RegisterRequestSchema } from '@/lib/api/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { authApi } from '@/lib/api/auth';
+import { useRouter } from 'next/navigation';
 
 const SignUpForm = () => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof RegisterRequestSchema>>({
     defaultValues: {
       email: '',
@@ -28,12 +31,17 @@ const SignUpForm = () => {
     resolver: zodResolver(RegisterRequestSchema),
   });
 
-  const onSubmit = (data: z.infer<typeof RegisterRequestSchema>) => {
-    // console.log(data);
-    authApi
-      .register(data)
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+  const onSubmit = async (data: z.infer<typeof RegisterRequestSchema>) => {
+    try {
+      const res: LoginResponse = await authApi.register(data);
+      console.log(res); // debug
+
+      if (res.accessToken) {
+        router.push('/home'); // redirect
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
