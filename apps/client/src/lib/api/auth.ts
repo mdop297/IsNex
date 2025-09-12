@@ -58,18 +58,18 @@ export const authApi = {
 
   // Protected: get current user
   me: async (): Promise<User> => {
-    const response = await secureApi.get('/auth/me');
+    const response = await secureApi.get('/api/auth/me');
     return UserSchema.parse(response.data);
   },
 
   // Protected: logout
   logout: async (): Promise<void> => {
-    await secureApi.post('/auth/logout');
+    await secureApi.post('/api/auth/logout');
   },
 
   // Protected: refresh access token
   refresh: async (): Promise<{ access_token: string }> => {
-    const response = await secureApi.post('/auth/refresh');
+    const response = await secureApi.post('/api/auth/refresh');
     return z.object({ access_token: z.string() }).parse(response.data);
   },
 };

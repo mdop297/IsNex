@@ -7,10 +7,10 @@ import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
-  app.enableCors({
-    origin: ['http://localhost:5000'],
-    credentials: true,
-  });
+  // app.enableCors({
+  //   origin: ['http://localhost:5000'],
+  //   credentials: true,
+  // });
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   const reflector = app.get(Reflector);
@@ -18,7 +18,7 @@ async function bootstrap() {
   app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.useGlobalPipes(new ValidationPipe());
   const port = process.env.PORT || 3001;
-  await app.listen(port, '0.0.0.0');
+  await app.listen(port);
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
   );

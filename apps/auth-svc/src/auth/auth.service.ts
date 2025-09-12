@@ -50,9 +50,9 @@ export class AuthService {
     }
   }
 
-  async register(userDto: CreateUserDto) {
+  async register(userDto: CreateUserDto, response: Response) {
     const user = await this.userService.findByEmail(userDto.email);
-
+    const rawPassword = userDto.password;
     if (user) {
       throw new BadRequestException('Email in use');
     }
@@ -63,8 +63,15 @@ export class AuthService {
       userDto.username = userDto.email.split('@')[0];
     }
     const newUser = await this.userService.create(userDto);
-
-    return newUser;
+    if (newUser) {
+      return await this.login(
+        { username: userDto.email, password: rawPassword },
+        response,
+      );
+    }
+    return {
+      message: 'User not created',
+    };
   }
 
   async login(body: LoginDto, response: Response) {
@@ -86,8 +93,9 @@ export class AuthService {
     response.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: this.configService.get('NODE_ENV') === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: 'lax',
+      path: '/api/auth/refresh',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     return {
