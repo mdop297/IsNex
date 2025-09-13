@@ -31,6 +31,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('/signin')
   async login(@Body() body: LoginDto, @Res() res: Response) {
+    console.log('backend Login called');
     const result = await this.authService.login(body, res);
     return res.json(result);
   }

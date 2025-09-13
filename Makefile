@@ -102,8 +102,7 @@ up-monitoring: up-network
 # Build services for development
 build-dev:
 	@echo "🏗️  Building development images..."
-# docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) build
-	docker compose --env-file $(ENV_FILE) --env-file $(AUTH_ENV_FILE) -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) build
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) build
 	@echo "✅ Development build completed!"
 
 # Apply Kong config manually

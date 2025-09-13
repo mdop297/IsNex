@@ -65,7 +65,7 @@ export class AuthService {
     const newUser = await this.userService.create(userDto);
     if (newUser) {
       return await this.login(
-        { username: userDto.email, password: rawPassword },
+        { email: userDto.email, password: rawPassword },
         response,
       );
     }
@@ -75,7 +75,7 @@ export class AuthService {
   }
 
   async login(body: LoginDto, response: Response) {
-    const validUser = await this.validateUser(body.username, body.password);
+    const validUser = await this.validateUser(body.email, body.password);
 
     if (!validUser) {
       throw new NotFoundException('Invalid credentials');

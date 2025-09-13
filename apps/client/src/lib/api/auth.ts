@@ -43,7 +43,8 @@ export const authApi = {
     payload: z.infer<typeof LoginRequestSchema>,
   ): Promise<LoginResponse> => {
     const body = LoginRequestSchema.parse(payload);
-    const response = await api.post('/api/auth/login', body);
+    const response = await api.post('/api/auth/signin', body);
+
     return LoginResponseSchema.parse(response.data);
   },
 
