@@ -52,16 +52,26 @@ const items = [
   // { title: 'Tasks', url: '/home/tasks', icon: ClipboardCheck },
 ];
 
-const menuItems = [
-  { icon: CircleUserRound, label: 'Profile' },
-  { icon: Settings, label: 'Setting' },
-  { icon: LogOut, label: 'Logout', destructive: true },
-];
-
 export default function AppSidebar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { state, isMobile, toggleSidebar } = useSidebar();
   const [hovered, setHovered] = useState(false);
+
+  const menuItems = [
+    { icon: CircleUserRound, label: 'Profile', onClick: () => {} },
+    { icon: Settings, label: 'Setting', onClick: () => {} },
+    {
+      icon: LogOut,
+      label: 'Logout',
+      destructive: true,
+      onClick: () => {
+        handleLogout();
+      },
+    },
+  ];
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     user && (
@@ -161,14 +171,18 @@ export default function AppSidebar() {
               align="end"
               sideOffset={4}
             >
-              {menuItems.map(({ icon: Icon, label, destructive }) => (
+              {menuItems.map((item) => (
                 <DropdownMenuItem
-                  key={label}
-                  variant={destructive ? 'destructive' : undefined}
+                  key={item.label}
+                  variant={item.destructive ? 'destructive' : undefined}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    item.onClick();
+                  }}
                 >
-                  <Icon className="h-4 w-4" />
-                  <span className={label === 'Logout' ? 'ml-1' : 'ml-2'}>
-                    {label}
+                  <item.icon className="h-4 w-4" />
+                  <span className={item.label === 'Logout' ? 'ml-1' : 'ml-2'}>
+                    {item.label}
                   </span>
                 </DropdownMenuItem>
               ))}

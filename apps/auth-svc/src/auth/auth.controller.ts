@@ -46,6 +46,7 @@ export class AuthController {
     return user;
   }
 
+  @Public()
   @Post('/signout')
   signOut(@Res() res: Response) {
     const result = this.authService.signOut(res);

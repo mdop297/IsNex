@@ -1,4 +1,4 @@
-import { api, secureApi } from './axios';
+import { api } from './axios';
 import { z } from 'zod';
 
 // Request schemas
@@ -57,10 +57,14 @@ export const authApi = {
   // Public: register
   register: async (
     payload: z.infer<typeof RegisterRequestSchema>,
-  ): Promise<LoginResponse> => {
-    const body = RegisterRequestSchema.parse(payload);
-    const response = await api.post('/api/auth/signup', body);
-    return LoginResponseSchema.parse(response.data);
+  ): Promise<LoginResponse | undefined> => {
+    try {
+      const body = RegisterRequestSchema.parse(payload);
+      const response = await api.post('/api/auth/signup', body);
+      return LoginResponseSchema.parse(response.data);
+    } catch (err) {
+      throw err;
+    }
   },
 
   // Protected: get current user
@@ -71,7 +75,7 @@ export const authApi = {
 
   // Protected: logout
   logout: async (): Promise<void> => {
-    await secureApi.post('/api/auth/logout');
+    await api.post('/api/auth/signout');
   },
 
   // Protected: refresh access token

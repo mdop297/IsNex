@@ -122,13 +122,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   ): Promise<LoginResponse | undefined> => {
     try {
       setIsLoading(true);
-      const loginResponse: LoginResponse = await authApi.register(payload);
+      const signupResponse: LoginResponse | undefined =
+        await authApi.register(payload);
+      if (!signupResponse) return;
+      setAccessToken(signupResponse.accessToken);
 
-      setAccessToken(loginResponse.accessToken);
-
-      setUser(loginResponse.user);
+      setUser(signupResponse.user);
       setIsAuthenticated(true);
-      return loginResponse;
+      return signupResponse;
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message || 'Registration failed');
@@ -145,6 +146,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setIsLoading(true);
       await authApi.logout();
+      bc.postMessage('logout');
       setAccessToken(null);
       setUser(null);
       setIsAuthenticated(false);
@@ -183,19 +185,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   // Handle automatic logout
+  const bc = new BroadcastChannel('auth');
+
   useEffect(() => {
-    const handleAuthLogout = () => {
-      setAccessToken(null);
-      setUser(null);
-      setIsAuthenticated(false);
-      setError('Session expired');
+    bc.onmessage = (event) => {
+      if (event.data === 'logout') {
+        setAccessToken(null);
+        setUser(null);
+        setIsAuthenticated(false);
+      }
     };
-
-    window.addEventListener('auth:logout', handleAuthLogout);
-
-    return () => {
-      window.removeEventListener('auth:logout', handleAuthLogout);
-    };
+    return () => bc.close();
   }, []);
 
   // Cleanup on unmount
