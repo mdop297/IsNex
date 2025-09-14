@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
-import { authApi, LoginRequestSchema, LoginResponse } from '@/lib/api/auth';
+import { LoginRequestSchema, LoginResponse } from '@/lib/api/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import {
@@ -18,12 +18,14 @@ import {
   FormMessage,
 } from '../ui/form';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export function SignInForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
   const router = useRouter();
+  const { login, isLoading } = useAuth();
 
   const form = useForm<z.infer<typeof LoginRequestSchema>>({
     defaultValues: {
@@ -35,11 +37,10 @@ export function SignInForm({
 
   const onSubmit = async (data: z.infer<typeof LoginRequestSchema>) => {
     try {
-      console.log('onSubmit called');
-      const res: LoginResponse = await authApi.login(data);
+      const res: LoginResponse | undefined = await login(data);
       console.log(data);
 
-      if (res.accessToken) {
+      if (res && res.accessToken) {
         router.push('/home'); // redirect
       }
     } catch (err) {
@@ -105,7 +106,7 @@ export function SignInForm({
                   )}
                 />
                 <Button type="submit" className="w-full ">
-                  Login
+                  {isLoading ? 'Logging in...' : 'Login'}
                 </Button>
                 <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                   <span className="bg-card text-muted-foreground relative z-10 px-2">

@@ -17,11 +17,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { authApi } from '@/lib/api/auth';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 const SignUpForm = () => {
   const router = useRouter();
+  const { register, isLoading } = useAuth();
 
   const form = useForm<z.infer<typeof RegisterRequestSchema>>({
     defaultValues: {
@@ -33,11 +34,12 @@ const SignUpForm = () => {
 
   const onSubmit = async (data: z.infer<typeof RegisterRequestSchema>) => {
     try {
-      const res: LoginResponse = await authApi.register(data);
+      const res: LoginResponse | undefined = await register(data);
+
       console.log(res); // debug
 
-      if (res.accessToken) {
-        router.push('/home'); // redirect
+      if (res && res.accessToken) {
+        router.push('/home');
       }
     } catch (err) {
       console.error(err);
@@ -105,7 +107,7 @@ const SignUpForm = () => {
               )}
             />
             <Button type="submit" className="mt-4 w-full">
-              Continue with Email
+              {isLoading ? 'Signing up...' : 'Continue with Email'}
             </Button>
           </form>
         </Form>

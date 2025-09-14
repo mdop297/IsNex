@@ -40,9 +40,9 @@ export type RegisterResponse = z.infer<typeof RegisterResponseSchema>;
 
 export const authApi = {
   login: async (
-    payload: z.infer<typeof LoginRequestSchema>,
+    credentials: z.infer<typeof LoginRequestSchema>,
   ): Promise<LoginResponse> => {
-    const body = LoginRequestSchema.parse(payload);
+    const body = LoginRequestSchema.parse(credentials);
     const response = await api.post('/api/auth/signin', body);
 
     return LoginResponseSchema.parse(response.data);
