@@ -32,12 +32,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ChatSearch from './SearchModal';
 
 import CollapsibleNav from '@/components/CollapsibleNav';
 import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
 
 // Menu items.
 const items = [
@@ -60,16 +59,9 @@ const menuItems = [
 ];
 
 export default function AppSidebar() {
-  const router = useRouter();
   const { user } = useAuth();
   const { state, isMobile, toggleSidebar } = useSidebar();
   const [hovered, setHovered] = useState(false);
-
-  useEffect(() => {
-    if (!user) {
-      router.push('/login');
-    }
-  }, [user, router]);
 
   return (
     user && (

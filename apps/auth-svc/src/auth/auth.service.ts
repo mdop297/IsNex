@@ -137,15 +137,23 @@ export class AuthService {
       };
       const tokens = await this.generateTokens(newPayload);
 
-      // Update refresh token in cookie
+      // Set refresh token in HTTP-only cookie
       response.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         secure: this.configService.get('NODE_ENV') === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: 'lax',
+        path: '/api/auth/refresh',
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 7 days
       });
-
-      return { accessToken: tokens.accessToken };
+      return {
+        accessToken: tokens.accessToken,
+        user: {
+          userId: user.id,
+          email: user.email,
+          username: user.username,
+          role: user.role,
+        },
+      };
     } catch (e) {
       console.error('Refresh token error:', e);
       throw new UnauthorizedException('Invalid refresh token 2');

@@ -34,6 +34,12 @@ export type LoginResponse = z.infer<typeof LoginResponseSchema>;
 export const RegisterResponseSchema = UserSchema;
 export type RegisterResponse = z.infer<typeof RegisterResponseSchema>;
 
+export const RefreshResponseSchema = z.object({
+  accessToken: z.string(),
+  user: UserSchema,
+});
+export type RefreshResponse = z.infer<typeof RefreshResponseSchema>;
+
 //
 // ---------- API METHODS ----------
 //
@@ -58,10 +64,10 @@ export const authApi = {
   },
 
   // Protected: get current user
-  me: async (): Promise<User> => {
-    const response = await secureApi.get('/api/auth/me');
-    return UserSchema.parse(response.data);
-  },
+  // me: async (): Promise<User> => {
+  //   const response = await secureApi.get('/api/auth/me');
+  //   return UserSchema.parse(response.data);
+  // },
 
   // Protected: logout
   logout: async (): Promise<void> => {
@@ -69,8 +75,8 @@ export const authApi = {
   },
 
   // Protected: refresh access token
-  refresh: async (): Promise<{ access_token: string }> => {
-    const response = await secureApi.post('/api/auth/refresh');
-    return z.object({ access_token: z.string() }).parse(response.data);
+  refresh: async (): Promise<RefreshResponse> => {
+    const response = await api.post('/api/auth/refresh');
+    return RefreshResponseSchema.parse(response.data);
   },
 };

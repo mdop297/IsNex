@@ -4,10 +4,11 @@ import {
   authApi,
   LoginRequestSchema,
   LoginResponse,
+  RefreshResponse,
   RegisterRequestSchema,
   User,
 } from '@/lib/api/auth';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import z from 'zod';
 
 type AuthContextType = {
@@ -23,7 +24,9 @@ type AuthContextType = {
   ) => Promise<LoginResponse | undefined>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<boolean>;
+  refresh: () => Promise<RefreshResponse | null>;
   clearError: () => void;
+  getAccessToken: () => string | null;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,18 +36,55 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const accessTokenRef = useRef<string | null>(null);
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const clearError = () => setError(null);
+
+  const getAccessToken = () => accessTokenRef.current;
+
+  const setAccessToken = (token: string | null) => {
+    accessTokenRef.current = token;
+
+    if (token) {
+      // Set up auto refresh 1 minute before token expires (14 minutes)
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+
+      refreshIntervalRef.current = setInterval(
+        async () => {
+          console.log('Auto refreshing token...');
+          await refresh();
+        },
+        14 * 60 * 1000,
+      ); // 14 minutes
+    } else {
+      // Clear refresh interval
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+        refreshIntervalRef.current = null;
+      }
+    }
+  };
 
   const checkAuth = async (): Promise<boolean> => {
     try {
       setIsLoading(true);
-      const userData = await authApi.me();
-      setUser(userData);
+
+      const refreshData = await authApi.refresh();
+
+      setAccessToken(refreshData.accessToken);
+      setUser(refreshData.user);
       setIsAuthenticated(true);
       setError(null);
       return true;
-    } catch {
+    } catch (error) {
+      console.error('Auth check failed:', error);
+
+      // Clear memory token
+      setAccessToken(null);
+
       setUser(null);
       setIsAuthenticated(false);
       return false;
@@ -58,7 +98,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   ): Promise<LoginResponse | undefined> => {
     try {
       setIsLoading(true);
+      clearError();
       const loginResponse: LoginResponse = await authApi.login(credentials);
+      setAccessToken(loginResponse.accessToken);
       setUser(loginResponse.user);
       setIsAuthenticated(true);
       return loginResponse;
@@ -81,13 +123,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setIsLoading(true);
       const loginResponse: LoginResponse = await authApi.register(payload);
+
+      setAccessToken(loginResponse.accessToken);
+
       setUser(loginResponse.user);
       setIsAuthenticated(true);
       return loginResponse;
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message || 'Registration failed');
-      } else setError('Registration failed');
+      } else {
+        setError('Registration failed');
+      }
+      setAccessToken(null);
     } finally {
       setIsLoading(false);
     }
@@ -97,20 +145,66 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setIsLoading(true);
       await authApi.logout();
+      setAccessToken(null);
+      setUser(null);
+      setIsAuthenticated(false);
+      setError(null);
+      window.dispatchEvent(new CustomEvent('auth:logout'));
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error('Logout failed:', err);
       } else console.error('Logout failed');
     } finally {
-      setUser(null);
-      setIsAuthenticated(false);
-      setError(null);
       setIsLoading(false);
     }
   };
 
+  const refresh = async (): Promise<RefreshResponse | null> => {
+    try {
+      setIsLoading(true);
+      const refreshData = await authApi.refresh();
+
+      setAccessToken(refreshData.accessToken);
+
+      setUser(refreshData.user);
+      setIsAuthenticated(true);
+      setError(null);
+      return refreshData;
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error('Refresh failed:', err);
+      } else console.error('Refresh failed');
+      setUser(null);
+      setIsAuthenticated(false);
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle automatic logout
   useEffect(() => {
-    checkAuth();
+    const handleAuthLogout = () => {
+      setAccessToken(null);
+      setUser(null);
+      setIsAuthenticated(false);
+      setError('Session expired');
+    };
+
+    window.addEventListener('auth:logout', handleAuthLogout);
+
+    return () => {
+      window.removeEventListener('auth:logout', handleAuthLogout);
+    };
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+    };
   }, []);
 
   return (
@@ -125,6 +219,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         logout,
         checkAuth,
         clearError,
+        refresh,
+        getAccessToken,
       }}
     >
       {children}

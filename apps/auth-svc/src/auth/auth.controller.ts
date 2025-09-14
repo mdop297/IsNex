@@ -41,7 +41,7 @@ export class AuthController {
     return this.authService.getProfile(param);
   }
 
-  @Get('/whoami')
+  @Get('/me')
   whoami(@CurrentUser() user: IUser) {
     return user;
   }
@@ -53,7 +53,7 @@ export class AuthController {
   }
 
   @Public()
-  @Post('refresh')
+  @Post('/refresh')
   async refreshToken(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
@@ -62,8 +62,8 @@ export class AuthController {
     if (!refreshToken) {
       throw new UnauthorizedException('No refresh token provided');
     }
-    const tokens = await this.authService.refreshToken(refreshToken, res);
+    const data = await this.authService.refreshToken(refreshToken, res);
 
-    return { accessToken: tokens.accessToken };
+    return data;
   }
 }
