@@ -382,6 +382,32 @@
     scrollbar-width: none;
   }
 
+  .minimal-scrollbar {
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: #6b7280 transparent;
+
+    /* Webkit browsers (Chrome, Safari, Edge) */
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #6b7280;
+      border-radius: 3px;
+      transition: background-color 0.2s ease;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #4b5563;
+    }
+
+    &::-webkit-scrollbar-button {
+      display: none;
+    }
+  }
+
   .message-content {
     max-width: 100%;
     overflow-x: hidden;

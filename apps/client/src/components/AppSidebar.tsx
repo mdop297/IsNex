@@ -37,6 +37,7 @@ import ChatSearch from './SearchModal';
 
 import CollapsibleNav from '@/components/CollapsibleNav';
 import { useAuth } from '@/context/AuthContext';
+import FileUploadModal from './file-upload/FileUpload';
 
 // Menu items.
 const items = [
@@ -151,6 +152,12 @@ export default function AppSidebar() {
         </SidebarContent>
         {/* FOOTER */}
         <SidebarFooter onClick={(e) => e.stopPropagation()}>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <FileUploadModal />
+            </SidebarMenuItem>
+          </SidebarMenu>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton size={'lg'} className="cursor-pointer">
