@@ -265,7 +265,7 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
     <div className="space-y-4 px-4">
       <div className="text-center">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600">
-          <Upload className="h-8 w-8 text-white" />
+          <Upload className="h-8 w-8 text-foreground" />
         </div>
         <h2 className="text-2xl font-semibold">Upload Your Files</h2>
         <p className="text-muted-foreground">
@@ -382,7 +382,10 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
                     {(fileItem.status === 'uploading' ||
                       fileItem.status === 'completed') && (
                       <div className="space-y-1">
-                        <Progress value={fileItem.progress} className="h-2" />
+                        <Progress
+                          value={fileItem.progress}
+                          className="h-2 [&_[data-slot=progress-indicator]]:bg-green-500"
+                        />
                         <p className="text-xs text-muted-foreground">
                           {fileItem.status === 'completed'
                             ? 'Upload completed'
@@ -398,7 +401,7 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
 
                   <div className="flex items-center space-x-2">
                     {fileItem.status === 'completed' && (
-                      <CheckCircle2 className="h-5 w-5 text-blue-500" />
+                      <CheckCircle2 className="h-5 w-5 text-green-500" />
                     )}
 
                     {fileItem.status === 'pending' && (
@@ -430,7 +433,7 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
       {/* Success Message & Actions */}
       {allFilesCompleted && (
         <Alert className="border-blue-200 bg-blue-50">
-          <CheckCircle2 className="h-4 w-4 text-blue-600" />
+          <CheckCircle2 className="h-4 w-4 text-green-600" />
           <AlertDescription className="flex items-center justify-between">
             <div>
               <p className="font-medium text-blue-800">
@@ -474,8 +477,8 @@ export const FileUploadModal: React.FC<Omit<FileUploadFormProps, 'onClose'>> = (
         onClick={openModal}
         asChild
         className={cn(
-          'flex justify-center items-center cursor-pointer',
-          'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700',
+          'flex justify-center items-center cursor-pointer ',
+          'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-foreground',
           `${state == 'collapsed' ? 'gap-0' : 'gap-2'}`,
         )}
         tooltip="Upload Files"
@@ -490,7 +493,9 @@ export const FileUploadModal: React.FC<Omit<FileUploadFormProps, 'onClose'>> = (
       <Dialog open={isModalOpen} onOpenChange={closeModal}>
         <DialogContent className="min-w-1/2 max-h-[90vh] overflow-y-auto hide-scrollbar">
           <DialogHeader>
-            <DialogTitle className="sr-only">Upload Files</DialogTitle>
+            <DialogTitle className="sr-only text-foreground">
+              Upload Files
+            </DialogTitle>
           </DialogHeader>
           <FileUploadForm {...props} onClose={closeModal} />
         </DialogContent>
