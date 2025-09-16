@@ -29,6 +29,19 @@ services:
       - ./apps/client:/isnex/apps/client
       - ./apps/client/node_modules:/isnex/apps/client/node_modules
 
+  data-lake:
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+    container_name: isnex-data-lake
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    command: server /data --console-address ":9001"
+    volumes:
+      - ./minio/data:/data
+
 networks:
   default:
     name: isnex-net

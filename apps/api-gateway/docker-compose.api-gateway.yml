@@ -1,4 +1,4 @@
-x-kong-image: &kong-image kong:3.9.1
+x-kong-image: &kong-image kong:3.9.1-ubuntu
 
 volumes:
   kong_data: {}
@@ -10,13 +10,6 @@ volumes:
     driver_opts:
       type: tmpfs
       device: tmpfs
-
-# networks:
-#   isnex-net:
-#     external: false
-#     ipam:
-#       config:
-#         - subnet: 172.1.1.0/24
 
 services:
   kong:
@@ -70,13 +63,13 @@ services:
       - no-new-privileges
 
   zipkin:
-    image: openzipkin/zipkin:latest
+    image: openzipkin/zipkin:3.5
     container_name: zipkin
     ports:
       - 9411:9411
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.5.0
     container_name: prometheus
     ports:
       - '9090:9090'
@@ -84,10 +77,10 @@ services:
       - ./apps/api-gateway/config/prometheus.yml:/etc/prometheus/prometheus.yml
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:12.3.0-17718666199-ubuntu
     container_name: grafana
     ports:
-      - '9000:3000'
+      - '3500:3000'
 
   # keycloak:
   #   image: quay.io/keycloak/keycloak:latest
