@@ -1,5 +1,6 @@
 services:
   auth:
+    container_name: auth-svc
     build:
       context: ./apps/auth-svc/
       dockerfile: Dockerfile.dev
@@ -19,7 +20,7 @@ services:
       - ./apps/auth-svc/.env.dev
 
   client:
-    container_name: client
+    container_name: client-ui
     build:
       context: .
       dockerfile: ./apps/client/Dockerfile.dev
@@ -41,6 +42,28 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - ./minio/data:/data
+
+  documents:
+    container_name: documents-svc
+    build:
+      context: ./apps/documents
+      dockerfile: Dockerfile.dev
+    ports:
+      - '4000:4000'
+    volumes:
+      - ./apps/documents/src:/app/src
+      - ./apps/documents/pyproject.toml:/app/pyproject.toml
+      - ./apps/documents/uv.lock:/app/uv.lock
+    develop:
+      watch:
+        - action: sync
+          path: ./apps/documents
+          target: /app
+          ignore:
+            - .venv/
+
+        - action: rebuild
+          path: ./apps/documents/uv.lock
 
 networks:
   default:

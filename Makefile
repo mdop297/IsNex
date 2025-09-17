@@ -8,7 +8,7 @@ AUTH_ENV_FILE = ./apps/auth-svc/.env.dev
 # Docker Compose files
 COMPOSE_FILE = docker-compose.yml
 COMPOSE_DEV_FILE = docker-compose.override.yml
-COMPOSE_API_GATEWAY = apps/api-gateway/docker-compose.api-gateway.yml
+COMPOSE_API_GATEWAY = docker-compose.api-gateway.yml
 COMPOSE_MONITORING = infras/monitoring/docker-compose.monitoring.yml
 
 # Image names
@@ -85,9 +85,8 @@ up: up-network
 up-dev: up-network
 	@echo "🔧 Starting all services in development mode (single stack)..."
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) up -d
-# docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) up -d
+# docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) up --watch documents
 	@echo "✅ All development services started in single stack!"
-
 
 # Start monitoring services
 up-monitoring: up-network

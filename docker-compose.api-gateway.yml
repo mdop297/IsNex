@@ -16,7 +16,6 @@ services:
     image: *kong-image
     container_name: kong-dbless
     user: '${KONG_USER:-kong}'
-
     environment:
       KONG_PROMETHEUS_ENABLED: 'on'
       KONG_PREFIX: /var/run/kong
@@ -45,9 +44,9 @@ services:
     restart: on-failure
     read_only: true
     volumes:
-      - ./declarative:/kong/declarative
-      - ./tmp_volume:/tmp
-      - ./prefix_volume:/var/run/kong
+      - ./apps/api-gateway/declarative:/kong/declarative
+      - ./apps/api-gateway/tmp_volume:/tmp
+      - ./apps/api-gateway/prefix_volume:/var/run/kong
     security_opt:
       - no-new-privileges
 

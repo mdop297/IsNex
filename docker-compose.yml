@@ -1,6 +1,6 @@
 services:
   auth:
-    container_name: isnex-auth-svc
+    container_name: auth-svc
     build:
       context: ./apps/auth-svc/
       dockerfile: Dockerfile
@@ -16,7 +16,7 @@ services:
 
   auth-db:
     image: postgres:17
-    container_name: isnex-auth-postgres
+    container_name: auth-db
     restart: unless-stopped
     ports:
       - 2432:5432
