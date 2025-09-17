@@ -1,3 +1,5 @@
+import { documentsApi } from '@/lib/api/documents';
+
 // Type definitions
 export interface FileItem {
   id: number;
@@ -139,25 +141,27 @@ export class BackgroundUploadManager {
     console.log('Uploading file: ==>', fileItem.file.name);
     console.log('===============================');
 
+    this.updateFileStatus(fileItem.id, { status: 'uploading', progress: 0 });
+
     try {
-      // Simulate upload with progress
-      for (let progress = 0; progress <= 100; progress += 5) {
-        await new Promise<void>((resolve) => setTimeout(resolve, 200));
-        this.updateFileStatus(fileItem.id, { progress });
+      const response = await documentsApi.uploadFile(
+        fileItem.file,
+        (progress) => {
+          this.updateFileStatus(fileItem.id, { progress });
+        },
+      );
 
-        // Check if file was removed during upload
-        if (!this.uploadQueue.has(fileItem.id)) {
-          return;
-        }
-      }
+      console.log('Upload response:', response);
 
-      this.updateFileStatus(fileItem.id, { status: 'completed' });
+      this.updateFileStatus(fileItem.id, {
+        status: 'completed',
+        progress: 100,
+      });
     } catch (error) {
       this.updateFileStatus(fileItem.id, { status: 'error' });
       console.error('Upload error:', error);
     } finally {
       this.activeUploads.delete(fileItem.id);
-      // Process next files in queue
       setTimeout(() => this.processQueue(), 100);
     }
   }

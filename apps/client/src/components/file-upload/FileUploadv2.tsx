@@ -69,7 +69,7 @@ const isDocumentFile = (fileType: string): boolean =>
 
 // File Upload Form Component
 export const FileUploadForm: React.FC<FileUploadFormProps> = ({
-  maxFileSize = 10 * 1024 * 1024, // 10MB default
+  maxFileSize = 30 * 1024 * 1024, // 30MB default
   acceptedFileTypes = ['image/*', 'video/*', '.pdf', '.doc', '.docx', '.txt'],
   maxFiles = 10,
   onClose,
