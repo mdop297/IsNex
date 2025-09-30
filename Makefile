@@ -2,13 +2,13 @@
 
 # ------------------ Variables ------------------------
 # Environment file for Docker Compose
-ENV_FILE = ./envs/.env.dev
-AUTH_ENV_FILE = ./apps/auth-svc/.env.dev
+ENV_FILE=$(CURDIR)/envs/.env.dev
+AUTH_ENV_FILE=$(CURDIR)/apps/auth-svc/.env.dev
 
 # Docker Compose files
-COMPOSE_FILE = docker-compose.yml
-COMPOSE_DEV_FILE = docker-compose.override.yml
-COMPOSE_API_GATEWAY = docker-compose.api-gateway.yml
+COMPOSE_FILE = infras/compose/docker-compose.yml
+COMPOSE_DEV_FILE = infras/compose/docker-compose.override.yml
+COMPOSE_API_GATEWAY = infras/compose/docker-compose.api-gateway.yml
 COMPOSE_MONITORING = infras/monitoring/docker-compose.monitoring.yml
 
 # Image names
@@ -19,7 +19,7 @@ CLIENT_IMAGE = mdop297/isnex-client
 NETWORK_NAME = isnex-net
 
 # Kong configuration path
-KONG_CONFIG = ./infras/api-gateway/declarative/kong.yml
+KONG_CONFIG = ./apps/api-gateway/declarative/kong.yml
 
 # Health check URL
 HEALTH_URL = http://localhost:3000/health
@@ -84,7 +84,7 @@ up: up-network
 # Start services in development mode with code sync
 up-dev: up-network
 	@echo "🔧 Starting all services in development mode (single stack)..."
-	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) up -d
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) --env-file $(ENV_FILE) --env-file $(AUTH_ENV_FILE) up -d
 # docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) up --watch documents
 	@echo "✅ All development services started in single stack!"
 
@@ -101,7 +101,7 @@ up-monitoring: up-network
 # Build services for development
 build-dev:
 	@echo "🏗️  Building development images..."
-	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) build
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) --env-file $(ENV_FILE) --env-file $(AUTH_ENV_FILE) build
 	@echo "✅ Development build completed!"
 
 # Apply Kong config manually
@@ -119,7 +119,7 @@ build-prod:
 # Stop and remove services
 down:
 	@echo "🛑 Stopping all services..."
-	docker compose -p isnex down
+	docker compose -p compose down
 	@echo "✅ All services stopped!"
 
 # View logs for all services

@@ -2,17 +2,17 @@ services:
   auth:
     container_name: auth-svc
     build:
-      context: ./apps/auth-svc/
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: ./apps/auth-svc/Dockerfile
     restart: unless-stopped
     ports:
       - 2001:3001
     environment:
-      DATABASE_URL: 'postgresql://${AUTH_POSTGRES_USER}:${AUTH_POSTGRES_PASSWORD}@auth-db:5432/${AUTH_POSTGRES_DB}'
+      DATABASE_URL: "postgresql://${AUTH_POSTGRES_USER}:${AUTH_POSTGRES_PASSWORD}@auth-db:5432/${AUTH_POSTGRES_DB}"
     depends_on:
       - auth-db
     env_file:
-      - ./envs/.env.dev
+      - ../../envs/.env.dev
 
   auth-db:
     image: postgres:17
@@ -27,7 +27,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
-      - ./envs/.env.dev
+      - ../../envs/.env.dev
 
 volumes:
   postgres_data:
