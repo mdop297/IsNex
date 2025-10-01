@@ -9,7 +9,8 @@ AUTH_ENV_FILE=$(CURDIR)/apps/auth-svc/.env.dev
 COMPOSE_FILE = infras/compose/docker-compose.yml
 COMPOSE_DEV_FILE = infras/compose/docker-compose.override.yml
 COMPOSE_API_GATEWAY = infras/compose/docker-compose.api-gateway.yml
-COMPOSE_MONITORING = infras/monitoring/docker-compose.monitoring.yml
+COMPOSE_KAFKA = infras/kafka/docker-compose.kafka.yml
+# COMPOSE_MONITORING = infras/monitoring/docker-compose.monitoring.yml
 
 # Image names
 AUTH_IMAGE = mdop297/isnex-auth
@@ -74,6 +75,11 @@ up-network:
 	@echo "✅ Network $(NETWORK_NAME) is ready"
 
 # ------------------ Docker Compose Commands ------------------------
+# Start kafka service
+up-kafka: up-network
+	@echo "🚀 Starting Kafka service..."
+	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_KAFKA) up -d
+
 
 # Start services in production mode
 up: up-network
@@ -82,7 +88,7 @@ up: up-network
 	@echo "✅ Services started successfully!"
 
 # Start services in development mode with code sync
-up-dev: up-network
+up-dev: up-network up-kafka
 	@echo "🔧 Starting all services in development mode (single stack)..."
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) --env-file $(ENV_FILE) --env-file $(AUTH_ENV_FILE) up -d
 # docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) up --watch documents
