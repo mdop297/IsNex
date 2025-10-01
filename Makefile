@@ -5,27 +5,88 @@
 ENV_FILE = ./envs/auth.env
 
 # Docker Compose files
-COMPOSE_FILE = docker-compose.yml
-COMPOSE_DB_FILE = docker-compose.db.yml
-COMPOSE_DEV_FILE = docker-compose.override.yml
+COMPOSE_FILE = infras/compose/docker-compose.yml
+COMPOSE_DEV_FILE = infras/compose/docker-compose.override.yml
+COMPOSE_API_GATEWAY = infras/compose/docker-compose.api-gateway.yml
+COMPOSE_KAFKA = infras/compose/docker-compose.kafka.yml
 
-# Image name for auth service
-IMAGE_NAME = mdop297/isnex-auth
+# Image names
+AUTH_IMAGE = mdop297/isnex-auth
+CLIENT_IMAGE = mdop297/isnex-client
 
+# Network name
+NETWORK_NAME = isnex-net
+
+# Kong configuration path
+KONG_CONFIG = ./apps/api-gateway/declarative/kong.yml
+
+# Health check URL
+HEALTH_URL = http://localhost:3000/health
+
+.PHONY: help up up-dev up-monitoring up-network build-dev build-prod down logs exec-auth \
+        skaffold-dev-cloud skaffold-prod skaffold-clean auth-run-dev auth-run-dev-watch \
+        auth-migrate-dev auth-db-reset auth-db-studio auth-prisma-generate auth-localhost \
+        clean push-prod check-health k8s-logs k8s-exec kong-config status
+
+# Default target
+help:
+	@echo "🐳 Docker Compose Commands:"
+	@echo "  up              - Start services in production mode"
+	@echo "  up-dev          - Start services in development mode"
+	@echo "  up-network      - Create Docker network"
+	@echo "  build-dev       - Build services for development"
+	@echo "  build-prod      - Build services for production"
+	@echo "  down            - Stop and remove services"
+	@echo "  logs            - View logs for all services"
+	@echo "  exec-auth       - Access the auth service container"
+	@echo "  kong-config     - Apply Kong configuration manually"
+	@echo ""
+	@echo "☸️  Kubernetes Commands:"
+	@echo "  skaffold-dev-cloud - Run Skaffold in development mode"
+	@echo "  skaffold-prod      - Run Skaffold in production mode"
+	@echo "  skaffold-clean     - Delete Skaffold resources"
+	@echo "  k8s-logs           - View Kubernetes pod logs"
+	@echo "  k8s-exec           - Access Kubernetes pod"
+	@echo ""
+	@echo "🔐 Auth Service Commands:"
+	@echo "  auth-run-dev         - Run auth service in development"
+	@echo "  auth-run-dev-watch   - Run with hot reload (nodemon)"
+	@echo "  auth-migrate-dev     - Migrate database in development"
+	@echo "  auth-db-reset        - Reset database (drops and recreates)"
+	@echo "  auth-db-studio       - Open Prisma Studio"
+	@echo "  auth-prisma-generate - Generate Prisma client"
+	@echo "  auth-localhost       - Run auth-service on localhost"
+	@echo ""
+	@echo "🛠️  Utility Commands:"
+	@echo "  clean          - Clean up Docker resources"
+	@echo "  push-prod      - Build and push production image"
+	@echo "  check-health   - Check container health"
+	@echo "  status         - Show status of all services"
+
+# ------------------ Docker Network Management ------------------------
+
+# Create Docker network if it doesn't exist
+up-network:
+	@echo "🌐 Creating Docker network: $(NETWORK_NAME)"
+	@docker network ls | grep -q $(NETWORK_NAME) || docker network create $(NETWORK_NAME)
 # ------------------ Docker Compose Commands ------------------------
 
-# Start services in detached mode
-up:
+# Start kafka services
+up-kafka: up-network
+	@echo "🚀 Starting Kafka services..."
+	docker compose -f $(COMPOSE_KAFKA) up -d
+
+# Start services in production mode
+up: up-network up-kafka
+	@echo "🚀 Starting services in production mode..."
 	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) up -d
+	@echo "✅ Services started successfully!"
 
-# Start database to test in local in detached mode
-up-database:
-	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_DB_FILE) up -d
-
-
-# Start services in development mode with override
-up-dev:
-	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) up -d
+# Start services in development mode with code sync
+up-dev: up-network up-kafka
+	@echo "🔧 Starting all services in development mode (single stack)..."
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) --env-file $(ENV_FILE) --env-file $(AUTH_ENV_FILE) up -d
+	@echo "✅ All development services started in single stack!"
 
 # Build services for development
 build-dev:
