@@ -2,10 +2,16 @@ FROM node:22-alpine AS builder
 
 RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
 RUN apk add --no-cache protobuf openssl
+
 WORKDIR /isnex/apps/auth-svc/
-COPY package*.json ./
-RUN pnpm install 
-COPY . .
+COPY ./apps/auth-svc/package*.json ./
+
+WORKDIR /isnex
+COPY ./pnpm-workspace.yaml ./pnpm-lock.yaml ./package.json ./
+RUN pnpm install --frozen-lockfile --filter auth-svc...
+
+WORKDIR /isnex/apps/auth-svc
+COPY ./apps/auth-svc .
 RUN pnpx prisma generate
 RUN pnpm run build
 
@@ -31,7 +37,7 @@ COPY --chown=nodejs:nodejs ./entrypoint.prod.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 USER nodejs
 
-EXPOSE 3000
+EXPOSE 3001
 
 # ENTRYPOINT ["dumb-init", "./entrypoint.sh"]
 ENTRYPOINT ["./entrypoint.sh"]

@@ -21,15 +21,17 @@ import { LoginDto } from './dtos/login.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
   @Public()
-  @Post('/register')
-  signUp(@Body() body: CreateUserDto) {
-    return this.authService.register(body);
+  @Post('/signup')
+  async signUp(@Body() body: CreateUserDto, @Res() res: Response) {
+    const result = await this.authService.register(body, res);
+    return res.json(result);
   }
 
   @Public()
   @UseGuards(LocalAuthGuard)
-  @Post('login')
+  @Post('/signin')
   async login(@Body() body: LoginDto, @Res() res: Response) {
+    console.log('backend Login called');
     const result = await this.authService.login(body, res);
     return res.json(result);
   }
@@ -39,11 +41,12 @@ export class AuthController {
     return this.authService.getProfile(param);
   }
 
-  @Get('/whoami')
+  @Get('/me')
   whoami(@CurrentUser() user: IUser) {
     return user;
   }
 
+  @Public()
   @Post('/signout')
   signOut(@Res() res: Response) {
     const result = this.authService.signOut(res);
@@ -51,7 +54,7 @@ export class AuthController {
   }
 
   @Public()
-  @Post('refresh')
+  @Post('/refresh')
   async refreshToken(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
@@ -60,8 +63,8 @@ export class AuthController {
     if (!refreshToken) {
       throw new UnauthorizedException('No refresh token provided');
     }
-    const tokens = await this.authService.refreshToken(refreshToken, res);
+    const data = await this.authService.refreshToken(refreshToken, res);
 
-    return { accessToken: tokens.accessToken };
+    return data;
   }
 }

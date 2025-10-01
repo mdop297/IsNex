@@ -52,7 +52,7 @@ async def upload_file(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Server error: {str(e)}") from e
 
- 
+
 @app.get("/download/{filename}")
 async def download_file(filename: str):
     try:

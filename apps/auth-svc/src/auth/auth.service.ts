@@ -8,7 +8,7 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 import { LoginDto } from './dtos/login.dto';
 
@@ -50,25 +50,32 @@ export class AuthService {
     }
   }
 
-  async register(userDto: CreateUserDto) {
+  async register(userDto: CreateUserDto, response: Response) {
     const user = await this.userService.findByEmail(userDto.email);
-
+    const rawPassword = userDto.password;
     if (user) {
       throw new BadRequestException('Email in use');
     }
-
+    console.log('Register reached!!!');
     const result = this.getHashPassword(userDto.password);
     userDto.password = result;
     if (!userDto.username) {
       userDto.username = userDto.email.split('@')[0];
     }
     const newUser = await this.userService.create(userDto);
-
-    return newUser;
+    if (newUser) {
+      return await this.login(
+        { email: userDto.email, password: rawPassword },
+        response,
+      );
+    }
+    return {
+      message: 'User not created',
+    };
   }
 
   async login(body: LoginDto, response: Response) {
-    const validUser = await this.validateUser(body.username, body.password);
+    const validUser = await this.validateUser(body.email, body.password);
 
     if (!validUser) {
       throw new NotFoundException('Invalid credentials');
@@ -86,8 +93,9 @@ export class AuthService {
     response.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: this.configService.get('NODE_ENV') === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: 'lax',
+      path: '/api/auth/refresh',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     return {
@@ -129,15 +137,23 @@ export class AuthService {
       };
       const tokens = await this.generateTokens(newPayload);
 
-      // Update refresh token in cookie
+      // Set refresh token in HTTP-only cookie
       response.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         secure: this.configService.get('NODE_ENV') === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: 'lax',
+        path: '/api/auth/refresh',
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 7 days
       });
-
-      return { accessToken: tokens.accessToken };
+      return {
+        accessToken: tokens.accessToken,
+        user: {
+          userId: user.id,
+          email: user.email,
+          username: user.username,
+          role: user.role,
+        },
+      };
     } catch (e) {
       console.error('Refresh token error:', e);
       throw new UnauthorizedException('Invalid refresh token 2');

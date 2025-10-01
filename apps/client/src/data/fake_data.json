@@ -1,0 +1,449 @@
+{
+  "documents": [
+    {
+      "id": 1,
+      "name": "Traditional Knowledge and the Public Domain.pdf",
+      "type": "pdf",
+      "size": "600 KB",
+      "pages": 42,
+      "uploadedAt": "2025-08-14T10:00:00Z",
+      "modified": "just now",
+      "status": "processed",
+      "category": "research",
+      "tags": ["traditional knowledge", "public domain", "IP"],
+      "summary": "Explores how traditional knowledge interacts with the legal concept of the public domain.",
+      "extractedText": "This paper advances the following principal ideas: → There is no international public domain nor is there any treaty requirement... ",
+      "metadata": {
+        "author": "Ruth L. Okediji",
+        "createdDate": "2018-06",
+        "version": "1.0",
+        "language": "en"
+      },
+      "url": "https://arxiv.org/pdf/2109.02653"
+    },
+    {
+      "id": 2,
+      "name": "The Value of the Public Domain.pdf The Value of the Public Domain.pdf The Value of the Public Domain.pdf",
+      "type": "pdf",
+      "size": "450 KB",
+      "pages": 18,
+      "uploadedAt": "2025-08-14T10:05:00Z",
+      "modified": "just now",
+      "status": "processed",
+      "category": "policy",
+      "tags": ["public domain", "policy", "society"],
+      "summary": "Policy-oriented discussion on the social and cultural value of the public domain.",
+      "extractedText": "Its work, the questions its research poses, and the methods it uses are driven by the belief that the journey to a good society is one that places social...",
+      "metadata": {
+        "author": "Rufus Pollock",
+        "createdDate": "2006-07",
+        "version": "1.0",
+        "language": "en"
+      },
+      "url": "https://arxiv.org/pdf/1611.00097"
+    },
+    {
+      "id": 3,
+      "name": "The Public Domain (Litman).pdf",
+      "type": "pdf",
+      "size": "500 KB",
+      "pages": 25,
+      "uploadedAt": "2025-08-14T10:10:00Z",
+      "modified": "just now",
+      "status": "processed",
+      "category": "legal",
+      "tags": ["copyright", "legal theory", "public domain"],
+      "summary": "Legal analysis of the role and importance of the public domain within copyright law.",
+      "extractedText": "The public domain should be understood not as the realm of material that is undeserving of protection, but as a device that permits the rest of the system to work by leaving the raw material of authorship available for authors to use.",
+      "metadata": {
+        "author": "Jessica Litman",
+        "createdDate": "2004-01",
+        "version": "1.0",
+        "language": "en"
+      },
+      "url": "https://arxiv.org/pdf/1911.02782"
+    },
+    {
+      "id": 4,
+      "name": "Enriching Discourse on Public Domains.pdf",
+      "type": "pdf",
+      "size": "250 KB",
+      "pages": 12,
+      "uploadedAt": "2025-08-14T10:15:00Z",
+      "modified": "just now",
+      "status": "processed",
+      "category": "essay",
+      "tags": ["public domain", "theory", "discourse"],
+      "summary": "Lecture addressing conceptual variations in the meaning of the public domain.",
+      "extractedText": "So if there is only one public domain, but many definitions, perhaps one objective of scholarly discourse... ",
+      "metadata": {
+        "author": "Pamela Samuelson",
+        "createdDate": "2006-03",
+        "version": "1.0",
+        "language": "en"
+      },
+      "url": "https://arxiv.org/pdf/2508.10696"
+    },
+    {
+      "id": 5,
+      "name": "Copyright and the Value of the Public Domain.pdf",
+      "type": "pdf",
+      "size": "700 KB",
+      "pages": 32,
+      "uploadedAt": "2025-08-14T10:20:00Z",
+      "modified": "just now",
+      "status": "processed",
+      "category": "research",
+      "tags": ["public domain", "economics", "empirical"],
+      "summary": "An empirical assessment of how the public domain contributes economic and cultural value.",
+      "extractedText": "Legal Background: definitions and uses of the public domain; 1) Copyright works outside of term; 2) Works which do not qualify for copyright protection...",
+      "metadata": {
+        "author": "Kris Erickson et al.",
+        "createdDate": "2015-01-26",
+        "version": "1.0",
+        "language": "en"
+      },
+      "url": "https://arxiv.org/pdf/2508.10216"
+    },
+    {
+      "id": 6,
+      "name": "Machine Unlearning: Solutions and Challenges.pdf",
+      "type": "pdf",
+      "size": "500 KB",
+      "pages": 12,
+      "uploadedAt": "2025-08-14T10:30:00Z",
+      "modified": "just now",
+      "status": "processing",
+      "category": "technical",
+      "tags": ["machine learning", "privacy", "unlearning"],
+      "summary": "Explores techniques and challenges for removing data from trained machine learning models.",
+      "extractedText": "This paper provides researchers with a roadmap of open problems... the Right to be Forgotten...",
+      "metadata": {
+        "author": "Gavin Leech et al.",
+        "createdDate": "2024-07",
+        "version": "1.0",
+        "language": "en"
+      },
+      "url": "https://arxiv.org/pdf/2308.07061"
+    }
+  ],
+  "conversations": [
+    {
+      "id": 1,
+      "name": "Questions about Project Management Guidelines",
+      "type": "chat",
+      "documentIds": [1],
+      "messageCount": 24,
+      "createdAt": "2024-08-14T10:30:00Z",
+      "modified": "30 min ago",
+      "status": "active",
+      "summary": "Discussion about project timelines, team roles, and milestone tracking procedures.",
+      "messages": [
+        {
+          "id": 1,
+          "sender": "user",
+          "content": "Can you explain the project timeline process mentioned in the guidelines?",
+          "timestamp": "2024-08-14T10:30:00Z",
+          "references": [
+            {
+              "documentId": 1,
+              "page": 12,
+              "section": "Timeline Management",
+              "text": "Project timelines should be established during the planning phase..."
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "sender": "bot",
+          "content": "Based on the Project Management Guidelines, the timeline process involves 4 key phases:\n\n1. **Planning Phase** (Week 1-2): Define scope and milestones\n2. **Execution Phase** (Week 3-8): Daily standups and weekly reviews\n3. **Monitoring Phase** (Ongoing): Track progress against milestones\n4. **Closure Phase** (Final week): Project retrospective and documentation\n\nThe document emphasizes that timelines should be realistic and include buffer time for unexpected issues.",
+          "timestamp": "2024-08-14T10:32:00Z",
+          "sources": [
+            {
+              "documentId": 1,
+              "page": 12,
+              "confidence": 0.95
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "sender": "user",
+          "content": "What are the team roles mentioned in the document?",
+          "timestamp": "2024-08-14T10:35:00Z"
+        },
+        {
+          "id": 4,
+          "sender": "bot",
+          "content": "The guidelines define several key team roles:\n\n**Core Roles:**\n- **Project Manager**: Overall coordination and stakeholder communication\n- **Tech Lead**: Technical decisions and architecture oversight\n- **Product Owner**: Requirements gathering and user story prioritization\n- **Scrum Master**: Process facilitation and impediment removal\n\n**Supporting Roles:**\n- **Developers**: Feature implementation and code reviews\n- **QA Engineers**: Testing strategy and quality assurance\n- **UX/UI Designers**: User experience and interface design\n- **DevOps Engineers**: Deployment and infrastructure management\n\nEach role has specific responsibilities outlined in Section 3.2 of the document.",
+          "timestamp": "2024-08-14T10:37:00Z",
+          "sources": [
+            {
+              "documentId": 1,
+              "page": 18,
+              "confidence": 0.92
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "sender": "user",
+          "content": "How should we handle scope changes during the project?",
+          "timestamp": "2024-08-14T11:45:00Z"
+        },
+        {
+          "id": 6,
+          "sender": "bot",
+          "content": "According to the guidelines, scope changes should follow this process:\n\n**1. Change Request Documentation**\n- Document the requested change in detail\n- Include business justification and impact analysis\n- Estimate time and resource implications\n\n**2. Impact Assessment**\n- Review effect on timeline, budget, and resources\n- Identify dependencies and risks\n- Assess impact on other project components\n\n**3. Approval Process**\n- Present to stakeholder committee\n- Require written approval from project sponsor\n- Update project charter if necessary\n\n**4. Implementation**\n- Update project plan and timeline\n- Communicate changes to all team members\n- Document lessons learned\n\nThe document notes that scope changes should be minimized during execution phase to maintain project momentum.",
+          "timestamp": "2024-08-14T11:47:00Z",
+          "sources": [
+            {
+              "documentId": 1,
+              "page": 25,
+              "confidence": 0.88
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "API Integration Questions",
+      "type": "chat",
+      "documentIds": [2],
+      "messageCount": 18,
+      "createdAt": "2024-08-14T08:20:00Z",
+      "modified": "2 hours ago",
+      "status": "active",
+      "summary": "Technical discussion about API endpoints, authentication, and implementation examples.",
+      "messages": [
+        {
+          "id": 1,
+          "sender": "user",
+          "content": "How do I authenticate with the API?",
+          "timestamp": "2024-08-14T08:20:00Z"
+        },
+        {
+          "id": 2,
+          "sender": "bot",
+          "content": "The API uses Bearer Token authentication. Here's how to authenticate:\n\n**1. Obtain Token:**\n```bash\nPOST /auth/token\nContent-Type: application/json\n\n{\n  \"username\": \"your_username\",\n  \"password\": \"your_password\"\n}\n```\n\n**2. Use Token in Requests:**\n```bash\nGET /api/v3/users\nAuthorization: Bearer YOUR_TOKEN_HERE\n```\n\n**Token Details:**\n- Expires after 24 hours\n- Can be refreshed using `/auth/refresh` endpoint\n- Include in all API requests in the Authorization header\n\nThe documentation also mentions rate limiting of 1000 requests per hour per token.",
+          "timestamp": "2024-08-14T08:22:00Z",
+          "sources": [
+            {
+              "documentId": 2,
+              "page": 8,
+              "confidence": 0.96
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "sender": "user",
+          "content": "What are the available user endpoints?",
+          "timestamp": "2024-08-14T08:25:00Z"
+        },
+        {
+          "id": 4,
+          "sender": "bot",
+          "content": "Here are the main user-related endpoints:\n\n**User Management:**\n- `GET /api/v3/users` - List all users (paginated)\n- `GET /api/v3/users/{id}` - Get specific user\n- `POST /api/v3/users` - Create new user\n- `PUT /api/v3/users/{id}` - Update user\n- `DELETE /api/v3/users/{id}` - Delete user\n\n**User Profile:**\n- `GET /api/v3/users/{id}/profile` - Get user profile\n- `PUT /api/v3/users/{id}/profile` - Update profile\n- `POST /api/v3/users/{id}/avatar` - Upload profile picture\n\n**User Preferences:**\n- `GET /api/v3/users/{id}/preferences` - Get preferences\n- `PUT /api/v3/users/{id}/preferences` - Update preferences\n\n**Response Format:**\nAll endpoints return JSON with standard structure including `data`, `status`, and `message` fields. Error responses include detailed error codes and descriptions.",
+          "timestamp": "2024-08-14T08:27:00Z",
+          "sources": [
+            {
+              "documentId": 2,
+              "page": 23,
+              "confidence": 0.91
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "sender": "user",
+          "content": "Can you show me an example of creating a user?",
+          "timestamp": "2024-08-14T09:10:00Z"
+        },
+        {
+          "id": 6,
+          "sender": "bot",
+          "content": "Here's a complete example of creating a user:\n\n**Request:**\n```bash\nPOST /api/v3/users\nAuthorization: Bearer YOUR_TOKEN\nContent-Type: application/json\n\n{\n  \"username\": \"john_doe\",\n  \"email\": \"john@example.com\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"role\": \"user\",\n  \"department\": \"Engineering\",\n  \"isActive\": true\n}\n```\n\n**Success Response (201):**\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"User created successfully\",\n  \"data\": {\n    \"id\": 1234,\n    \"username\": \"john_doe\",\n    \"email\": \"john@example.com\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"role\": \"user\",\n    \"department\": \"Engineering\",\n    \"isActive\": true,\n    \"createdAt\": \"2024-08-14T09:10:30Z\",\n    \"updatedAt\": \"2024-08-14T09:10:30Z\"\n  }\n}\n```\n\n**Required Fields:** username, email, firstName, lastName\n**Optional Fields:** role (defaults to 'user'), department, isActive (defaults to true)",
+          "timestamp": "2024-08-14T09:12:00Z",
+          "sources": [
+            {
+              "documentId": 2,
+              "page": 25,
+              "confidence": 0.94
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Employee Benefits and Policies",
+      "type": "chat",
+      "documentIds": [3],
+      "messageCount": 12,
+      "createdAt": "2024-08-13T14:15:00Z",
+      "modified": "5 hours ago",
+      "status": "active",
+      "summary": "HR-related questions about vacation policies, health benefits, and company procedures.",
+      "messages": [
+        {
+          "id": 1,
+          "sender": "user",
+          "content": "What is the vacation policy for new employees?",
+          "timestamp": "2024-08-13T14:15:00Z"
+        },
+        {
+          "id": 2,
+          "sender": "bot",
+          "content": "According to the Employee Handbook 2024, here's the vacation policy for new employees:\n\n**Accrual Schedule:**\n- **0-2 years**: 15 days annually (1.25 days per month)\n- **3-5 years**: 20 days annually (1.67 days per month)\n- **6+ years**: 25 days annually (2.08 days per month)\n\n**Key Details:**\n- Vacation time accrues monthly starting from your first day\n- You can use accrued time after 90 days of employment\n- Maximum carryover: 5 days to the following year\n- Unused vacation over 5 days is forfeited\n- Advance vacation requests require 2 weeks notice\n- Blackout periods: End of fiscal quarters and company-wide events\n\n**Pro-tip**: The handbook recommends using vacation time regularly for work-life balance rather than accumulating large amounts.",
+          "timestamp": "2024-08-13T14:17:00Z",
+          "sources": [
+            {
+              "documentId": 3,
+              "page": 45,
+              "confidence": 0.93
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "sender": "user",
+          "content": "What health insurance options are available?",
+          "timestamp": "2024-08-13T14:20:00Z"
+        },
+        {
+          "id": 4,
+          "sender": "bot",
+          "content": "The company offers three health insurance plans:\n\n**1. Basic Plan (HMO)**\n- Monthly premium: $150 (company pays 80%)\n- Deductible: $1,500\n- Copay: $25 primary care, $50 specialist\n- Network: Regional HMO network\n\n**2. Standard Plan (PPO)**\n- Monthly premium: $220 (company pays 75%)\n- Deductible: $1,000\n- Coinsurance: 80/20 after deductible\n- Network: National PPO network\n\n**3. Premium Plan (PPO Plus)**\n- Monthly premium: $320 (company pays 70%)\n- Deductible: $500\n- Coinsurance: 90/10 after deductible\n- Network: Premium national network + international coverage\n\n**Additional Benefits:**\n- Dental and vision included in all plans\n- $2,000 annual HSA contribution (Premium plan)\n- Telemedicine services included\n- Mental health coverage with $0 copay\n- Prescription drug coverage\n\n**Enrollment:** Open enrollment is in November, with coverage starting January 1st. New employees have 30 days from start date to enroll.",
+          "timestamp": "2024-08-13T14:22:00Z",
+          "sources": [
+            {
+              "documentId": 3,
+              "page": 67,
+              "confidence": 0.89
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "sender": "user",
+          "content": "The company offers three health insurance plans:\n\n**1. Basic Plan (HMO)**\n- Monthly premium: $150 (company pays 80%)\n- Deductible: $1,500\n- Copay: $25 primary care, $50 specialist\n- Network: Regional HMO network\n\n**2. Standard Plan (PPO)**\n- Monthly premium: $220 (company pays 75%)\n- Deductible: $1,000\n- Coinsurance: 80/20 after deductible\n- Network: National PPO network\n\n**3. Premium Plan (PPO Plus)**\n- Monthly premium: $320 (company pays 70%)\n- Deductible: $500\n- Coinsurance: 90/10 after deductible\n- Network: Premium national network + international coverage\n\n**Additional Benefits:**\n- Dental and vision included in all plans\n- $2,000 annual HSA contribution (Premium plan)\n- Telemedicine services included\n- Mental health coverage with $0 copay\n- Prescription drug coverage\n\n**Enrollment:** Open enrollment is in November, with coverage starting January 1st. New employees have 30 days from start date to enroll.",
+          "timestamp": "2024-08-13T14:22:00Z",
+          "sources": [
+            {
+              "documentId": 3,
+              "page": 67,
+              "confidence": 0.89
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "sender": "bot",
+          "content": "The company offers three health insurance plans:\n\n**1. Basic Plan (HMO)**\n- Monthly premium: $150 (company pays 80%)\n- Deductible: $1,500\n- Copay: $25 primary care, $50 specialist\n- Network: Regional HMO network\n\n**2. Standard Plan (PPO)**\n- Monthly premium: $220 (company pays 75%)\n- Deductible: $1,000\n- Coinsurance: 80/20 after deductible\n- Network: National PPO network\n\n**3. Premium Plan (PPO Plus)**\n- Monthly premium: $320 (company pays 70%)\n- Deductible: $500\n- Coinsurance: 90/10 after deductible\n- Network: Premium national network + international coverage\n\n**Additional Benefits:**\n- Dental and vision included in all plans\n- $2,000 annual HSA contribution (Premium plan)\n- Telemedicine services included\n- Mental health coverage with $0 copay\n- Prescription drug coverage\n\n**Enrollment:** Open enrollment is in November, with coverage starting January 1st. New employees have 30 days from start date to enroll.",
+          "timestamp": "2024-08-13T14:22:00Z",
+          "sources": [
+            {
+              "documentId": 3,
+              "page": 67,
+              "confidence": 0.89
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Financial Performance Analysis",
+      "type": "chat",
+      "documentIds": [4],
+      "messageCount": 8,
+      "createdAt": "2024-08-12T16:30:00Z",
+      "modified": "1 day ago",
+      "status": "archived",
+      "summary": "Analysis of Q2 2024 financial results and performance metrics.",
+      "messages": [
+        {
+          "id": 1,
+          "sender": "user",
+          "content": "What were the key highlights from Q2 2024?",
+          "timestamp": "2024-08-12T16:30:00Z"
+        },
+        {
+          "id": 2,
+          "sender": "bot",
+          "content": "Here are the key highlights from Q2 2024:\n\n**Revenue Growth:**\n- Total Revenue: $2.4M (15% YoY growth)\n- Recurring Revenue: $1.8M (18% YoY growth)\n- New Customer Revenue: $600K\n\n**Profitability:**\n- Gross Profit Margin: 68% (up from 65% in Q1)\n- Operating Profit: $480K\n- Net Profit Margin: 12%\n\n**Key Metrics:**\n- Customer Acquisition Cost (CAC): $120 (down 10%)\n- Customer Lifetime Value (LTV): $2,400\n- LTV/CAC Ratio: 20:1 (healthy benchmark)\n- Monthly Recurring Revenue (MRR): $600K\n\n**Operational Highlights:**\n- Added 50 new enterprise customers\n- Product development costs reduced by 8%\n- Employee headcount grew to 85 (up from 78)\n\n**Outlook:** The report indicates strong momentum heading into Q3 with a robust sales pipeline of $3.2M.",
+          "timestamp": "2024-08-12T16:32:00Z",
+          "sources": [
+            {
+              "documentId": 4,
+              "page": 3,
+              "confidence": 0.97
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Product Feature Requirements Discussion",
+      "type": "chat",
+      "documentIds": [5],
+      "messageCount": 35,
+      "createdAt": "2024-08-11T09:45:00Z",
+      "modified": "2 days ago",
+      "status": "active",
+      "summary": "Detailed discussion about mobile app features, user stories, and technical requirements.",
+      "messages": [
+        {
+          "id": 1,
+          "sender": "user",
+          "content": "What are the core features for the mobile app?",
+          "timestamp": "2024-08-11T09:45:00Z"
+        },
+        {
+          "id": 2,
+          "sender": "bot",
+          "content": "Based on the Product Requirements Document, the mobile app will include these core features:\n\n**Authentication & User Management:**\n- Social login (Google, Apple, Facebook)\n- Biometric authentication (Face ID, Touch ID)\n- Profile management and preferences\n\n**Core Functionality:**\n- Dashboard with personalized content\n- Real-time notifications and messaging\n- Document upload and management\n- Search and filtering capabilities\n- Offline mode for key features\n\n**Advanced Features:**\n- AI-powered recommendations\n- In-app chat and collaboration\n- Calendar integration\n- File sharing and version control\n- Analytics and reporting\n\n**Platform Specific:**\n- iOS: Widget support, Siri integration\n- Android: Material Design 3, Android Auto support\n\n**Technical Requirements:**\n- React Native framework\n- Backend API integration\n- Local data caching\n- Push notifications\n- Cloud storage integration\n\nThe document emphasizes user experience consistency across all platforms while leveraging platform-specific capabilities.",
+          "timestamp": "2024-08-11T09:47:00Z",
+          "sources": [
+            {
+              "documentId": 5,
+              "page": 15,
+              "confidence": 0.91
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "sender": "user",
+          "content": "What are the user personas mentioned in the document?",
+          "timestamp": "2024-08-11T10:15:00Z"
+        },
+        {
+          "id": 4,
+          "sender": "bot",
+          "content": "The document defines 4 primary user personas:\n\n**1. Sarah - The Busy Executive**\n- Age: 35-50\n- Needs: Quick access to key metrics, mobile-first experience\n- Goals: Make informed decisions on-the-go\n- Pain points: Limited time, needs executive summaries\n- Usage: 15-30 minutes daily, primarily mobile\n\n**2. Mike - The Project Manager**\n- Age: 28-40\n- Needs: Team collaboration, project tracking, file management\n- Goals: Keep projects on track, facilitate team communication\n- Pain points: Juggling multiple projects, need for real-time updates\n- Usage: 2-3 hours daily, mixed mobile/desktop\n\n**3. Lisa - The Field Worker**\n- Age: 25-35\n- Needs: Offline access, simple interface, quick data entry\n- Goals: Complete tasks efficiently in field conditions\n- Pain points: Unreliable internet, need for offline functionality\n- Usage: 4-6 hours daily, primarily mobile\n\n**4. David - The Analyst**\n- Age: 26-35\n- Needs: Detailed reports, data export, advanced filtering\n- Goals: Generate insights and comprehensive reports\n- Pain points: Complex data analysis, need for detailed views\n- Usage: 6-8 hours daily, primarily desktop\n\nEach persona has specific user journeys and feature priorities outlined in Section 4.",
+          "timestamp": "2024-08-11T10:17:00Z",
+          "sources": [
+            {
+              "documentId": 5,
+              "page": 22,
+              "confidence": 0.88
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "totalDocuments": 5,
+    "totalConversations": 5,
+    "totalMessages": 97,
+    "documentsProcessed": 4,
+    "documentsProcessing": 1,
+    "activeChats": 4,
+    "archivedChats": 1
+  }
+}
