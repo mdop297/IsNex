@@ -1,5 +1,6 @@
 # logger.py
 import logging
+from logging import Logger
 
 from rich.console import Console
 from rich.logging import RichHandler
@@ -33,9 +34,10 @@ if not logger.handlers:
     logger.addHandler(file_handler)
 
 
-def get_logger(name: str = None):  # type: ignore
+def get_custom_logger(name: str = "") -> Logger:
     """Return a child logger with given name."""
-    return logger.getChild(name) if name else logger
+
+    return logger.getChild(name) if name != "" else logger
 
 
 # how to use this logger

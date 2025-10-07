@@ -1,5 +1,5 @@
 services:
-  auth:
+  auth-svc:
     container_name: auth-svc
     build:
       context: ../..
@@ -43,7 +43,7 @@ services:
     volumes:
       - ../../minio/data:/data
 
-  documents:
+  documents-svc:
     container_name: documents-svc
     build:
       context: ../../apps/documents
@@ -65,7 +65,7 @@ services:
         - action: rebuild
           path: ../../apps/documents/uv.lock
 
-  notification:
+  notification-svc:
     container_name: notification-svc
     build:
       context: ../../apps/notification-svc

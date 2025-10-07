@@ -1,5 +1,5 @@
 services:
-  auth:
+  auth-svc:
     container_name: auth-svc
     build:
       context: ../..
