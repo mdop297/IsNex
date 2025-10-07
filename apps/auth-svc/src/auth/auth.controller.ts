@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   Param,
   Post,
   Req,
@@ -16,15 +17,24 @@ import { Public, CurrentUser } from '../decorators/customize';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { IUser } from '../users/user.interface';
 import { LoginDto } from './dtos/login.dto';
+import { ClientKafka } from '@nestjs/microservices';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    @Inject('AUTH_SERVICE') private readonly kafkaClient: ClientKafka,
+  ) {}
   @Public()
   @Post('/signup')
   async signUp(@Body() body: CreateUserDto, @Res() res: Response) {
-    const result = await this.authService.register(body, res);
-    return res.json(result);
+    try {
+      this.kafkaClient.emit('user_created', body.email);
+      const result = await this.authService.register(body, res);
+      return res.json(result);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   @Public()
