@@ -29,7 +29,6 @@ export class AuthController {
   @Post('/signup')
   async signUp(@Body() body: CreateUserDto, @Res() res: Response) {
     try {
-      this.kafkaClient.emit('user_created', body.email);
       const result = await this.authService.register(body, res);
       return res.json(result);
     } catch (err) {

@@ -29,7 +29,14 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         transport: Transport.KAFKA,
         options: {
           client: {
-            brokers: ['broker:9092'],
+            brokers: ['broker:29092'],
+          },
+          consumer: {
+            groupId: 'auth-consumer',
+          },
+          producer: {
+            allowAutoTopicCreation: true,
+            idempotent: true,
           },
         },
       },

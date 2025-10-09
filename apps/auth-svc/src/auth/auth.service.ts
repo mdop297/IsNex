@@ -1,6 +1,8 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -11,6 +13,8 @@ import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 import { LoginDto } from './dtos/login.dto';
+import { ClientKafka } from '@nestjs/microservices';
+import { UserCreatedEvent } from 'src/proto/auth';
 
 export interface JwtPayload {
   userId: string;
@@ -21,10 +25,12 @@ export interface JwtPayload {
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
     private userService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    @Inject('AUTH_SERVICE') private readonly kafkaClient: ClientKafka,
   ) {}
 
   getHashPassword = (password: string) => {
@@ -63,6 +69,22 @@ export class AuthService {
       userDto.username = userDto.email.split('@')[0];
     }
     const newUser = await this.userService.create(userDto);
+
+    const payload: UserCreatedEvent = {
+      userId: newUser.id,
+      email: userDto.email,
+      timestamp: Date.now(),
+      urlToken: '',
+    };
+    const buffer = UserCreatedEvent.encode(payload).finish();
+    this.kafkaClient.emit('user_created', {
+      key: userDto.email,
+      value: Buffer.from(buffer),
+      headers: {
+        'content-type': 'application/x-protobuf',
+      },
+    });
+
     if (newUser) {
       return await this.login(
         { email: userDto.email, password: rawPassword },
