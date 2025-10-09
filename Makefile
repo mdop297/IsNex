@@ -87,10 +87,29 @@ up: up-network
 	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) up -d
 	@echo "✅ Services started successfully!"
 
+# Start auth service in development mode
+auth-up:
+	@echo "🚀 Starting auth service in development mode..."
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) --env-file $(ENV_FILE) --env-file $(AUTH_ENV_FILE) up -d auth
+	@echo "✅ Auth service started successfully!"
+
+# Start notification service 
+noti-up:
+	@echo "🚀 Starting notification service ..."
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) --env-file $(ENV_FILE) up -d notification
+	@echo "✅ Notification service started successfully!"
+
+# Start client service
+client-up:
+	@echo "🚀 Starting client service ..."
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) --env-file $(ENV_FILE) up -d client
+	@echo "✅ Client service started successfully!"
+
+
 # Start services in development mode with code sync
 up-dev: up-network up-kafka
 	@echo "🔧 Starting all services in development mode (single stack)..."
-	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) --env-file $(ENV_FILE) --env-file $(AUTH_ENV_FILE) up -d --build
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) --env-file $(ENV_FILE) --env-file $(AUTH_ENV_FILE) up -d
 # docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) up --watch documents
 	@echo "✅ All development services started in single stack!"
 
@@ -134,6 +153,12 @@ down:
 	@echo "🛑 Stopping all services..."
 	docker compose -p compose down
 	@echo "✅ All services stopped!"
+
+# docker ps format view:
+ps: 
+	@echo "📊 Showing Docker containers..."
+	docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
 
 # View logs for all services
 logs:

@@ -39,7 +39,7 @@ ENV PATH="/app/.venv/bin:$PATH"
 ENTRYPOINT []
 
 # Use the non-root user to run our application
-USER nonroot
+# USER nonroot
 
 # Run the FastAPI application by default
 # Uses `fastapi dev` to enable hot-reloading when the `watch` sync occurs

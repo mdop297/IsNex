@@ -1,0 +1,8 @@
+- flow registry:
+  - user click registry
+  - send request to api-gateway -> auth-svc
+  - auth-svc generate token url
+  - auth-svc send url token to user-registry kafka topic
+  - notification-svc listen user-registry topic
+  - send url token and verification link to user gmail
+  - user click that link -> verify user email
