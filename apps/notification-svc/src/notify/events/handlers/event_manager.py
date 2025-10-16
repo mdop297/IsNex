@@ -1,8 +1,6 @@
 from confluent_kafka import Message
 
 from notify.events.handlers.base_handler import EventHandler
-from notify.events.handlers.user_created import UserCreatedHandler
-from notify.events.schemas.auth_pb2 import UserCreatedEvent
 from notify.events.schemas.event_types import EventType
 from notify.utils.logger import get_custom_logger
 

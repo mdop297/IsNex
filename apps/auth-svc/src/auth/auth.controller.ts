@@ -78,7 +78,7 @@ export class AuthController {
   }
 
   @Public()
-  @Post('/verify/:token')
+  @Get('/verify/:token')
   async verify(@Param('token') token: string) {
     await this.authService.verify(token);
     return { message: 'Email verified successfully' };

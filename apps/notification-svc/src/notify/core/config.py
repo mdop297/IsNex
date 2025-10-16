@@ -12,7 +12,8 @@ _base_config = SettingsConfigDict(
 
 class AppSettings(BaseSettings):
     APP_NAME: str = "IsNex"
-    APP_DOMAIN: str = "localhost:3000"
+    APP_DOMAIN: str = "localhost:8000"  # api-gateway expose port 8000
+    PREFIX: str = "api/auth"
 
 
 class Settings(BaseSettings):

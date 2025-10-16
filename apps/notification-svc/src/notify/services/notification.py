@@ -1,4 +1,3 @@
-from fastapi import BackgroundTasks
 from fastapi.responses import JSONResponse
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 from pydantic import EmailStr
