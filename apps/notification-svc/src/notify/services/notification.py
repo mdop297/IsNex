@@ -1,29 +1,59 @@
-import asyncio
-
+from fastapi import BackgroundTasks
+from fastapi.responses import JSONResponse
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
+from pydantic import EmailStr
 
-from notify import PROJECT_DIR
 from notify.core.config import email_notification_settings
-
-fastmail = FastMail(
-    ConnectionConfig(
-        **email_notification_settings.model_dump(),
-    )
-)
+from notify.services.base import BaseService
+from notify.utils import TEMPLATE_DIR
 
 
-async def send_email() -> None:
-    print(email_notification_settings.model_dump())
-    print(PROJECT_DIR)
-    await fastmail.send_message(
-        message=MessageSchema(
-            recipients=["lenhatminh12321@gmail.com"],
-            subject="Your email delivered with IsNex",
-            body="Hello from IsNex, your email has been delivered successfully",
+class NotificationService(BaseService):
+    def __init__(self, tasks: BackgroundTasks | None = None):
+        self.tasks = tasks
+        self.fastmail = FastMail(
+            ConnectionConfig(
+                **email_notification_settings.model_dump(), TEMPLATE_FOLDER=TEMPLATE_DIR
+            )
+        )
+
+    async def send_email(
+        self,
+        recipients: list[str],
+        subject: str,
+        body: str,
+    ) -> JSONResponse:
+        # TODO: handle exceptions
+
+        message = MessageSchema(
+            recipients=recipients,
+            subject=subject,
+            body=body,
             subtype=MessageType.plain,
         )
-    )
-    print("Email sent")
+        if self.tasks:
+            self.tasks.add_task(self.fastmail.send_message, message)
+        return JSONResponse(status_code=200, content={"message": "Email sent"})
 
+    async def send_email_with_template(
+        self,
+        recipients: list[EmailStr],
+        subject: str,
+        context: dict,
+        template_name: str,
+    ) -> JSONResponse:
+        # TODO: handle exceptions
+        message = MessageSchema(
+            recipients=recipients,
+            subject=subject,
+            template_body=context,
+            subtype=MessageType.html,
+        )
+        if self.tasks:
+            self.tasks.add_task(
+                self.fastmail.send_message,
+                message=message,
+                template_name=template_name,
+            )
 
-asyncio.run(send_email())
+        return JSONResponse(status_code=200, content={"message": "Email sent"})

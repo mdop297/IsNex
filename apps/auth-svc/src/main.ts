@@ -13,7 +13,14 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
+        clientId: 'auth-svc',
         brokers: ['broker:29092'],
+      },
+      consumer: {
+        groupId: 'auth-service-consumer',
+      },
+      producer: {
+        allowAutoTopicCreation: true,
       },
     },
   });

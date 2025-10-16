@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Role } from '@prisma/client';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -13,5 +14,11 @@ export class CreateUserDto {
 
   @IsString()
   @IsOptional()
-  address: string;
+  address: string | null;
+
+  @IsOptional()
+  role: Role;
+
+  @IsOptional()
+  isVerified: boolean;
 }

@@ -31,11 +31,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
           client: {
             brokers: ['broker:29092'],
           },
-          consumer: {
-            groupId: 'auth-consumer',
-          },
           producer: {
-            allowAutoTopicCreation: true,
             idempotent: true,
           },
         },

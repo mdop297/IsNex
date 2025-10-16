@@ -10,6 +10,11 @@ _base_config = SettingsConfigDict(
 )
 
 
+class AppSettings(BaseSettings):
+    APP_NAME: str = "IsNex"
+    APP_DOMAIN: str = "localhost:3000"
+
+
 class Settings(BaseSettings):
     model_config = _base_config
 
@@ -37,4 +42,5 @@ class SMSNotificationSettings(Settings):
     TWILIO_PHONE_NUMBER: str = "phone_number"
 
 
+app_settings = AppSettings()
 email_notification_settings = EmailNotificationSettings()  # type: ignore[call-arg]

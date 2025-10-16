@@ -76,4 +76,11 @@ export class AuthController {
 
     return data;
   }
+
+  @Public()
+  @Post('/verify/:token')
+  async verify(@Param('token') token: string) {
+    await this.authService.verify(token);
+    return { message: 'Email verified successfully' };
+  }
 }

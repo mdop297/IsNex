@@ -4,6 +4,8 @@ import {
   Injectable,
   Logger,
   NotFoundException,
+  OnModuleDestroy,
+  OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from '../users/dto/create-user.dto';
@@ -23,15 +25,31 @@ export interface JwtPayload {
   role: string;
 }
 
+export interface EmailVerifyPayload {
+  userId: string;
+  email: string;
+}
+
 @Injectable()
-export class AuthService {
+export class AuthService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private userService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
     @Inject('AUTH_SERVICE') private readonly kafkaClient: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.logger.log('Connecting Kafka producer...');
+    await this.kafkaClient.connect();
+    this.logger.log('Kafka producer connected ✅');
+  }
+
+  async onModuleDestroy() {
+    await this.kafkaClient.close();
+  }
 
   getHashPassword = (password: string) => {
     const salt = genSaltSync(10);
@@ -74,16 +92,27 @@ export class AuthService {
       userId: newUser.id,
       email: userDto.email,
       timestamp: Date.now(),
-      urlToken: '',
+      urlToken: this.generateEmailToken({
+        userId: newUser.id,
+        email: userDto.email,
+      }),
     };
+
     const buffer = UserCreatedEvent.encode(payload).finish();
-    this.kafkaClient.emit('user_created', {
-      key: userDto.email,
-      value: Buffer.from(buffer),
-      headers: {
-        'content-type': 'application/x-protobuf',
-      },
+    await this.kafkaClient.producer.send({
+      topic: 'user_created',
+      messages: [
+        {
+          key: userDto.email,
+          value: Buffer.from(buffer),
+          headers: { 'event-type': 'user.created' },
+        },
+      ],
     });
+    // this.kafkaClient.emit('user_created', {
+    //   key: userDto.email,
+    //   value: Buffer.from(buffer),
+    // });
 
     if (newUser) {
       return await this.login(
@@ -94,6 +123,20 @@ export class AuthService {
     return {
       message: 'User not created',
     };
+  }
+
+  async verify(token: string) {
+    try {
+      const payload: EmailVerifyPayload | JwtPayload =
+        this.jwtService.verify(token);
+      if (payload) {
+        const user = await this.userService.findById(payload.userId);
+        if (!user) throw new NotFoundException('User not found');
+        await this.userService.update(user.id, { ...user, isVerified: true });
+      }
+    } catch {
+      throw new BadRequestException('Invalid token');
+    }
   }
 
   async login(body: LoginDto, response: Response) {
@@ -203,5 +246,13 @@ export class AuthService {
     ]);
 
     return { accessToken, refreshToken };
+  }
+
+  private generateEmailToken(payload: EmailVerifyPayload) {
+    const emailToken = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_ACCESS_SECRET'),
+      expiresIn: '15m',
+    });
+    return emailToken;
   }
 }

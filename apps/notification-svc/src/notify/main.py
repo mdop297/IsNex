@@ -1,9 +1,10 @@
+import asyncio
 import threading
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from notify.infrastructure.kafka.consumer import kafka_consumer_worker
+from notify.events.adaptors.consumer import ConsumerService
 from notify.utils.logger import get_custom_logger
 
 logger = get_custom_logger(__name__)
@@ -11,7 +12,18 @@ logger = get_custom_logger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    thread = threading.Thread(target=kafka_consumer_worker, daemon=True)
+    consumer_conf = {
+        "bootstrap.servers": "broker:29092",
+        "group.id": "notification-svc",
+        "auto.offset.reset": "earliest",
+        "enable.auto.commit": False,
+    }
+    consumer = ConsumerService(consumer_conf, ["user_created"])
+
+    def run_consumer():
+        asyncio.run(consumer.start())
+
+    thread = threading.Thread(target=run_consumer, daemon=True)
     thread.start()
     logger.info("Kafka consumer thread started")
     yield
