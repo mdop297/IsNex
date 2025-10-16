@@ -1,5 +1,4 @@
-from os import error
-from typing import Any, Optional
+from typing import Any
 
 from confluent_kafka import Consumer
 
@@ -9,8 +8,6 @@ from notify.services.notification import NotificationService
 from notify.utils.logger import get_custom_logger
 
 logger = get_custom_logger(__name__)
-
-topics = ["user"]
 
 
 class ConsumerService:

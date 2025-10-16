@@ -9,8 +9,7 @@ from notify.utils import TEMPLATE_DIR
 
 
 class NotificationService(BaseService):
-    def __init__(self, tasks: BackgroundTasks | None = None):
-        self.tasks = tasks
+    def __init__(self):
         self.fastmail = FastMail(
             ConnectionConfig(
                 **email_notification_settings.model_dump(), TEMPLATE_FOLDER=TEMPLATE_DIR
@@ -31,8 +30,7 @@ class NotificationService(BaseService):
             body=body,
             subtype=MessageType.plain,
         )
-        if self.tasks:
-            self.tasks.add_task(self.fastmail.send_message, message)
+        await self.fastmail.send_message(message)
         return JSONResponse(status_code=200, content={"message": "Email sent"})
 
     async def send_email_with_template(
@@ -49,11 +47,7 @@ class NotificationService(BaseService):
             template_body=context,
             subtype=MessageType.html,
         )
-        if self.tasks:
-            self.tasks.add_task(
-                self.fastmail.send_message,
-                message=message,
-                template_name=template_name,
-            )
+
+        await self.fastmail.send_message(message=message, template_name=template_name)
 
         return JSONResponse(status_code=200, content={"message": "Email sent"})

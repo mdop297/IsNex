@@ -13,20 +13,21 @@ class UserCreatedHandler(EventHandler[UserCreatedEvent]):
         self.notification_service = notification_service
 
     async def handle(self, event: UserCreatedEvent) -> bool:
-        # await self.notification_service.send_email_with_template(
-        #     recipients=[event.email],
-        #     subject="Verify your email",
-        #     context={
-        #         "username": event.userId,
-        #         # TODO: replace fixed prefix "/verify/"
-        #         "verification_url": f"http://{app_settings.APP_DOMAIN}/verify/{event.urlToken}",
-        #     },
-        #     template_name="mail_email_verify.html",
-        # )
         user_id: str = event.userId
         email: str = event.email
         timestamp: int = event.timestamp
         token: str = event.urlToken
+
+        await self.notification_service.send_email_with_template(
+            recipients=[event.email],
+            subject="Verify your email",
+            context={
+                "username": event.userId,
+                # TODO: replace fixed prefix "/verify/"
+                "verification_url": f"http://{app_settings.APP_DOMAIN}/verify/{event.urlToken}",
+            },
+            template_name="mail_email_verify.html",
+        )
 
         logger.info(
             "✅ ĐÃ VÀO ĐƯỢC HÀM handle() rồi hahahaha: \n"
