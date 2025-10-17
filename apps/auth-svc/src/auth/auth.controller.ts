@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Inject,
+  Logger,
   Param,
   Post,
   Req,
@@ -21,6 +22,8 @@ import { ClientKafka } from '@nestjs/microservices';
 
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(
     private authService: AuthService,
     @Inject('AUTH_SERVICE') private readonly kafkaClient: ClientKafka,
@@ -28,12 +31,9 @@ export class AuthController {
   @Public()
   @Post('/signup')
   async signUp(@Body() body: CreateUserDto, @Res() res: Response) {
-    try {
-      const result = await this.authService.register(body, res);
-      return res.json(result);
-    } catch (err) {
-      console.error(err);
-    }
+    const result = await this.authService.register(body);
+
+    return res.json(result);
   }
 
   @Public()
@@ -79,8 +79,8 @@ export class AuthController {
 
   @Public()
   @Get('/verify/:token')
-  async verify(@Param('token') token: string) {
-    await this.authService.verify(token);
-    return { message: 'Email verified successfully' };
+  async verify(@Param('token') token: string, @Res() res: Response) {
+    const verified = await this.authService.verify(token);
+    return res.json(verified);
   }
 }

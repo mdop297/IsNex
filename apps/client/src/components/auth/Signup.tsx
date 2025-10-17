@@ -12,16 +12,14 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { LoginResponse, RegisterRequestSchema } from '@/lib/api/auth';
+import { RegisterRequestSchema } from '@/lib/api/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
 const SignUpForm = () => {
-  const router = useRouter();
   const { register, isLoading } = useAuth();
 
   const form = useForm<z.infer<typeof RegisterRequestSchema>>({
@@ -33,17 +31,7 @@ const SignUpForm = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof RegisterRequestSchema>) => {
-    try {
-      const res: LoginResponse | undefined = await register(data);
-
-      console.log(res); // debug
-
-      if (res && res.accessToken) {
-        router.push('/home');
-      }
-    } catch (err) {
-      console.error(err);
-    }
+    await register(data);
   };
 
   return (

@@ -1,7 +1,11 @@
 import {
   BadRequestException,
+  ConflictException,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
+  InternalServerErrorException,
   Logger,
   NotFoundException,
   OnModuleDestroy,
@@ -74,68 +78,84 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async register(userDto: CreateUserDto, response: Response) {
-    const user = await this.userService.findByEmail(userDto.email);
-    const rawPassword = userDto.password;
-    if (user) {
-      throw new BadRequestException('Email in use');
+  async register(
+    userDto: CreateUserDto,
+  ): Promise<{ status: number; message: string; userId?: string }> {
+    const existing = await this.userService.findByEmail(userDto.email);
+    if (existing) {
+      if (existing.isVerified) {
+        throw new BadRequestException('Email already registered');
+      } else {
+        throw new ConflictException(
+          'Email is not verified. Please verify your email.',
+        );
+      }
     }
-    console.log('Register reached!!!');
-    const result = this.getHashPassword(userDto.password);
-    userDto.password = result;
-    if (!userDto.username) {
-      userDto.username = userDto.email.split('@')[0];
-    }
-    const newUser = await this.userService.create(userDto);
 
-    const payload: UserCreatedEvent = {
-      userId: newUser.id,
-      email: userDto.email,
-      timestamp: Date.now(),
-      urlToken: this.generateEmailToken({
+    try {
+      console.log('Register reached!!!');
+      const result = this.getHashPassword(userDto.password);
+      userDto.password = result;
+      if (!userDto.username) {
+        userDto.username = userDto.email.split('@')[0];
+      }
+      const newUser = await this.userService.create(userDto);
+
+      const payload: UserCreatedEvent = {
         userId: newUser.id,
         email: userDto.email,
-      }),
-    };
+        timestamp: Date.now(),
+        urlToken: this.generateEmailToken({
+          userId: newUser.id,
+          email: userDto.email,
+        }),
+      };
 
-    const buffer = UserCreatedEvent.encode(payload).finish();
-    await this.kafkaClient.producer.send({
-      topic: 'user_created',
-      messages: [
-        {
-          key: userDto.email,
-          value: Buffer.from(buffer),
-          headers: { 'event-type': 'user.created' },
-        },
-      ],
-    });
-    // this.kafkaClient.emit('user_created', {
-    //   key: userDto.email,
-    //   value: Buffer.from(buffer),
-    // });
+      const buffer = UserCreatedEvent.encode(payload).finish();
+      await this.kafkaClient.producer.send({
+        topic: 'user_created',
+        messages: [
+          {
+            key: userDto.email,
+            value: Buffer.from(buffer),
+            headers: { 'event-type': 'user.created' },
+          },
+        ],
+      });
 
-    if (newUser) {
-      return await this.login(
-        { email: userDto.email, password: rawPassword },
-        response,
+      return {
+        status: HttpStatus.CREATED,
+        userId: newUser.id,
+        message: 'User registered successfully',
+      };
+    } catch (err) {
+      this.logger.error('Registration failed', err);
+      if (err instanceof HttpException) throw err;
+      throw new InternalServerErrorException(
+        'Registration failed. Please try again later. Check broker or upstream server',
       );
     }
-    return {
-      message: 'User not created',
-    };
   }
 
   async verify(token: string) {
     try {
-      const payload: EmailVerifyPayload | JwtPayload =
-        this.jwtService.verify(token);
-      if (payload) {
-        const user = await this.userService.findById(payload.userId);
-        if (!user) throw new NotFoundException('User not found');
-        await this.userService.update(user.id, { ...user, isVerified: true });
-      }
+      const payload: EmailVerifyPayload = this.jwtService.verify(token);
+      const user = await this.userService.findById(payload.userId);
+      if (!user) throw new NotFoundException('User not found');
+      if (user.isVerified)
+        return {
+          status: HttpStatus.CONFLICT,
+          message: 'Email already verified',
+        }; // already verified
+      await this.userService.update(user.id, { ...user, isVerified: true });
+      return {
+        status: HttpStatus.OK,
+        message: 'Email verified successfully',
+      };
     } catch {
-      throw new BadRequestException('Invalid token');
+      throw new BadRequestException(
+        'Invalid or expired token, please try again',
+      );
     }
   }
 

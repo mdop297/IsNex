@@ -6,9 +6,12 @@ import {
   LoginResponse,
   RefreshResponse,
   RegisterRequestSchema,
+  RegisterResponse,
   User,
 } from '@/lib/api/auth';
+import { AxiosError } from 'axios';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import z from 'zod';
 
 type AuthContextType = {
@@ -21,7 +24,7 @@ type AuthContextType = {
   ) => Promise<LoginResponse | undefined>;
   register: (
     payload: z.infer<typeof RegisterRequestSchema>,
-  ) => Promise<LoginResponse | undefined>;
+  ) => Promise<RegisterResponse | undefined>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<boolean>;
   refresh: () => Promise<RefreshResponse | null>;
@@ -119,23 +122,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const register = async (
     payload: z.infer<typeof RegisterRequestSchema>,
-  ): Promise<LoginResponse | undefined> => {
+  ): Promise<RegisterResponse | undefined> => {
     try {
       setIsLoading(true);
-      const signupResponse: LoginResponse | undefined =
+      const signupResponse: RegisterResponse | undefined =
         await authApi.register(payload);
-      if (!signupResponse) return;
-      setAccessToken(signupResponse.accessToken);
 
-      setUser(signupResponse.user);
+      if (!signupResponse) return;
+
+      if (signupResponse.status === 201) {
+        toast.info('Please check your email to verify your account');
+      }
+
       setIsAuthenticated(true);
       return signupResponse;
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message || 'Registration failed');
-      } else {
-        setError('Registration failed');
+      let message = 'Registration failed';
+
+      // check if it's an AxiosError
+      if (err instanceof AxiosError) {
+        message = err.response?.data?.message || message;
+      } else if (err instanceof Error) {
+        message = err.message;
       }
+
+      toast.error(message);
+      setError(message);
       setAccessToken(null);
     } finally {
       setIsLoading(false);

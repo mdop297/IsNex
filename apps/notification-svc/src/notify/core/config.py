@@ -14,6 +14,7 @@ class AppSettings(BaseSettings):
     APP_NAME: str = "IsNex"
     APP_DOMAIN: str = "localhost:8000"  # api-gateway expose port 8000
     PREFIX: str = "api/auth"
+    CLIENT_URL: str = "localhost:3000"
 
 
 class Settings(BaseSettings):

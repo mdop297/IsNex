@@ -24,7 +24,7 @@ class UserCreatedHandler(EventHandler[UserCreatedEvent]):
             context={
                 "username": event.userId,
                 # TODO: replace fixed prefix "/verify/"
-                "verification_url": f"http://{app_settings.APP_DOMAIN}/{app_settings.PREFIX}/verify/{event.urlToken}",
+                "verification_url": f"http://{app_settings.CLIENT_URL}/verify/{event.urlToken}",
             },
             template_name="mail_email_verify.html",
         )
