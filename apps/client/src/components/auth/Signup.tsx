@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useAuth } from '@/context/AuthContext';
+import { routes } from '@/lib/constants';
 
 const SignUpForm = () => {
   const { register, isLoading } = useAuth();
@@ -103,10 +104,10 @@ const SignUpForm = () => {
         <p className="mt-5 text-sm text-center">
           Already have an account?
           <Link
-            href="/auth/signin"
+            href={routes.SIGNIN}
             className="ml-1 underline text-muted-foreground"
           >
-            Log in
+            Sign In
           </Link>
         </p>
       </div>

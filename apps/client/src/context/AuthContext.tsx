@@ -30,6 +30,7 @@ type AuthContextType = {
   refresh: () => Promise<RefreshResponse | null>;
   clearError: () => void;
   getAccessToken: () => string | null;
+  // verify: (token: string) => Promise<VerifyResponse>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -37,7 +38,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const accessTokenRef = useRef<string | null>(null);
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);

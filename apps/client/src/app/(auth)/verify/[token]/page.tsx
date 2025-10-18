@@ -1,6 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { authApi } from '@/lib/api/auth';
+import { routes } from '@/lib/constants';
 import { CheckCircleIcon, XCircleIcon } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -12,13 +13,14 @@ const VerifyPage = () => {
     'loading',
   );
   const router = useRouter();
-
+  let status = 0;
   useEffect(() => {
     if (!token) return;
 
     const verifyEmail = async () => {
       try {
         const result = await authApi.verify(token as string);
+        status = result.status;
         if (result.status === 200) {
           setState('success');
           toast.success(result.message);
@@ -60,7 +62,7 @@ const VerifyPage = () => {
           <p className="text-green-600 text-center">
             You can now proceed to login.
           </p>
-          <Button onClick={() => router.push('/signin')}>Sign In</Button>
+          <Button onClick={() => router.push(routes.SIGNIN)}>Sign In</Button>
         </div>
       )}
 
@@ -70,9 +72,18 @@ const VerifyPage = () => {
           <p className="text-red-700 text-xl font-semibold">
             Verification Failed
           </p>
-          <p className="text-red-600 text-center">
-            The link may be expired or invalid.
-          </p>
+          {status !== 409 ? (
+            <p className="text-red-600 text-center">Email already verified</p>
+          ) : (
+            <>
+              <p className="text-red-600 text-center">
+                The link may be expired or invalid. Please try again.
+              </p>
+              <Button onClick={() => router.push(routes.SIGNUP)}>
+                Sign Up
+              </Button>
+            </>
+          )}
         </div>
       )}
     </div>

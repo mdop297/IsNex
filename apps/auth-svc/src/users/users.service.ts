@@ -75,7 +75,11 @@ export class UsersService {
   }
 
   remove(id: string) {
-    return `This action removes a #${id} user`;
+    try {
+      return this.prisma.user.delete({ where: { id: id } });
+    } catch (error) {
+      this.handlePrismaError(error);
+    }
   }
 
   private handlePrismaError(error: Error) {

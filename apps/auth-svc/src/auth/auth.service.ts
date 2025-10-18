@@ -81,23 +81,21 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
   async register(
     userDto: CreateUserDto,
   ): Promise<{ status: number; message: string; userId?: string }> {
-    const existing = await this.userService.findByEmail(userDto.email);
-    if (existing) {
-      if (existing.isVerified) {
-        throw new BadRequestException('Email already registered');
-      } else {
-        throw new ConflictException(
-          'Email is not verified. Please verify your email.',
-        );
-      }
+    const user = await this.userService.findByEmail(userDto.email);
+    if (user && user.isVerified) {
+      throw new ConflictException('This email is already registered');
     }
 
     try {
       console.log('Register reached!!!');
+
       const result = this.getHashPassword(userDto.password);
       userDto.password = result;
       if (!userDto.username) {
         userDto.username = userDto.email.split('@')[0];
+      }
+      if (user) {
+        await this.userService.remove(user.id);
       }
       const newUser = await this.userService.create(userDto);
 
@@ -152,7 +150,17 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
         status: HttpStatus.OK,
         message: 'Email verified successfully',
       };
-    } catch {
+    } catch (err) {
+      if (err instanceof Error && err.name === 'TokenExpiredError') {
+        const payload: EmailVerifyPayload = this.jwtService.decode(token);
+        if (!payload?.userId)
+          throw new BadRequestException('Invalid token structure');
+
+        const user = await this.userService.findById(payload.userId);
+        if (user?.isVerified) {
+          throw new ConflictException('Email already verified');
+        }
+      }
       throw new BadRequestException(
         'Invalid or expired token, please try again',
       );

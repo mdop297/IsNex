@@ -19,6 +19,7 @@ import {
 } from '../ui/form';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { routes } from '@/lib/constants';
 
 export function SignInForm({
   className,
@@ -87,7 +88,7 @@ export function SignInForm({
                       <div className="flex items-center justify-between">
                         <FormLabel>Password</FormLabel>
                         <Link
-                          href="/auth/forgot_password"
+                          href={routes.FORGOT_PASSWORD}
                           className="ml-auto text-sm underline-offset-2 hover:underline"
                         >
                           Forgot your password?
@@ -140,7 +141,7 @@ export function SignInForm({
                 <div className="text-center text-sm">
                   Don&apos;t have an account?{' '}
                   <Link
-                    href="/auth/signup"
+                    href={routes.SIGNUP}
                     className="underline underline-offset-4"
                   >
                     Sign up
