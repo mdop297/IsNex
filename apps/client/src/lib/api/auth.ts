@@ -31,7 +31,10 @@ export const LoginResponseSchema = z.object({
 
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;
 
-export const RegisterResponseSchema = UserSchema;
+export const RegisterResponseSchema = z.object({
+  status: z.number(),
+  message: z.string(),
+});
 export type RegisterResponse = z.infer<typeof RegisterResponseSchema>;
 
 export const RefreshResponseSchema = z.object({
@@ -39,6 +42,12 @@ export const RefreshResponseSchema = z.object({
   user: UserSchema,
 });
 export type RefreshResponse = z.infer<typeof RefreshResponseSchema>;
+
+export const VerifyResponseSchema = z.object({
+  status: z.number(),
+  message: z.string(),
+});
+export type VerifyResponse = z.infer<typeof VerifyResponseSchema>;
 
 //
 // ---------- API METHODS ----------
@@ -57,14 +66,10 @@ export const authApi = {
   // Public: register
   register: async (
     payload: z.infer<typeof RegisterRequestSchema>,
-  ): Promise<LoginResponse | undefined> => {
-    try {
-      const body = RegisterRequestSchema.parse(payload);
-      const response = await api.post('/api/auth/signup', body);
-      return LoginResponseSchema.parse(response.data);
-    } catch (err) {
-      throw err;
-    }
+  ): Promise<RegisterResponse | undefined> => {
+    const body = RegisterRequestSchema.parse(payload);
+    const response = await api.post('/api/auth/signup', body);
+    return RegisterResponseSchema.parse(response.data);
   },
 
   // Protected: get current user
@@ -82,5 +87,10 @@ export const authApi = {
   refresh: async (): Promise<RefreshResponse> => {
     const response = await api.post('/api/auth/refresh');
     return RefreshResponseSchema.parse(response.data);
+  },
+
+  verify: async (token: string): Promise<VerifyResponse> => {
+    const response = await api.get(`/api/auth/verify/${token}`);
+    return VerifyResponseSchema.parse(response.data);
   },
 };

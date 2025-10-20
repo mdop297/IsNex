@@ -1,7 +1,15 @@
 import {
   BadRequestException,
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Inject,
   Injectable,
+  InternalServerErrorException,
+  Logger,
   NotFoundException,
+  OnModuleDestroy,
+  OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from '../users/dto/create-user.dto';
@@ -11,6 +19,8 @@ import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 import { LoginDto } from './dtos/login.dto';
+import { ClientKafka } from '@nestjs/microservices';
+import { UserCreatedEvent } from 'src/proto/auth';
 
 export interface JwtPayload {
   userId: string;
@@ -19,13 +29,31 @@ export interface JwtPayload {
   role: string;
 }
 
+export interface EmailVerifyPayload {
+  userId: string;
+  email: string;
+}
+
 @Injectable()
-export class AuthService {
+export class AuthService implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private userService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    @Inject('AUTH_SERVICE') private readonly kafkaClient: ClientKafka,
   ) {}
+
+  async onModuleInit() {
+    this.logger.log('Connecting Kafka producer...');
+    await this.kafkaClient.connect();
+    this.logger.log('Kafka producer connected ✅');
+  }
+
+  async onModuleDestroy() {
+    await this.kafkaClient.close();
+  }
 
   getHashPassword = (password: string) => {
     const salt = genSaltSync(10);
@@ -50,28 +78,93 @@ export class AuthService {
     }
   }
 
-  async register(userDto: CreateUserDto, response: Response) {
+  async register(
+    userDto: CreateUserDto,
+  ): Promise<{ status: number; message: string; userId?: string }> {
     const user = await this.userService.findByEmail(userDto.email);
-    const rawPassword = userDto.password;
-    if (user) {
-      throw new BadRequestException('Email in use');
+    if (user && user.isVerified) {
+      throw new ConflictException('This email is already registered');
     }
-    console.log('Register reached!!!');
-    const result = this.getHashPassword(userDto.password);
-    userDto.password = result;
-    if (!userDto.username) {
-      userDto.username = userDto.email.split('@')[0];
-    }
-    const newUser = await this.userService.create(userDto);
-    if (newUser) {
-      return await this.login(
-        { email: userDto.email, password: rawPassword },
-        response,
+
+    try {
+      console.log('Register reached!!!');
+
+      const result = this.getHashPassword(userDto.password);
+      userDto.password = result;
+      if (!userDto.username) {
+        userDto.username = userDto.email.split('@')[0];
+      }
+      if (user) {
+        await this.userService.remove(user.id);
+      }
+      const newUser = await this.userService.create(userDto);
+
+      const payload: UserCreatedEvent = {
+        userId: newUser.id,
+        email: userDto.email,
+        timestamp: Date.now(),
+        urlToken: this.generateEmailToken({
+          userId: newUser.id,
+          email: userDto.email,
+        }),
+      };
+
+      const buffer = UserCreatedEvent.encode(payload).finish();
+      await this.kafkaClient.producer.send({
+        topic: 'user_created',
+        messages: [
+          {
+            key: userDto.email,
+            value: Buffer.from(buffer),
+            headers: { 'event-type': 'user.created' },
+          },
+        ],
+      });
+
+      return {
+        status: HttpStatus.CREATED,
+        userId: newUser.id,
+        message: 'User registered successfully',
+      };
+    } catch (err) {
+      this.logger.error('Registration failed', err);
+      if (err instanceof HttpException) throw err;
+      throw new InternalServerErrorException(
+        'Registration failed. Please try again later. Check broker or upstream server',
       );
     }
-    return {
-      message: 'User not created',
-    };
+  }
+
+  async verify(token: string) {
+    try {
+      const payload: EmailVerifyPayload = this.jwtService.verify(token);
+      const user = await this.userService.findById(payload.userId);
+      if (!user) throw new NotFoundException('User not found');
+      if (user.isVerified)
+        return {
+          status: HttpStatus.CONFLICT,
+          message: 'Email already verified',
+        }; // already verified
+      await this.userService.update(user.id, { ...user, isVerified: true });
+      return {
+        status: HttpStatus.OK,
+        message: 'Email verified successfully',
+      };
+    } catch (err) {
+      if (err instanceof Error && err.name === 'TokenExpiredError') {
+        const payload: EmailVerifyPayload = this.jwtService.decode(token);
+        if (!payload?.userId)
+          throw new BadRequestException('Invalid token structure');
+
+        const user = await this.userService.findById(payload.userId);
+        if (user?.isVerified) {
+          throw new ConflictException('Email already verified');
+        }
+      }
+      throw new BadRequestException(
+        'Invalid or expired token, please try again',
+      );
+    }
   }
 
   async login(body: LoginDto, response: Response) {
@@ -181,5 +274,13 @@ export class AuthService {
     ]);
 
     return { accessToken, refreshToken };
+  }
+
+  private generateEmailToken(payload: EmailVerifyPayload) {
+    const emailToken = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_ACCESS_SECRET'),
+      expiresIn: '15m',
+    });
+    return emailToken;
   }
 }

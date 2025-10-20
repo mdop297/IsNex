@@ -1,5 +1,5 @@
 services:
-  auth:
+  auth-svc:
     container_name: auth-svc
     build:
       context: ../..
@@ -43,7 +43,7 @@ services:
     volumes:
       - ../../minio/data:/data
 
-  documents:
+  documents-svc:
     container_name: documents-svc
     build:
       context: ../../apps/documents
@@ -64,6 +64,27 @@ services:
 
         - action: rebuild
           path: ../../apps/documents/uv.lock
+
+  notification-svc:
+    container_name: notification-svc
+    build:
+      context: ../../apps/notification-svc
+      dockerfile: Dockerfile
+    ports:
+      - "4001:8001"
+    volumes:
+      - ../../apps/notification-svc/src:/app/src
+      - ../../apps/notification-svc/pyproject.toml:/app/pyproject.toml
+      - ../../apps/notification-svc/uv.lock:/app/uv.lock
+    develop:
+      watch:
+        - action: sync
+          path: ../../apps/notification-svc
+          target: /app
+          ignore:
+            - .venv/
+        - action: rebuild
+          path: ../../apps/notification-svc/uv.lock
 
 networks:
   default:

@@ -12,7 +12,6 @@ minio_client = Minio(
     "data-lake:9000", access_key="minioadmin", secret_key="minioadmin", secure=False
 )
 
-# Tạo bucket nếu chưa có
 bucket_name = "my-bucket"
 try:
     if not minio_client.bucket_exists(bucket_name):

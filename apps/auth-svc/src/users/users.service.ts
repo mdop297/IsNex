@@ -63,9 +63,9 @@ export class UsersService {
 
   update(id: string, updateUserDto: UpdateUserDto) {
     try {
-      const { userId, ...data } = updateUserDto;
+      const { id, ...data } = updateUserDto;
       const result = this.prisma.user.update({
-        where: { id: userId },
+        where: { id: id },
         data: { ...data },
       });
       return result;
@@ -75,7 +75,11 @@ export class UsersService {
   }
 
   remove(id: string) {
-    return `This action removes a #${id} user`;
+    try {
+      return this.prisma.user.delete({ where: { id: id } });
+    } catch (error) {
+      this.handlePrismaError(error);
+    }
   }
 
   private handlePrismaError(error: Error) {

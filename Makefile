@@ -9,7 +9,8 @@ AUTH_ENV_FILE=$(CURDIR)/apps/auth-svc/.env.dev
 COMPOSE_FILE = infras/compose/docker-compose.yml
 COMPOSE_DEV_FILE = infras/compose/docker-compose.override.yml
 COMPOSE_API_GATEWAY = infras/compose/docker-compose.api-gateway.yml
-COMPOSE_MONITORING = infras/monitoring/docker-compose.monitoring.yml
+COMPOSE_KAFKA = infras/compose/docker-compose.kafka.yml
+# COMPOSE_MONITORING = infras/monitoring/docker-compose.monitoring.yml
 
 # Image names
 AUTH_IMAGE = mdop297/isnex-auth
@@ -74,6 +75,11 @@ up-network:
 	@echo "✅ Network $(NETWORK_NAME) is ready"
 
 # ------------------ Docker Compose Commands ------------------------
+# Start kafka service
+up-kafka: up-network
+	@echo "🚀 Starting Kafka service..."
+	docker compose -f $(COMPOSE_KAFKA) up -d
+
 
 # Start services in production mode
 up: up-network
@@ -81,8 +87,27 @@ up: up-network
 	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) up -d
 	@echo "✅ Services started successfully!"
 
+# Start auth service in development mode
+auth-up:
+	@echo "🚀 Starting auth service in development mode..."
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) --env-file $(ENV_FILE) --env-file $(AUTH_ENV_FILE) up -d auth
+	@echo "✅ Auth service started successfully!"
+
+# Start notification service 
+noti-up:
+	@echo "🚀 Starting notification service ..."
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) --env-file $(ENV_FILE) up -d notification
+	@echo "✅ Notification service started successfully!"
+
+# Start client service
+client-up:
+	@echo "🚀 Starting client service ..."
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) --env-file $(ENV_FILE) up -d client
+	@echo "✅ Client service started successfully!"
+
+
 # Start services in development mode with code sync
-up-dev: up-network
+up-dev: up-network up-kafka
 	@echo "🔧 Starting all services in development mode (single stack)..."
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) --env-file $(ENV_FILE) --env-file $(AUTH_ENV_FILE) up -d
 # docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) up --watch documents
@@ -104,6 +129,13 @@ build-dev:
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) --env-file $(ENV_FILE) --env-file $(AUTH_ENV_FILE) build
 	@echo "✅ Development build completed!"
 
+# Build notification service
+build-notification:
+	@echo "🏗️  Building notification service image..."
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) --env-file $(ENV_FILE) --env-file $(AUTH_ENV_FILE) build notification
+	@echo "✅ Notification service build completed!"
+
+
 # Apply Kong config manually
 kong-config:
 	@echo "🔧 Applying Kong configuration..."
@@ -121,6 +153,12 @@ down:
 	@echo "🛑 Stopping all services..."
 	docker compose -p compose down
 	@echo "✅ All services stopped!"
+
+# docker ps format view:
+ps: 
+	@echo "📊 Showing Docker containers..."
+	docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
 
 # View logs for all services
 logs:

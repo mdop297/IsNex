@@ -17,7 +17,7 @@ services:
     container_name: kong-dbless
     user: "${KONG_USER:-kong}"
     environment:
-      KONG_PROMETHEUS_ENABLED: "on"
+      KONG_PROMETHEUS_ENABLED: "off"
       KONG_PREFIX: /var/run/kong
       KONG_DATABASE: off
       KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
@@ -26,7 +26,7 @@ services:
       KONG_PROXY_ERROR_LOG: /dev/stderr
       KONG_ADMIN_ERROR_LOG: /dev/stderr
       KONG_ADMIN_LISTEN: 0.0.0.0:8001
-      KONG_ADMIN_GUI_URL: http://kong:8002
+      KONG_ADMIN_GUI_URL: http://localhost:8002
     ports:
       - "8000:8000"
       - "8443:8443"
@@ -42,7 +42,6 @@ services:
       timeout: 10s
       retries: 10
     restart: on-failure
-    read_only: true
     volumes:
       - ../../apps/api-gateway/declarative:/kong/declarative
       - ../../apps/api-gateway/tmp_volume:/tmp
@@ -50,25 +49,25 @@ services:
     security_opt:
       - no-new-privileges
 
-  zipkin:
-    image: openzipkin/zipkin:3.5
-    container_name: zipkin
-    ports:
-      - 8411:9411
+  # zipkin:
+  #   image: openzipkin/zipkin:3.5
+  #   container_name: zipkin
+  #   ports:
+  #     - 8411:9411
 
-  prometheus:
-    image: prom/prometheus:v3.5.0
-    container_name: prometheus
-    ports:
-      - "8090:9090"
-    volumes:
-      - ../../apps/api-gateway/config/prometheus.yml:/etc/prometheus/prometheus.yml
+  # prometheus:
+  #   image: prom/prometheus:v3.5.0
+  #   container_name: prometheus
+  #   ports:
+  #     - "8090:9090"
+  #   volumes:
+  #     - ../../apps/api-gateway/config/prometheus.yml:/etc/prometheus/prometheus.yml
 
-  grafana:
-    image: grafana/grafana:12.3.0-17718666199-ubuntu
-    container_name: grafana
-    ports:
-      - "8500:3000"
+  # grafana:
+  #   image: grafana/grafana:12.3.0-17718666199-ubuntu
+  #   container_name: grafana
+  #   ports:
+  #     - "8500:3000"
 
   # keycloak:
   #   image: quay.io/keycloak/keycloak:latest
