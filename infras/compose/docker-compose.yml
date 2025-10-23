@@ -7,8 +7,6 @@ services:
     restart: unless-stopped
     ports:
       - 2001:3001
-    environment:
-      DATABASE_URL: "postgresql://${AUTH_POSTGRES_USER}:${AUTH_POSTGRES_PASSWORD}@auth-db:5432/${AUTH_POSTGRES_DB}"
     depends_on:
       - auth-db
     env_file:
@@ -20,14 +18,21 @@ services:
     restart: unless-stopped
     ports:
       - 2432:5432
-    environment:
-      POSTGRES_USER: ${AUTH_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${AUTH_POSTGRES_PASSWORD}
-      POSTGRES_DB: ${AUTH_POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    env_file:
-      - ../../envs/.env.dev
+
+  data-lake:
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+    container_name: isnex-data-lake
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "1000:9000"
+      - "1001:9001"
+    command: server /data --console-address ":9001"
+    volumes:
+      - ../../minio/data:/data
 
 volumes:
   postgres_data:
