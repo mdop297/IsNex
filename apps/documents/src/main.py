@@ -1,10 +1,20 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.concurrency import asynccontextmanager
 from fastapi.responses import StreamingResponse
 from minio import Minio
 from minio.error import S3Error
 import io
+from src.core.config import db_settings
+from src.database.session import create_tables
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan_handler(app: FastAPI):
+    await create_tables()
+    yield
+
+
+app = FastAPI(lifespan=lifespan_handler)
 
 
 # MinIO client
@@ -67,6 +77,26 @@ async def download_file(filename: str):
             media_type="application/octet-stream",
             headers={"Content-Disposition": f"attachment; filename={filename}"},
         )
+    except HTTPException:
+        raise
+    except S3Error as e:
+        raise HTTPException(status_code=500, detail=f"MinIO error: {str(e)}") from e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Server error: {str(e)}") from e
+
+
+@app.get(path="/showenv")
+def showenv():
+    try:
+        db_configs = {
+            "db_host": db_settings.DATABASE_HOST,
+            "db_port": db_settings.DATABASE_PORT,
+            "db_user": db_settings.POSTGRES_USER,
+            "db_password": db_settings.POSTGRES_PASSWORD,
+            "db_name": db_settings.DATABASE_NAME,
+            "db_url": db_settings.DATABASE_URL,
+        }
+        return db_configs
     except HTTPException:
         raise
     except S3Error as e:

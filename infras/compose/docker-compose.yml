@@ -1,25 +1,22 @@
 services:
-  auth-svc:
-    container_name: auth-svc
-    build:
-      context: ../..
-      dockerfile: ./apps/auth-svc/Dockerfile
-    restart: unless-stopped
-    ports:
-      - 2001:3001
-    depends_on:
-      - auth-db
-    env_file:
-      - ../../envs/.env.dev
-
-  auth-db:
+  isnex-db:
     image: postgres:17
-    container_name: auth-db
+    container_name: isnex-db
     restart: unless-stopped
     ports:
       - 2432:5432
+    env_file:
+      - ../../envs/.env.dev
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: users, documents
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./create-multiple-postgresql-databases.sh:/docker-entrypoint-initdb.d/create-multiple-databases.sh
 
   data-lake:
     image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z

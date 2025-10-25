@@ -12,10 +12,10 @@ services:
       - 2001:3001
       - 2211:4211
     depends_on:
-      - auth-db
+      - isnex-db
     env_file:
-      - ../../apps/auth-svc/.env.dev
       - ../../envs/.env.dev
+      - ../../apps/auth-svc/.env.dev
 
   client:
     container_name: client-ui
@@ -49,6 +49,9 @@ services:
 
         - action: rebuild
           path: ../../apps/documents/uv.lock
+    env_file:
+      - ../../envs/.env.dev
+      - ../../apps/documents/.env.dev
 
   notification-svc:
     container_name: notification-svc

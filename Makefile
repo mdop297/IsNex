@@ -23,7 +23,7 @@ HEALTH_URL = http://localhost:3000/health
 
 .PHONY: help up up-dev up-monitoring up-network build-dev build-prod down logs exec-auth \
         skaffold-dev-cloud skaffold-prod skaffold-clean auth-run-dev auth-run-dev-watch \
-        auth-migrate-dev auth-db-reset auth-db-studio auth-prisma-generate auth-localhost \
+        auth-migrate-dev isnex-db-reset isnext-db-studio auth-prisma-generate auth-localhost \
         clean push-prod check-health k8s-logs k8s-exec kong-config status
 
 
@@ -41,17 +41,14 @@ up-kafka: up-network
 	@echo "🚀 Starting Kafka service..."
 	docker compose -f $(COMPOSE_KAFKA) up -d
 
-
-# Start services in production mode
-up: up-network
-	@echo "🚀 Starting services in production mode..."
-	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) up -d
-	@echo "✅ Services started successfully!"
+up-db: up-network 
+	@echo "🚀 Starting DB service..."
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) up -d isnex-db
 
 # Start auth service in development mode
 up-auth : up-kafka
 	@echo "🚀 Starting auth service in development mode..."
-	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) up -d auth-svc auth-db
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) up -d auth-svc isnex-db
 	@echo "✅ Auth service started successfully!"
 
 # Start notification service 
@@ -61,23 +58,27 @@ up-notification:
 	@echo "✅ Notification service started successfully!"
 
 # Start client service
-client-up:
+up-client:
 	@echo "🚀 Starting client service ..."
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) up -d client
 	@echo "✅ Client service started successfully!"
 
+up-documents: up-db
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE)  up -d documents-svc data-lake
+
 # Start services in development mode with code sync
-up-dev: up-network up-kafka
+up-dev: up-network up-kafka up-db
 	@echo "🔧 Starting all services in development mode (single stack)..."
 # merge ENV files then override conflicting fields in earlier ones
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) up -d
 # docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) -f $(COMPOSE_API_GATEWAY) up --watch documents
 	@echo "✅ All development services started in single stack!"
 
-up-documents-svc: 
-	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE)  up -d documents-svc documents-db data-lake
-
-
+# Start services in production mode
+up: up-network
+	@echo "🚀 Starting services in production mode..."
+	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) up -d
+	@echo "✅ Services started successfully!"
 
 # Build services for development
 build-dev:
@@ -86,7 +87,7 @@ build-dev:
 	@echo "✅ Development build completed!"
 
 # Build notification service
-build-notification:
+build-notification: 
 	@echo "🏗️  Building notification service image..."
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) build notification
 	@echo "✅ Notification service build completed!"
