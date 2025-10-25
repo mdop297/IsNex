@@ -37,6 +37,8 @@ services:
       - "4000:8000"
     volumes:
       - ../../apps/documents/src:/app/src
+      - ../../apps/documents/migrations:/app/migrations
+      - ../../apps/documents/alembic.ini:/app/alembic.ini
       - ../../apps/documents/pyproject.toml:/app/pyproject.toml
       - ../../apps/documents/uv.lock:/app/uv.lock
     develop:

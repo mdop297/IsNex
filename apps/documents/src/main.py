@@ -5,17 +5,15 @@ from minio import Minio
 from minio.error import S3Error
 import io
 from src.core.config import db_settings
-from src.database.session import create_tables
 
+# we use alembic, so we don't need the following lines
+# @asynccontextmanager
+# async def lifespan_handler(app: FastAPI):
+#     await create_tables()
+#     yield
+# app = FastAPI(lifespan=lifespan_handler)
 
-@asynccontextmanager
-async def lifespan_handler(app: FastAPI):
-    await create_tables()
-    yield
-
-
-app = FastAPI(lifespan=lifespan_handler)
-
+app = FastAPI()
 
 # MinIO client
 minio_client = Minio(

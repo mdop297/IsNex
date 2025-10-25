@@ -66,6 +66,13 @@ up-client:
 up-documents: up-db
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE)  up -d documents-svc data-lake
 
+documents-revision:
+# how to use: make documents-revision m="message"
+	docker exec documents-svc alembic revision --autogenerate -m "$(m)"
+
+documents-upgrade:
+	docker exec documents-svc alembic upgrade head 
+
 # Start services in development mode with code sync
 up-dev: up-network up-kafka up-db
 	@echo "🔧 Starting all services in development mode (single stack)..."
