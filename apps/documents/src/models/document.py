@@ -38,18 +38,14 @@ class FileSizeUnit(str, Enum):
 class Document(BaseTable, table=True):
     id: UUID = Field(sa_column=Column(postgresql.UUID, default=uuid4, primary_key=True))
     user_id: UUID  # soft FK
-    workspace_id: UUID
+    # workspace_id: Optional[UUID]
     folder_id: Optional[UUID] = Field(foreign_key="folder.id")
-    folder: Optional["Folder"] = Relationship(
-        back_populates="documents", sa_relationship_kwargs={"lazy": "selectin"}
-    )
 
     name: str
-    description: Optional[str]
     file_url: str
     source_type: Source  # only Pdf for now
     num_pages: int
-    embedding_status: Status
+    embedding_status: Status = Field(default=Status.PENDING)
     file_size: float = Field(
         sa_column=Column(postgresql.DOUBLE_PRECISION, nullable=False)
     )
@@ -65,11 +61,14 @@ class Document(BaseTable, table=True):
         default_factory=dict, sa_column=Column(postgresql.JSONB)
     )
 
-    highlights: list["Highlight"] = Relationship(
-        back_populates="document", sa_relationship_kwargs={"lazy": "selectin"}
-    )
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(
         default_factory=datetime.now,
         sa_column=Column(postgresql.TIMESTAMP, onupdate=datetime.now),
+    )
+    folder: Optional["Folder"] = Relationship(
+        back_populates="documents", sa_relationship_kwargs={"lazy": "selectin"}
+    )
+    highlights: list["Highlight"] = Relationship(
+        back_populates="document", sa_relationship_kwargs={"lazy": "selectin"}
     )
