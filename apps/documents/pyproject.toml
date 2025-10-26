@@ -15,6 +15,7 @@ addopts = """
  --junitxml='../../reports/apps/documents/unittests/junit.xml'
 """
 
+
 [project]
 name = "documents"
 version = "1.0.0"
@@ -32,6 +33,11 @@ dependencies = [
     "sqlalchemy>=2.0.44",
     "sqlmodel>=0.0.27",
 ]
+
+[project.scripts]
+dev = "scripts.dev:main"
+revision = "scripts.revision:main"
+upgrade = "scripts.upgrade:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]

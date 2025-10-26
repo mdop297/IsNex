@@ -41,6 +41,7 @@ services:
       - ../../apps/documents/alembic.ini:/app/alembic.ini
       - ../../apps/documents/pyproject.toml:/app/pyproject.toml
       - ../../apps/documents/uv.lock:/app/uv.lock
+      - ../../apps/documents/scripts:/app/scripts
     develop:
       watch:
         - action: sync

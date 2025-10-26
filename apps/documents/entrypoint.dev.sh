@@ -1,8 +1,7 @@
 #!/bin/bash
 set -e
 
-# Chạy app FastAPI ở background
-fastapi dev --host 0.0.0.0 src/main.py &
+uv run dev &
 
 # Watch uv.lock
 UV_LOCK=/app/uv.lock

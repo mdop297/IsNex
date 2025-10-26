@@ -68,10 +68,10 @@ up-documents: up-db
 
 documents-revision:
 # how to use: make documents-revision m="message"
-	docker exec documents-svc alembic revision --autogenerate -m "$(m)"
+	docker exec documents-svc uv run revision "$(m)"
 
 documents-upgrade:
-	docker exec documents-svc alembic upgrade head 
+	docker exec documents-svc uv run upgrade
 
 # Start services in development mode with code sync
 up-dev: up-network up-kafka up-db

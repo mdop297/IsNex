@@ -29,6 +29,13 @@ class Status(str, Enum):
     FAILED = "FAILED"
 
 
+class FileSizeUnit(str, Enum):
+    B = "b"
+    KB = "Kb"
+    MB = "Mb"
+    GB = "Gb"
+
+
 class Document(BaseTable, table=True):
     id: UUID = Field(sa_column=Column(postgresql.UUID, default=uuid4, primary_key=True))
     user_id: UUID
@@ -44,6 +51,13 @@ class Document(BaseTable, table=True):
     source_type: Source  # only Pdf for now
     num_pages: int
     embedding_status: Status
+    file_size: float = Field(
+        sa_column=Column(postgresql.DOUBLE_PRECISION, nullable=False)
+    )
+    file_unit: FileSizeUnit = Field(
+        sa_column=Column(postgresql.ENUM(FileSizeUnit, name="file_size_unit_enum")),
+        default=FileSizeUnit.MB,
+    )
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(
         default_factory=datetime.now,
