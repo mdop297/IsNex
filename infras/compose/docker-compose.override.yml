@@ -12,7 +12,8 @@ services:
       - 2001:3001
       - 2211:4211
     depends_on:
-      - isnex-db
+      isnex-db:
+        condition: service_healthy
     env_file:
       - ../../envs/.env.dev
       - ../../apps/auth-svc/.env.dev
@@ -33,6 +34,9 @@ services:
     build:
       context: ../../apps/documents
       dockerfile: Dockerfile.dev
+    depends_on:
+      isnex-db:
+        condition: service_healthy
     ports:
       - "4000:8000"
     volumes:

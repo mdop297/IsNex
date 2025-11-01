@@ -25,7 +25,6 @@ model User {
   isVerified Boolean @default(false)
   password  String
   username  String   @unique
-  address   String?
   disable   Boolean @default(false)
   role      Role     @default(USER)
   createdAt DateTime @default(now())

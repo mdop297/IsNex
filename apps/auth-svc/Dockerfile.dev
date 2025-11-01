@@ -12,7 +12,8 @@ RUN pnpm install --frozen-lockfile --filter auth-svc...
 
 WORKDIR /isnex/apps/auth-svc
 COPY ./apps/auth-svc ./
-RUN chmod +x ./entrypoint.dev.sh
+
+RUN npx prisma generate
 
 EXPOSE 3001
-CMD ["pnpm", "nodemon", "--config", "nodemon.json"]
+CMD ["pnpm", "run", "start:dev"]

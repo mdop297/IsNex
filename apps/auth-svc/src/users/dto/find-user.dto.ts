@@ -5,21 +5,16 @@ export class FindUserDto {
   @IsOptional()
   @IsString()
   username?: string;
-
-  @IsOptional()
-  @IsString()
-  address?: string;
 }
 
 export class UserDto {
   id: string;
   email: string;
   username: string;
-  address?: string | null;
   isVerified: boolean;
 }
 
 export function toUserDto(user: User): UserDto {
-  const { id, email, username, address, isVerified } = user;
-  return { id, email, username, address, isVerified };
+  const { id, email, username, isVerified } = user;
+  return { id, email, username, isVerified };
 }

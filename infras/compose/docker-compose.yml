@@ -10,7 +10,7 @@ services:
     environment:
       POSTGRES_MULTIPLE_DATABASES: users, documents
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U mdop297"]
       interval: 5s
       timeout: 5s
       retries: 5
