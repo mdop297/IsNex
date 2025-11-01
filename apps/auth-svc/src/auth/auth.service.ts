@@ -23,14 +23,14 @@ import { ClientKafka } from '@nestjs/microservices';
 import { UserCreatedEvent } from 'src/proto/auth';
 
 export interface JwtPayload {
-  userId: string;
+  user_id: string;
   email: string;
   username: string;
   role: string;
 }
 
 export interface EmailVerifyPayload {
-  userId: string;
+  user_id: string;
   email: string;
 }
 
@@ -104,7 +104,7 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
         email: userDto.email,
         timestamp: Date.now(),
         urlToken: this.generateEmailToken({
-          userId: newUser.id,
+          user_id: newUser.id,
           email: userDto.email,
         }),
       };
@@ -138,7 +138,7 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
   async verify(token: string) {
     try {
       const payload: EmailVerifyPayload = this.jwtService.verify(token);
-      const user = await this.userService.findById(payload.userId);
+      const user = await this.userService.findById(payload.user_id);
       if (!user) throw new NotFoundException('User not found');
       if (user.isVerified)
         return {
@@ -153,10 +153,10 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     } catch (err) {
       if (err instanceof Error && err.name === 'TokenExpiredError') {
         const payload: EmailVerifyPayload = this.jwtService.decode(token);
-        if (!payload?.userId)
+        if (!payload?.user_id)
           throw new BadRequestException('Invalid token structure');
 
-        const user = await this.userService.findById(payload.userId);
+        const user = await this.userService.findById(payload.user_id);
         if (user?.isVerified) {
           throw new ConflictException('Email already verified');
         }
@@ -175,7 +175,7 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     }
 
     const payload: JwtPayload = {
-      userId: validUser.id,
+      user_id: validUser.id,
       email: validUser.email,
       username: validUser.username,
       role: validUser.role,
@@ -183,16 +183,23 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     const tokens = await this.generateTokens(payload);
 
     // Set refresh token in HTTP-only cookie
-    response.cookie('refreshToken', tokens.refreshToken, {
+    response.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
       secure: this.configService.get('NODE_ENV') === 'production',
       sameSite: 'lax',
       path: '/api/auth/refresh',
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
+    });
+
+    response.cookie('access_token', tokens.accessToken, {
+      httpOnly: true,
+      secure: this.configService.get('NODE_ENV') === 'production',
+      sameSite: 'lax',
+      path: '/api',
+      maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
     return {
-      accessToken: tokens.accessToken,
       user: {
         userId: validUser.id,
         email: validUser.email,
@@ -223,7 +230,7 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
         throw new UnauthorizedException('User not found');
       }
       const newPayload: JwtPayload = {
-        userId: user.id,
+        user_id: user.id,
         email: user.email,
         username: user.username,
         role: user.role,
@@ -231,7 +238,7 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
       const tokens = await this.generateTokens(newPayload);
 
       // Set refresh token in HTTP-only cookie
-      response.cookie('refreshToken', tokens.refreshToken, {
+      response.cookie('refresh_token', tokens.refreshToken, {
         httpOnly: true,
         secure: this.configService.get('NODE_ENV') === 'production',
         sameSite: 'lax',
@@ -254,10 +261,12 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
   }
 
   signOut(response: Response) {
+    // TODO: Also invalidate the refresh token server-side (e.g. delete from DB or Redis)
+    // to prevent reuse of old tokens after logout.
     if (!response) {
       throw new Error('Response object is undefined');
     }
-    response.clearCookie('refreshToken');
+    response.clearCookie('refresh_token');
     return { message: 'Logged out successfully' };
   }
 
@@ -266,10 +275,12 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
       this.jwtService.signAsync(payload, {
         secret: this.configService.get('JWT_ACCESS_SECRET'),
         expiresIn: '15m',
+        algorithm: 'HS256',
       }),
       this.jwtService.signAsync(payload, {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
         expiresIn: '7d',
+        algorithm: 'HS256',
       }),
     ]);
 

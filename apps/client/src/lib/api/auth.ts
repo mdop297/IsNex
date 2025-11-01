@@ -24,8 +24,6 @@ export const UserSchema = z.object({
 export type User = z.infer<typeof UserSchema>;
 
 export const LoginResponseSchema = z.object({
-  accessToken: z.string(),
-  refreshToken: z.string().optional(),
   user: UserSchema,
 });
 

@@ -2,7 +2,7 @@ from typing import Optional
 from uuid import UUID
 from pydantic import BaseModel, Field, field_validator
 
-from src.models.document import Source, Status
+from src.models.document import Source
 
 
 class DocumentCreate(BaseModel):
@@ -10,7 +10,7 @@ class DocumentCreate(BaseModel):
     workspace_id: Optional[UUID] = Field(default=None)
     folder_id: Optional[UUID] = Field(default=None)
     name: str = Field(default="Untitled")
-    file_url: str
+    # file_url: str
     source_type: Source = Field(
         default=Source.PDF,
         description="type of the file, only pdf for now",
@@ -34,3 +34,9 @@ class DocumentCreate(BaseModel):
                 "Please upload a PDF file. IsNex only support PDF for now."
             )
         return v
+
+
+class DocumentUpdate(BaseModel):
+    workspace_id: Optional[UUID] = Field(default=None)
+    folder_id: Optional[UUID] = Field(default=None)
+    name: Optional[str] = Field(default=None)
