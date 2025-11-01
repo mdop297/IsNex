@@ -1,13 +1,14 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.concurrency import asynccontextmanager
+from fastapi import APIRouter, File, Request, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse
 from minio import Minio
 from minio.error import S3Error
 import io
 from src.core.config import settings
+from src.core.utils.logger import setup_custom_logger
 
+router = APIRouter(prefix="/api")
+logger = setup_custom_logger("IsNexLogger")
 
-app = FastAPI()
 
 # MinIO client
 minio_client = Minio(
@@ -22,12 +23,16 @@ except S3Error as e:
     print(f"Error creating bucket: {e}")
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+@router.get("")
+async def root(request: Request):
+    logger.info("Current user info: %s", request.user.json())
+    return {
+        "message": "Hello World",
+        "user": request.user.dict(),  # convert Pydantic model -> dict
+    }
 
 
-@app.post("/upload")
+@router.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     try:
         if not file.filename:
@@ -54,7 +59,7 @@ async def upload_file(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"Server error: {str(e)}") from e
 
 
-@app.get("/download/{filename}")
+@router.get("/download/{filename}")
 async def download_file(filename: str):
     try:
         try:
@@ -77,7 +82,7 @@ async def download_file(filename: str):
         raise HTTPException(status_code=500, detail=f"Server error: {str(e)}") from e
 
 
-@app.get(path="/showenv")
+@router.get(path="/showenv")
 def showenv():
     try:
         db_configs = {

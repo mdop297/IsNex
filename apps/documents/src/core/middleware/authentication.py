@@ -10,6 +10,7 @@ from starlette.middleware.authentication import AuthenticationMiddleware
 from fastapi import Request
 from starlette.responses import JSONResponse
 from fastapi import status
+from src.core.utils.logger import setup_custom_logger
 from src.schemas.extras.current_user import CurrentUser
 from src.core.config import settings
 from src.schemas.extras.jwt_payload import JwtPayload
@@ -19,12 +20,20 @@ def on_auth_error(request: Request, exc: Exception):
     return JSONResponse({"error": str(exc)}, status_code=401)
 
 
+PUBLIC_PREFIXES = ["/docs", "/redoc", "/openapi.json", "/api/public", "/api/health"]
+
+logger = setup_custom_logger("IsNexLogger")
+
+
 class AuthBackend(AuthenticationBackend):
     async def authenticate(self, conn: HTTPConnection):
-        if any(conn.url.path.startswith(p) for p in settings.PUBLIC_PREFIXES):
+        if any(conn.url.path.startswith(p) for p in PUBLIC_PREFIXES):
             return None
 
         token = conn.cookies.get("access_token")
+
+        logger.info("AUTHENTICATION BACKEND REACHED!!!!!")
+
         if not token:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

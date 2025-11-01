@@ -196,7 +196,7 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
       secure: this.configService.get('NODE_ENV') === 'production',
       sameSite: 'lax',
       path: '/api',
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 
     return {

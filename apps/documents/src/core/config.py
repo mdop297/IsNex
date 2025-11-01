@@ -29,8 +29,6 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ENVIRONMENT: str = "development"
 
-    PUBLIC_PREFIXES = ["/api/public", "/api/health"]
-
     model_config = _base_config
 
     @property
