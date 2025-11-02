@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.core.middleware.authentication import (
@@ -16,7 +15,7 @@ my_logger = setup_custom_logger("IsNexLogger")
 
 
 app = FastAPI(
-    title="Core Service",
+    title="Core Service ",
     description="Core Service for IsNex project",
     docs_url=None if settings.ENVIRONMENT == "production" else "/docs",
     redoc_url=None if settings.ENVIRONMENT == "production" else "/redoc",

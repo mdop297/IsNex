@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Generic, Type, TypeVar
+from typing import Generic, Sequence, Type, TypeVar
+from uuid import UUID
 from pydantic import BaseModel
 
 from src.core.repository.base import BaseRepository
@@ -18,21 +19,21 @@ class BaseService(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
         self.repository = repository
 
     @abstractmethod
-    def create(self, *args, **kwargs) -> ModelType:
+    async def create(self, *args, **kwargs) -> ModelType:
         pass
 
     @abstractmethod
-    def update(self, *args, **kwargs) -> ModelType:
+    async def update(self, *args, **kwargs) -> ModelType:
         pass
 
     @abstractmethod
-    def delete(self, *args, **kwargs) -> bool:
+    async def delete(self, *args, **kwargs) -> bool:
         pass
 
     @abstractmethod
-    def get_by_id(self, *args, **kwargs) -> ModelType:
+    async def get_by_id(self, id: UUID) -> ModelType:
         pass
 
     @abstractmethod
-    def get_all(self, *args, **kwargs) -> list[ModelType]:
+    async def get_all(self, *args, **kwargs) -> Sequence[ModelType]:
         pass

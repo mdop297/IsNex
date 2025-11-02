@@ -50,7 +50,7 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
         records = results.all()
         return records
 
-    async def get_by_id(self, id: int) -> ModelType | None:
+    async def get_by_id(self, id: UUID) -> ModelType | None:
         """
         Returns the model instance matching the id.
 
@@ -116,7 +116,7 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
         result = await self.session.exec(stmt)
         return result.first() is not None
 
-    async def delete(self, id: int) -> bool:
+    async def delete(self, id: UUID) -> bool:
         """
         Deletes the entity with the given id.
 

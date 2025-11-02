@@ -10,8 +10,8 @@ class DocumentCreate(BaseModel):
     workspace_id: Optional[UUID] = Field(default=None)
     folder_id: Optional[UUID] = Field(default=None)
     name: str = Field(default="Untitled")
-    # file_url: str
-    source_type: Source = Field(
+    file_url: str
+    type: Source = Field(
         default=Source.PDF,
         description="type of the file, only pdf for now",
         examples=[
@@ -23,10 +23,9 @@ class DocumentCreate(BaseModel):
         ],
     )
     num_pages: Optional[int] = Field(..., description="number of pages in the file")
-    file_size: float = Field(..., description="size of the file in bytes")
-    file_unit: str = Field(..., description="unit of the file size")
+    file_size: str = Field(..., description="size of the file in bytes")
 
-    @field_validator("source_type")
+    @field_validator("type")
     @classmethod
     def ensure_pdf_only(cls, v):
         if v != Source.PDF:

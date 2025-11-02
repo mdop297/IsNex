@@ -1,9 +1,8 @@
-from __future__ import annotations
 from typing import Any, Optional, TYPE_CHECKING
 from sqlalchemy.dialects import postgresql
 from enum import Enum
 from sqlmodel import Column, Field, Relationship
-from uuid import UUID, uuid4
+from uuid import UUID
 from datetime import datetime
 
 from src.core.database.base import BaseTable
@@ -14,45 +13,34 @@ if TYPE_CHECKING:
 
 
 class Source(str, Enum):
-    PDF = "PDF"
-    WORD = "WORD"
-    EXCEL = "EXCEL"
-    POWERPOINT = "POWERPOINT"
-    IMAGE = "IMAGE"
+    PDF = "pdf"
+    WORD = "docx"
+    EXCEL = "xlsx"
+    POWERPOINT = "pptx"
+    IMAGE = "image"
 
 
 class Status(str, Enum):
-    PENDING = "PENDING"
+    UPLOADED = "UPLOADED"
     PROCESSING = "PROCESSING"
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
 
 
-class FileSizeUnit(str, Enum):
-    B = "b"
-    KB = "Kb"
-    MB = "Mb"
-    GB = "Gb"
-
-
 class Document(BaseTable, table=True):
-    id: UUID = Field(sa_column=Column(postgresql.UUID, default=uuid4, primary_key=True))
     user_id: UUID  # soft FK
     # workspace_id: Optional[UUID]
-    folder_id: Optional[UUID] = Field(foreign_key="folder.id")
-
+    folder_id: Optional[UUID] = Field(foreign_key="folder.id", default=None)
+    # workspace_id: Optional[UUID] = Field(foreign_key="workspace.id")
     name: str
+    status: Status = Field(default=Status.UPLOADED)
+    # summary: Optional[str]
     file_url: str
-    source_type: Source  # only Pdf for now
     num_pages: int
-    embedding_status: Status = Field(default=Status.PENDING)
-    file_size: float = Field(
-        sa_column=Column(postgresql.DOUBLE_PRECISION, nullable=False)
-    )
-    file_unit: FileSizeUnit = Field(
-        sa_column=Column(postgresql.ENUM(FileSizeUnit, name="file_size_unit_enum")),
-        default=FileSizeUnit.MB,
-    )
+    type: Source = Field(default=Source.PDF)
+
+    file_size: str = Field(sa_column=Column(postgresql.VARCHAR(16), nullable=False))
+
     deleted_at: Optional[datetime] = Field(
         sa_column=Column(postgresql.TIMESTAMP, default=None)
     )

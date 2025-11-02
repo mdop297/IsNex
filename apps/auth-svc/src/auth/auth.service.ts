@@ -274,12 +274,12 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.configService.get('JWT_ACCESS_SECRET'),
-        expiresIn: '15m',
+        expiresIn: '1d',
         algorithm: 'HS256',
       }),
       this.jwtService.signAsync(payload, {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
-        expiresIn: '7d',
+        expiresIn: '15d',
         algorithm: 'HS256',
       }),
     ]);

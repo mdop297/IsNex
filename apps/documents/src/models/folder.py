@@ -1,4 +1,3 @@
-from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from sqlalchemy.dialects import postgresql
 from sqlmodel import Column, Field, Relationship
@@ -12,8 +11,6 @@ if TYPE_CHECKING:
 
 
 class Folder(BaseTable, table=True):
-    id: UUID = Field(sa_column=Column(postgresql.UUID, default=uuid4, primary_key=True))
-
     user_id: UUID  # soft FK
     workspace_id: UUID
     parent_id: Optional[UUID] = Field(default=None, foreign_key="folder.id")
@@ -26,7 +23,10 @@ class Folder(BaseTable, table=True):
 
     # relationships
     parent: Optional["Folder"] = Relationship(
-        back_populates="children", sa_relationship_kwargs={"lazy": "selectin"}
+        back_populates="children",
+        sa_relationship_kwargs=dict(
+            remote_side="Folder.id"  # notice the uppercase "N" to refer to this table class
+        ),
     )
     children: list["Folder"] = Relationship(
         back_populates="parent", sa_relationship_kwargs={"lazy": "selectin"}

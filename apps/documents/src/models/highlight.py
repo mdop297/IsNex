@@ -1,4 +1,3 @@
-from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 from sqlalchemy.dialects import postgresql
@@ -18,8 +17,6 @@ class HighlightType(str, Enum):
 
 
 class Highlight(BaseTable, table=True):
-    id: UUID = Field(sa_column=Column(postgresql.UUID, default=uuid4, primary_key=True))
-
     user_id: UUID  # soft FK
     document_id: UUID = Field(
         foreign_key="document.id",

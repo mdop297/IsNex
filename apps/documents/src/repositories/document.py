@@ -8,5 +8,5 @@ class DocumentRepository(BaseRepository[Document, DocumentCreate, DocumentUpdate
     def __init__(self, db_session: AsyncSession):
         super().__init__(Document, db_session)
 
-    async def create(self, entity: DocumentCreate):
+    async def create(self, entity: DocumentCreate) -> Document:
         return await super().create(entity)
