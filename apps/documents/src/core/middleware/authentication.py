@@ -1,4 +1,3 @@
-from fastapi import HTTPException
 from starlette.authentication import (
     AuthCredentials,
     AuthenticationBackend,
@@ -7,7 +6,8 @@ from starlette.authentication import (
 from jose import jwt, JWTError, ExpiredSignatureError  # type: ignore
 from starlette.requests import HTTPConnection
 from starlette.middleware.authentication import AuthenticationMiddleware
-from fastapi import Request
+from starlette.authentication import AuthenticationError
+from starlette.exceptions import HTTPException
 from starlette.responses import JSONResponse
 from fastapi import status
 from src.core.utils.logger import setup_custom_logger
@@ -16,8 +16,8 @@ from src.core.config import settings
 from src.schemas.extras.jwt_payload import JwtPayload
 
 
-def on_auth_error(request: Request, exc: Exception):
-    return JSONResponse({"error": str(exc)}, status_code=401)
+def on_auth_error(conn: HTTPConnection, exc: Exception):
+    return JSONResponse({"error rồi bro": str(exc)}, status_code=401)
 
 
 PUBLIC_PREFIXES = ["/docs", "/redoc", "/openapi.json", "/api/public", "/api/health"]
@@ -35,10 +35,7 @@ class AuthBackend(AuthenticationBackend):
         logger.info("AUTHENTICATION BACKEND REACHED!!!!!")
 
         if not token:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Missing authentication credentials",
-            )
+            raise AuthenticationError("Missing authentication credentials")
 
         try:
             payload = jwt.decode(
@@ -55,16 +52,10 @@ class AuthBackend(AuthenticationBackend):
             )
 
         except ExpiredSignatureError:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token expired",
-            )
+            raise AuthenticationError("Token expired")
 
         except JWTError:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token",
-            )
+            raise AuthenticationError("Invalid token")
 
         return AuthCredentials(["authenticated"]), current_user
 
