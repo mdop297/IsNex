@@ -8,11 +8,10 @@ from src.core.middleware.authentication import (
 )
 from src.core.config import settings
 from src.api import router
-from src.core.utils.logger import setup_custom_logger
+from src.core.middleware.logging import LoggingMiddleware
+from src.core.utils.logger import setup_logger
 
-
-my_logger = setup_custom_logger("IsNexLogger")
-
+setup_logger()
 
 app = FastAPI(
     title="Core Service ",
@@ -20,7 +19,7 @@ app = FastAPI(
     docs_url=None if settings.ENVIRONMENT == "production" else "/docs",
     redoc_url=None if settings.ENVIRONMENT == "production" else "/redoc",
 )
-
+app.add_middleware(AuthMiddleware, backend=AuthBackend(), on_error=on_auth_error)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -28,6 +27,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.add_middleware(AuthMiddleware, backend=AuthBackend(), on_error=on_auth_error)
+app.add_middleware(LoggingMiddleware)
+
 
 app.include_router(router=router)

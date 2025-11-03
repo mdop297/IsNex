@@ -4,7 +4,9 @@ from minio import Minio
 from minio.error import S3Error
 import io
 from src.core.config import settings
-from src.core.utils.logger import setup_custom_logger
+from src.core.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 router = APIRouter(prefix="/api")
 

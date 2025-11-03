@@ -7,10 +7,8 @@ from jose import jwt, JWTError, ExpiredSignatureError  # type: ignore
 from starlette.requests import HTTPConnection
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.authentication import AuthenticationError
-from starlette.exceptions import HTTPException
 from starlette.responses import JSONResponse
-from fastapi import status
-from src.core.utils.logger import setup_custom_logger
+from src.core.utils.logger import get_logger
 from src.schemas.extras.current_user import CurrentUser
 from src.core.config import settings
 from src.schemas.extras.jwt_payload import JwtPayload
@@ -22,7 +20,7 @@ def on_auth_error(conn: HTTPConnection, exc: Exception):
 
 PUBLIC_PREFIXES = ["/docs", "/redoc", "/openapi.json", "/api/public", "/api/health"]
 
-logger = setup_custom_logger("IsNexLogger")
+logger = get_logger(__name__)
 
 
 class AuthBackend(AuthenticationBackend):

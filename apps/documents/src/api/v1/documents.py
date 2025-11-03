@@ -5,14 +5,14 @@ from fastapi.responses import StreamingResponse
 from minio import Minio, S3Error
 
 from src.api.depends.factory import Factory
-from src.core.utils.logger import setup_custom_logger
+from src.core.utils.logger import get_logger
 from src.core.utils.utils import format_file_size
 from src.models.document import Source
 from src.schemas.requests.document import DocumentCreate
 from src.services.document import DocumentService
 from src.services.obj_storage import MinioService
 
-logger = setup_custom_logger("IsNexLogger")
+logger = get_logger(__name__)
 
 # create route: upload document
 document_router = APIRouter(prefix="/documents", tags=["documents"])

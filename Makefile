@@ -111,6 +111,9 @@ build-notification:
 build-auth: 
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) build auth-svc
 
+build-documents: 
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) build documents-svc
+
 # Apply Kong config manually
 kong-config:
 	@echo "🔧 Applying Kong configuration..."

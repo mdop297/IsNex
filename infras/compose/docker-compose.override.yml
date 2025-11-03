@@ -46,6 +46,7 @@ services:
       - ../../apps/documents/pyproject.toml:/app/pyproject.toml
       - ../../apps/documents/uv.lock:/app/uv.lock
       - ../../apps/documents/scripts:/app/scripts
+      - ../../apps/documents/logs:/app/logs
     develop:
       watch:
         - action: sync

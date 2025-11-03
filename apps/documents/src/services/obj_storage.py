@@ -29,7 +29,7 @@ class MinioSession:
 
 
 def get_minio_session() -> Generator[MinioSession, None, None]:
-    bucket_name = "my-bucket"
+    bucket_name = "isnex-dev"
     client = get_minio_client()  # Always return same instance
 
     try:
@@ -67,7 +67,6 @@ class MinioService:
         return result.object_name, file.filename, file_size
 
     async def download_file(self, filename: str) -> bytes:
-        """Download file efficiently"""
         try:
             response = self.client.get_object(self.bucket_name, filename)
             data = response.read()
