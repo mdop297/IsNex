@@ -3,14 +3,14 @@ from typing import Optional
 from uuid import UUID
 from pydantic import BaseModel
 
-from src.models.document import Source, Status
+from src.models.document import FileType, Status
 
 
 class DocumentResponse(BaseModel):
     id: UUID
     folder_id: Optional[UUID] = None
     name: str
-    type: Source
+    type: FileType
     num_pages: int
     embedding_status: Status
     file_size: str

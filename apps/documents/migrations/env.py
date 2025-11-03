@@ -8,7 +8,21 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 from src.core.config import settings
 from src.core.database.base import BaseTable
-from src.models import Document, Folder, Highlight
+from src.models import (
+    Folder,
+    Document,
+    Highlight,
+    Workspace,
+    DocumentWorkspaceLink,
+    Note,
+    NoteBlock,
+    NoteBlockSourceLink,
+    Conversation,
+    Message,
+    Prompt,
+    Source,
+    PersonalContext,
+)
 import alembic_postgresql_enum
 
 # this is the Alembic Config object, which provides

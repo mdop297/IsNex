@@ -7,7 +7,7 @@ from src.core.service.base import BaseService
 from src.core.utils.logger import get_logger
 from src.core.utils.utils import format_file_size
 from src.exceptions.document import DocumentError, StorageError
-from src.models.document import Document, Source
+from src.models.document import Document, FileType
 from src.repositories.document import DocumentRepository
 from src.schemas.requests.document import DocumentCreate, DocumentUpdate
 from src.services.obj_storage import MinioService
@@ -60,7 +60,7 @@ class DocumentService(
                 user_id=user_id,
                 file_url=path,
                 name=filename,
-                type=Source.PDF,
+                type=FileType.PDF,
                 num_pages=0,
                 file_size=file_size_str,
             )

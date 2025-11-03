@@ -6,13 +6,15 @@ from uuid import UUID
 from datetime import datetime
 
 from src.core.database.base import BaseTable
+from src.models.workspace import DocumentWorkspaceLink
 
 if TYPE_CHECKING:
+    from src.models.workspace import Workspace
     from src.models.folder import Folder
     from src.models.highlight import Highlight
 
 
-class Source(str, Enum):
+class FileType(str, Enum):
     PDF = "pdf"
     WORD = "docx"
     EXCEL = "xlsx"
@@ -29,15 +31,14 @@ class Status(str, Enum):
 
 class Document(BaseTable, table=True):
     user_id: UUID  # soft FK
-    # workspace_id: Optional[UUID]
     folder_id: Optional[UUID] = Field(foreign_key="folder.id", default=None)
-    # workspace_id: Optional[UUID] = Field(foreign_key="workspace.id")
+    workspace_id: Optional[UUID] = Field(foreign_key="workspace.id")
     name: str
     status: Status = Field(default=Status.UPLOADED)
     # summary: Optional[str]
-    file_url: str
+    file_url: str = Field(unique=True)
     num_pages: int
-    type: Source = Field(default=Source.PDF)
+    type: FileType = Field(default=FileType.PDF)
 
     file_size: str = Field(sa_column=Column(postgresql.VARCHAR(16), nullable=False))
 
@@ -54,9 +55,18 @@ class Document(BaseTable, table=True):
         default_factory=datetime.now,
         sa_column=Column(postgresql.TIMESTAMP, onupdate=datetime.now),
     )
-    folder: Optional["Folder"] = Relationship(
-        back_populates="documents", sa_relationship_kwargs={"lazy": "selectin"}
+    re_folder: Optional["Folder"] = Relationship(
+        back_populates="re_documents", sa_relationship_kwargs={"lazy": "selectin"}
     )
-    highlights: list["Highlight"] = Relationship(
-        back_populates="document", sa_relationship_kwargs={"lazy": "selectin"}
+    re_highlights: list["Highlight"] = Relationship(
+        back_populates="re_document", sa_relationship_kwargs={"lazy": "selectin"}
+    )
+    re_workspace: Optional["Workspace"] = Relationship(
+        back_populates="re_documents",
+        link_model=DocumentWorkspaceLink,
+        sa_relationship_kwargs={"lazy": "immediate"},
+    )
+
+    re_opened_in: Optional["Workspace"] = Relationship(
+        back_populates="re_active_doc", sa_relationship_kwargs={"lazy": "selectin"}
     )
