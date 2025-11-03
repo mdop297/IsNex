@@ -1,7 +1,8 @@
 # obj_storage.py
 from functools import lru_cache
-from typing import Generator
+from typing import BinaryIO, Generator
 from dataclasses import dataclass
+from uuid import UUID
 from minio import Minio, S3Error
 from fastapi import UploadFile
 
@@ -75,3 +76,78 @@ class MinioService:
             return data
         except S3Error as e:
             raise ValueError(f"File not found: {filename}") from e
+
+    async def create(
+        self,
+        bucket_name: str,
+        user_id: UUID,
+        object_name: str,
+        data: BinaryIO,
+        length: int,
+    ):
+        result = self.client.put_object(
+            bucket_name=bucket_name,
+            object_name=str(user_id) + "/" + object_name,
+            data=data,
+            length=length,
+        )
+        return result
+
+    async def read(self, bucket_name: str, object_name: str, user_id: UUID):
+        try:
+            response = self.client.get_object(
+                bucket_name, str(user_id) + "/" + object_name
+            )
+            # Read data from response.
+            try:
+                for chunk in response.stream():
+                    yield chunk
+
+            finally:
+                response.close()
+                response.release_conn()
+
+        except S3Error as e:
+            raise ValueError(f"File not found: {object_name}") from e
+
+    async def update(
+        self, bucket_name: str, object_name: str, new_name: str, user_id: UUID
+    ):
+        try:
+            from minio.commonconfig import CopySource
+
+            source = CopySource(bucket_name, str(user_id) + "/" + object_name)
+
+            self.client.copy_object(
+                bucket_name=bucket_name,
+                object_name=str(user_id) + "/" + new_name,
+                source=source,
+            )
+
+            self.client.remove_object(
+                bucket_name=bucket_name, object_name=str(user_id) + "/" + object_name
+            )
+
+            return new_name
+        except S3Error as e:
+            raise ValueError(
+                f"Failed to rename object {object_name} to {new_name}"
+            ) from e
+
+    async def remove_obj(self, bucket_name: str, object_name: str, user_id: UUID):
+        try:
+            self.client.remove_object(
+                bucket_name=bucket_name, object_name=str(user_id) + "/" + object_name
+            )
+        except S3Error as e:
+            raise ValueError(f"Failed to delete object {object_name}") from e
+
+    async def remove_objs(self, bucket_name: str, object_names: list, user_id: UUID):
+        for object_name in object_names:
+            try:
+                self.client.remove_object(
+                    bucket_name=bucket_name,
+                    object_name=str(user_id) + "/" + object_name,
+                )
+            except S3Error as e:
+                raise ValueError(f"Failed to delete object {object_name}") from e

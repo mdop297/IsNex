@@ -54,15 +54,15 @@ def setup_logger(
     logger.setLevel(getattr(logging, level.upper()))
     logger.handlers.clear()
 
-    # Format cho console
+    # Format cho console (có màu + location)
     console_formatter = ColoredFormatter(
-        "%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+        "%(asctime)s | %(levelname)s | %(name)s | %(filename)s:%(lineno)d | %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    # Format cho file
+    # Format cho file (có location)
     file_formatter = logging.Formatter(
-        "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
+        "%(asctime)s | %(levelname)-8s | %(name)s | %(pathname)s:%(lineno)d | %(funcName)s() | %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 

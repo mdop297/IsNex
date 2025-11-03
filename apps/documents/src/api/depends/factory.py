@@ -13,8 +13,13 @@ class Factory:
 
     document_repository = partial(DocumentRepository)
 
-    def get_document_service(self, db_session=Depends(get_session)) -> DocumentService:
-        return DocumentService(self.document_repository(db_session))
+    def get_document_service(
+        self, db_session=Depends(get_session), minio_session=Depends(get_minio_session)
+    ) -> DocumentService:
+        return DocumentService(
+            self.document_repository(db_session),
+            MinioService(minio_session),
+        )
 
     def get_storage_service(
         self, minio_session: MinioSession = Depends(get_minio_session)

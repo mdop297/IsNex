@@ -11,10 +11,11 @@ from src.core.database.base import BaseTable
 ModelType = TypeVar("ModelType", bound=BaseTable)
 ModelCreated = TypeVar("ModelCreated", bound=BaseModel)
 ModelUpdated = TypeVar("ModelUpdated", bound=BaseModel)
+RepositoryType = TypeVar("RepositoryType", bound=BaseRepository)
 
 
-class BaseService(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
-    def __init__(self, model: Type[ModelType], repository: BaseRepository):
+class BaseService(Generic[ModelType, ModelCreated, ModelUpdated, RepositoryType], ABC):
+    def __init__(self, model: Type[ModelType], repository: RepositoryType):
         self.model_class = model
         self.repository = repository
 
