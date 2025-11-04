@@ -28,7 +28,6 @@ class Source(BaseTable, table=True):
     noteblock_id: Optional[UUID] = Field(foreign_key="noteblock.id", default=None)
     url: Optional[str]
     preview_content: Optional[str] = Field(sa_column=Column(postgresql.TEXT))
-    created_at: datetime = Field(default_factory=datetime.now)
 
     re_noteblock: Optional["NoteBlock"] = Relationship(
         back_populates="re_source", sa_relationship_kwargs={"lazy": "selectin"}
