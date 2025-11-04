@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 
 class Conversation(BaseTable, table=True):
+    # id: UUID (inherited from BaseTable)
     user_id: UUID
     workspace_id: Optional[UUID] = Field(foreign_key="workspace.id", default=None)
     title: str = Field(sa_column=Column(postgresql.TEXT))
