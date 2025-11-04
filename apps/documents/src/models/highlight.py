@@ -11,10 +11,25 @@ if TYPE_CHECKING:
     from src.models.source import Source
     from src.models.document import Document
 
+""" 
+TODO: follow this link to have more details about how to design highlights, especially for position: 
+https://danielarnould.github.io/react-pdf-highlighter-extended/docs/interfaces/Highlight.html
+"""
+
 
 class HighlightType(str, Enum):
     TEXT = "TEXT"
     AREA = "AREA"
+
+
+class Position(dict[str, float]):
+    height: float
+    pageNumber: float
+    width: float
+    x1: float
+    x2: float
+    y1: float
+    y2: float
 
 
 class Highlight(BaseTable, table=True):
@@ -25,14 +40,12 @@ class Highlight(BaseTable, table=True):
     page_number: int
     color: str
     highlight_type: HighlightType
-    preview_content: Optional[str] = Field(sa_column=Column(postgresql.TEXT))
+    comment: Optional[str] = Field(sa_column=Column(postgresql.TEXT))
     text: Optional[str] = Field(sa_column=Column(postgresql.TEXT))  # only used if TEXT
     # TODO: add support for image, add object storage bucket for images per user
     image_url: Optional[str]  # only used if AREA
 
-    position: Optional[dict[str, float]] = Field(
-        default_factory=dict, sa_column=Column(postgresql.JSONB)
-    )
+    position: Position = Field(sa_column=Column(postgresql.JSONB))
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(
         default_factory=datetime.now,
