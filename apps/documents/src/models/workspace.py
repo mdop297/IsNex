@@ -28,8 +28,8 @@ class DocumentWorkspaceLink(BaseTable, table=True):
 class Workspace(BaseTable, table=True):
     user_id: UUID
     name: str
-    icon: str
-    description: str = Field(sa_column=Column(postgresql.TEXT))
+    icon: Optional[str]
+    description: Optional[str] = Field(sa_column=Column(postgresql.TEXT))
 
     # Sử dụng use_alter=True cho circular foreign keys
     active_conv: Optional[UUID] = Field(
