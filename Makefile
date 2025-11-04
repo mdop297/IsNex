@@ -139,7 +139,7 @@ ps:
 
 
 # View logs for all services
-logs:
+logs-all:
 	@echo "📋 Showing logs for all services..."
 	docker compose -f $(COMPOSE_FILE) logs -f --tail=100
 
@@ -147,6 +147,12 @@ logs:
 logs-auth:
 	@echo "📋 Showing logs for auth service..."
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) logs -f --tail=100 auth-svc
+
+
+#View logs of core service
+logs-core:
+	@echo "📋 Showing logs for core service..."
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) logs -f --tail=100 documents-svc
 
 # Access the auth service container
 exec-auth:

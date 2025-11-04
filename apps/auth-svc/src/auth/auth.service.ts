@@ -196,7 +196,7 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
       secure: this.configService.get('NODE_ENV') === 'production',
       sameSite: 'lax',
       path: '/api',
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      maxAge: 5 * 24 * 60 * 60 * 1000, // 5 day
     });
 
     return {
@@ -243,7 +243,7 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
         secure: this.configService.get('NODE_ENV') === 'production',
         sameSite: 'lax',
         path: '/api/auth/refresh',
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 7 days
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
       return {
         accessToken: tokens.accessToken,
@@ -274,7 +274,7 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.configService.get('JWT_ACCESS_SECRET'),
-        expiresIn: '1d',
+        expiresIn: '5d',
         algorithm: 'HS256',
       }),
       this.jwtService.signAsync(payload, {

@@ -29,10 +29,16 @@ class Note(BaseTable, table=True):
     )
 
     re_parent: Optional["Note"] = Relationship(
-        back_populates="re_children", sa_relationship_kwargs={"lazy": "selectin"}
+        back_populates="re_children",
+        sa_relationship_kwargs={"remote_side": "[Note.id]"},
     )
+
     re_children: list["Note"] = Relationship(
-        back_populates="re_parent", sa_relationship_kwargs={"lazy": "selectin"}
+        back_populates="re_parent",
+        sa_relationship_kwargs={
+            "lazy": "selectin",
+            "cascade": "all, delete-orphan",
+        },
     )
 
     re_blocks: list["NoteBlock"] = Relationship(

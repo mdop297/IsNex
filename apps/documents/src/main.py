@@ -19,7 +19,9 @@ app = FastAPI(
     docs_url=None if settings.ENVIRONMENT == "production" else "/docs",
     redoc_url=None if settings.ENVIRONMENT == "production" else "/redoc",
 )
+
 app.add_middleware(AuthMiddleware, backend=AuthBackend(), on_error=on_auth_error)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

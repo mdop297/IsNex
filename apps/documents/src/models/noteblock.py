@@ -18,10 +18,10 @@ class NoteBlockType(str, Enum):
 
 
 class NoteBlockSourceLink(BaseTable, table=True):
-    note_block_id: UUID = Field(
+    noteblock_id: UUID = Field(
         foreign_key="noteblock.id", nullable=False, primary_key=True
     )
-    note_id: UUID = Field(foreign_key="note.id", nullable=False, primary_key=True)
+    source_id: UUID = Field(foreign_key="source.id", nullable=False, primary_key=True)
 
 
 class NoteBlock(BaseTable, table=True):
@@ -40,9 +40,10 @@ class NoteBlock(BaseTable, table=True):
         back_populates="re_blocks", sa_relationship_kwargs={"lazy": "selectin"}
     )
     re_parent: Optional["NoteBlock"] = Relationship(
-        back_populates="re_children", sa_relationship_kwargs={"lazy": "selectin"}
+        back_populates="re_children",
+        sa_relationship_kwargs={"remote_side": "[NoteBlock.id]"},
     )
-    children: list["NoteBlock"] = Relationship(
+    re_children: list["NoteBlock"] = Relationship(
         back_populates="re_parent", sa_relationship_kwargs={"lazy": "selectin"}
     )
 

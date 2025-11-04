@@ -22,9 +22,6 @@ class Highlight(BaseTable, table=True):
     document_id: UUID = Field(
         foreign_key="document.id",
     )
-    document: "Document" = Relationship(
-        back_populates="highlights", sa_relationship_kwargs={"lazy": "selectin"}
-    )
     page_number: int
     color: str
     highlight_type: HighlightType
@@ -44,4 +41,8 @@ class Highlight(BaseTable, table=True):
 
     re_source: Optional["Source"] = Relationship(
         back_populates="re_highlight", sa_relationship_kwargs={"lazy": "selectin"}
+    )
+
+    re_document: "Document" = Relationship(
+        back_populates="re_highlights", sa_relationship_kwargs={"lazy": "selectin"}
     )

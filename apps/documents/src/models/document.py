@@ -32,7 +32,6 @@ class Status(str, Enum):
 class Document(BaseTable, table=True):
     user_id: UUID  # soft FK
     folder_id: Optional[UUID] = Field(foreign_key="folder.id", default=None)
-    workspace_id: Optional[UUID] = Field(foreign_key="workspace.id")
     name: str
     status: Status = Field(default=Status.UPLOADED)
     # summary: Optional[str]
