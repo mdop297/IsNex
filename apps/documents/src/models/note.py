@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional
 
 from uuid import UUID
 from sqlalchemy.dialects import postgresql
-
+from sqlalchemy.orm import Mapped
 from sqlmodel import Column, Field, Relationship
 from src.core.database.base import BaseTable
 
@@ -33,7 +33,7 @@ class Note(BaseTable, table=True):
         sa_relationship_kwargs={"remote_side": "[Note.id]"},
     )
 
-    re_children: list["Note"] = Relationship(
+    re_children: Mapped[list["Note"]] = Relationship(
         back_populates="re_parent",
         sa_relationship_kwargs={
             "lazy": "selectin",
