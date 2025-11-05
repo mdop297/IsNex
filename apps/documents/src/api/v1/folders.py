@@ -15,3 +15,10 @@ def create(request: Request, data: FolderCreate, folder_service: FolderServiceDe
     # get user_id -> check folder name -> check parent_id belong to user_id -> create folder
     result = folder_service.create(request.user.id, data)
     return result
+
+
+@folder_router.get("/", response_model=list[FolderResponse])
+def get_all(request: Request, folder_service: FolderServiceDep):
+    # eager load folders
+    result = folder_service.get_all(request.user.id)
+    return result

@@ -41,9 +41,9 @@ class FolderService(
         return FolderResponse.model_validate(folder)
 
     async def get_all(
-        self, skip: int = 0, limit: int = 100
+        self, user_id: UUID, skip: int = 0, limit: int = 100
     ) -> Sequence[FolderResponse]:
-        folders = await self.repository.get_all(skip, limit)
+        folders = await self.repository.get_all_by_user_id(user_id, skip, limit)
         results = [FolderResponse.model_validate(folder) for folder in folders]
         return results
 
