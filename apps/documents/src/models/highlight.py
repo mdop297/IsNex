@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
+from pydantic import BaseModel
 from sqlalchemy.dialects import postgresql
 from enum import Enum
 from sqlmodel import Column, Field, Relationship
@@ -22,7 +23,7 @@ class HighlightType(str, Enum):
     AREA = "AREA"
 
 
-class Position(dict[str, float]):
+class Position(BaseModel):
     height: float
     pageNumber: float
     width: float
