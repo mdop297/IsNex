@@ -1,23 +1,23 @@
 # factory.py
-from functools import lru_cache, partial
+from typing import Annotated
 from fastapi import Depends
 
 from src.core.database.session import get_session
 from src.repositories.document import DocumentRepository
+from src.repositories.folder import FolderRepository
 from src.services.document import DocumentService
+from src.services.folder import FolderService
 from src.services.obj_storage import MinioService, get_minio_session, MinioSession
 
 
 class Factory:
     """Factory with proper dependency injection"""
 
-    document_repository = partial(DocumentRepository)
-
     def get_document_service(
         self, db_session=Depends(get_session), minio_session=Depends(get_minio_session)
     ) -> DocumentService:
         return DocumentService(
-            self.document_repository(db_session),
+            DocumentRepository(db_session),
             MinioService(minio_session),
         )
 
@@ -27,8 +27,12 @@ class Factory:
         """Fixed type hint"""
         return MinioService(minio_session)
 
+    def get_folder_service(self, db_session=Depends(get_session)) -> FolderService:
+        return FolderService(repository=FolderRepository(db_session))
 
-# Singleton factory instance
-@lru_cache()
-def get_factory() -> Factory:
-    return Factory()
+
+factory = Factory()
+
+FolderServiceDep = Annotated[FolderService, Depends(factory.get_folder_service)]
+
+DocumentServiceDep = Annotated[DocumentService, Depends(factory.get_document_service)]

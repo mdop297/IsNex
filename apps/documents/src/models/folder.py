@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Optional
 from sqlalchemy.dialects import postgresql
-from sqlmodel import Column, Field, Relationship
+from sqlmodel import Column, Field, Relationship, UniqueConstraint
 from uuid import UUID
 from datetime import datetime
 
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class Folder(BaseTable, table=True):
-    user_id: UUID  # soft FK
+    user_id: UUID = Field(index=True)
     parent_id: Optional[UUID] = Field(default=None, foreign_key="folder.id")
     name: str
     path: str
@@ -37,4 +37,10 @@ class Folder(BaseTable, table=True):
     )
     re_documents: list["Document"] = Relationship(
         back_populates="re_folder", sa_relationship_kwargs={"lazy": "selectin"}
+    )
+
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id", "parent_id", "name", name="unique_folder_per_parent"
+        ),
     )

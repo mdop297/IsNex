@@ -3,7 +3,15 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from src.core.config import settings
 from sqlmodel import SQLModel
 
+from src.core.utils.logger import get_logger
+
+logger = get_logger(__name__)
+
 engine = create_async_engine(url=settings.DATABASE_URL, echo=True)
+
+async_session = async_sessionmaker(
+    bind=engine, class_=AsyncSession, expire_on_commit=False
+)
 
 
 async def create_tables():
@@ -14,8 +22,10 @@ async def create_tables():
 
 
 async def get_session():
-    async_session = async_sessionmaker(
-        bind=engine, class_=AsyncSession, expire_on_commit=False
-    )
     async with async_session() as session:
-        yield session
+        try:
+            yield session
+        except Exception as e:
+            logger.error(f"Database error during request: {e}")
+            await session.rollback()
+            raise
