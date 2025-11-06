@@ -37,3 +37,8 @@ async def update_folder(
 ):
     result = folder_service.update(request.user.id, id, data)
     return result
+
+
+@folder_router.delete("/{id}")
+async def delete_folder(request: Request, id: UUID, folder_service: FolderServiceDep):
+    await folder_service.delete(request.user.id, id)
