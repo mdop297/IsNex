@@ -35,7 +35,7 @@ class BaseService(
         pass
 
     @abstractmethod
-    async def get_by_id(self, id: UUID) -> ModelResponse:
+    async def get_by_id(self, *args, **kwargs) -> ModelResponse:
         pass
 
     @abstractmethod

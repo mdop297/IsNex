@@ -13,4 +13,3 @@ class FolderCreate(BaseModel):
 class FolderUpdate(BaseModel):
     parent_id: Optional[UUID] = Field(default=None, description="parent folder id")
     name: Optional[str] = Field(default=None, description="name of the folder")
-    path: Optional[str] = Field(default=None, description="path of the folder")

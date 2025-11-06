@@ -63,21 +63,25 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
 
     async def update(self, entity: ModelType, obj: ModelUpdated) -> ModelType:
         """
-        Updates the entity with the provided data.
+        Partially updates the entity with the provided data (PATCH semantics).
 
         Args:
             entity (ModelType): The entity to be updated.
-            obj (ModelUpdated): The data to be used for the update.
+            obj (ModelUpdated): Partial data for update.
 
         Returns:
             ModelType: The updated entity.
         """
-        data = obj.model_dump()
-        for key, value in data.items():
+        update_data = obj.model_dump(exclude_unset=True)
+
+        for key, value in update_data.items():
             setattr(entity, key, value)
-        self.session.add(entity)
-        await self.session.commit()
-        await self.session.refresh(entity)
+
+        if update_data:
+            self.session.add(entity)
+            await self.session.commit()
+            await self.session.refresh(entity)
+
         return entity
 
     async def get_by(

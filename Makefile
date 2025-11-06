@@ -114,6 +114,9 @@ build-auth:
 build-documents: 
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) build documents-svc
 
+build-kong:
+	docker compose -f $(COMPOSE_API_GATEWAY) build kong
+
 # Apply Kong config manually
 kong-config:
 	@echo "🔧 Applying Kong configuration..."
