@@ -47,6 +47,13 @@ class HighlightService(
         highlight = await self.__get_user_highlight(user_id=user_id, hl_id=id)
         return HighlightResponse.model_validate(highlight)
 
+    async def get_all_by_doc_id(
+        self, user_id: UUID, doc_id: UUID
+    ) -> Sequence[Highlight]:
+        await self.__validate_document(user_id, doc_id)
+        hls = await self.repository.get_all_by_doc_id(doc_id)
+        return hls
+
     async def get_all(
         self, skip: int = 0, limit: int = 100
     ) -> Sequence[HighlightResponse]:

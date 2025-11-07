@@ -34,3 +34,11 @@ async def update_hl(
 async def get_hl(request: Request, id: UUID, highlight_service: HighlightServiceDep):
     result = await highlight_service.get_by_id(request.user.id, id)
     return result
+
+
+@highlight_router.get("/doc/{doc_id}", response_model=list[HighlightResponse])
+async def get_hls_of_document(
+    request: Request, doc_id: UUID, highlight_service: HighlightServiceDep
+):
+    result = await highlight_service.get_all_by_doc_id(request.user.id, doc_id)
+    return result
