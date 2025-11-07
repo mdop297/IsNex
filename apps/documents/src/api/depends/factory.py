@@ -5,8 +5,10 @@ from fastapi import Depends
 from src.core.database.session import get_session
 from src.repositories.document import DocumentRepository
 from src.repositories.folder import FolderRepository
+from src.repositories.highlight import HighlightRepository
 from src.services.document import DocumentService
 from src.services.folder import FolderService
+from src.services.highlight import HighlightService
 from src.services.obj_storage import MinioService, get_minio_session, MinioSession
 
 
@@ -30,9 +32,18 @@ class Factory:
     def get_folder_service(self, db_session=Depends(get_session)) -> FolderService:
         return FolderService(repository=FolderRepository(db_session))
 
+    def get_highlight_service(
+        self, db_session=Depends(get_session)
+    ) -> HighlightService:
+        return HighlightService(repository=HighlightRepository(db_session))
+
 
 factory = Factory()
 
 FolderServiceDep = Annotated[FolderService, Depends(factory.get_folder_service)]
 
 DocumentServiceDep = Annotated[DocumentService, Depends(factory.get_document_service)]
+
+HighlightServiceDep = Annotated[
+    HighlightService, Depends(factory.get_highlight_service)
+]

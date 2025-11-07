@@ -27,7 +27,6 @@ class AuthBackend(AuthenticationBackend):
     async def authenticate(self, conn: HTTPConnection):
         if any(conn.url.path.startswith(p) for p in PUBLIC_PREFIXES):
             return None
-
         token = conn.cookies.get("access_token")
 
         logger.info("AUTHENTICATION BACKEND REACHED!!!!!")
@@ -60,3 +59,11 @@ class AuthBackend(AuthenticationBackend):
 
 class AuthMiddleware(AuthenticationMiddleware):
     pass
+
+
+def public(is_public: bool = True):
+    def decorator(func):
+        setattr(func, "is_public", is_public)
+        return func
+
+    return decorator

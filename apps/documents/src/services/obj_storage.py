@@ -72,7 +72,7 @@ class MinioService:
             response = self.client.get_object(self.bucket_name, filename)
             data = response.read()
             response.close()
-            response.release_conn()  # Important: release connection back to pool
+            response.release_conn()
             return data
         except S3Error as e:
             raise ValueError(f"File not found: {filename}") from e

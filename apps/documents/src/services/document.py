@@ -10,13 +10,16 @@ from src.exceptions.document import DocumentError, StorageError
 from src.models.document import Document, FileType
 from src.repositories.document import DocumentRepository
 from src.schemas.requests.document import DocumentCreate, DocumentUpdate
+from src.schemas.responses.document import DocumentResponse
 from src.services.obj_storage import MinioService
 
 logger = get_logger(__name__)
 
 
 class DocumentService(
-    BaseService[Document, DocumentCreate, DocumentUpdate, DocumentRepository]
+    BaseService[
+        Document, DocumentCreate, DocumentUpdate, DocumentResponse, DocumentRepository
+    ]
 ):
     def __init__(self, repository: DocumentRepository, minio_service: MinioService):
         super().__init__(Document, repository)
@@ -95,24 +98,27 @@ class DocumentService(
         if file.content_type not in ALLOWED_TYPES:
             raise DocumentError(f"Invalid file type: {file.content_type}")
 
-    async def create(self, entity: DocumentCreate) -> Document:
+    async def create(self, entity: DocumentCreate) -> DocumentResponse:
         result = await self.repository.create(entity)
-        return result
+        return DocumentResponse.model_validate(result)
 
-    async def update(self, entity: Document, obj: DocumentUpdate) -> Document:
+    async def update(self, entity: Document, obj: DocumentUpdate) -> DocumentResponse:
         result = await self.repository.update(entity, obj)
-        return result
+        return DocumentResponse.model_validate(result)
 
     async def delete(self, id: UUID) -> bool:
         result = await self.repository.delete(id)
         return result
 
-    async def get_by_id(self, id: UUID) -> Document:
+    async def get_by_id(self, id: UUID) -> DocumentResponse:
         document = await self.repository.get_by_id(id)
         if not document:
             raise Exception("Document not found")
-        return document
+        return DocumentResponse.model_validate(document)
 
-    async def get_all(self, skip: int = 0, limit: int = 100) -> Sequence[Document]:
+    async def get_all(
+        self, skip: int = 0, limit: int = 100
+    ) -> Sequence[DocumentResponse]:
         documents = await self.repository.get_all(skip, limit)
-        return documents
+        results = [DocumentResponse.model_validate(doc) for doc in documents]
+        return results
