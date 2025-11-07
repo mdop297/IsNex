@@ -33,9 +33,10 @@ class HighlightService(
         return HighlightResponse.model_validate(result)
 
     async def update(
-        self, entity: Highlight, obj: HighlightUpdate
+        self, user_id: UUID, hl_id: UUID, data: HighlightUpdate
     ) -> HighlightResponse:
-        result = await self.repository.update(entity, obj)
+        hl_entity = await self.__validate_highlight(user_id=user_id, hl_id=hl_id)
+        result = await self.repository.update(hl_entity, data)
         return HighlightResponse.model_validate(result)
 
     async def delete(self, id: UUID) -> bool:
@@ -63,3 +64,11 @@ class HighlightService(
             raise Exception("Document not found")
         if document.user_id != user_id:
             raise Exception("Document does not belong to user")
+
+    async def __validate_highlight(self, user_id: UUID, hl_id: UUID) -> Highlight:
+        highlight = await self.repository.get_by_id(hl_id)
+        if not highlight:
+            raise Exception("Highlight not found")
+        if highlight.user_id != user_id:
+            raise Exception("Highlight does not belong to user")
+        return highlight

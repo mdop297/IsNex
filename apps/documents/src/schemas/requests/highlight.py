@@ -21,6 +21,5 @@ class HighlightCreate(HighlightBase):
 
 
 class HighlightUpdate(BaseModel):
-    id: UUID
     color: Optional[str] = None
     comment: Optional[str] = None

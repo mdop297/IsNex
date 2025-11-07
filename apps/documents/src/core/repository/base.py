@@ -66,7 +66,7 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
         Partially updates the entity with the provided data (PATCH semantics).
 
         Args:
-            entity (ModelType): The entity to be updated.
+            entity (ModelType): The entity retrieved from the database to be updated.
             obj (ModelUpdated): Partial data for update.
 
         Returns:
