@@ -61,3 +61,9 @@ async def get_all(
         return result
     except Exception:
         raise HTTPException(status_code=500, detail="Failed to fetch highlights")
+
+
+@highlight_router.delete("/{id}", response_model=bool)
+async def delete_hl(request: Request, id: UUID, highlight_service: HighlightServiceDep):
+    result = await highlight_service.delete(id)
+    return result
