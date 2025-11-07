@@ -13,6 +13,7 @@ ModelCreated = TypeVar("ModelCreated", bound=BaseModel)
 ModelUpdated = TypeVar("ModelUpdated", bound=BaseModel)
 ModelResponse = TypeVar("ModelResponse", bound=BaseModel)
 RepositoryType = TypeVar("RepositoryType", bound=BaseRepository)
+PaginatedResponseType = TypeVar("PaginatedResponseType", bound=BaseModel)
 
 
 class BaseService(
@@ -41,3 +42,28 @@ class BaseService(
     @abstractmethod
     async def get_all(self, *args, **kwargs) -> Sequence[ModelResponse]:
         pass
+
+    # async def _get_paginated_by_user(
+    #     self,
+    #     user_id: UUID,
+    #     response_model: Type[ModelResponse],
+    #     paginated_model: Type[PaginatedResponseType],
+    #     skip: int = 0,
+    #     limit: int = 25,
+    # ) -> PaginatedResponseType:
+    #     """Generic method to get paginated data filtered by user_id"""
+    #     records = await self.repository.get_by(
+    #         field="user_id", value=user_id, skip=skip, limit=limit
+    #     )
+
+    #     if not records:
+    #         return paginated_model(items=[], total=0, skip=skip, limit=limit)
+
+    #     total = await self.repository.count_by(field="user_id", value=user_id)
+
+    #     return paginated_model(
+    #         items=[response_model.model_validate(r) for r in records],
+    #         total=total,
+    #         skip=skip,
+    #         limit=limit,
+    #     )

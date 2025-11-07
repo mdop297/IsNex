@@ -14,3 +14,10 @@ class ConversationResponse(BaseModel):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class PaginatedConversationResponse(BaseModel):
+    items: list[ConversationResponse]
+    total: int
+    skip: int
+    limit: int

@@ -52,10 +52,18 @@ class HighlightService(
 
     async def get_all_by_doc_id(
         self, user_id: UUID, doc_id: UUID
-    ) -> Sequence[Highlight]:
+    ) -> PaginatedHighlightResponse:
         await self.__validate_document(user_id, doc_id)
         hls = await self.repository.get_all_by_doc_id(doc_id)
-        return hls
+        if not hls:
+            return PaginatedHighlightResponse(items=[], total=0, skip=0, limit=100)
+
+        return PaginatedHighlightResponse(
+            items=[HighlightResponse.model_validate(h) for h in hls],
+            total=len(hls),
+            skip=0,
+            limit=100,
+        )
 
     async def get_all(
         self, field: str, value: str, skip: int = 0, limit: int = 100
