@@ -8,10 +8,10 @@ from starlette.requests import HTTPConnection
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.authentication import AuthenticationError
 from starlette.responses import JSONResponse
+from src.core.security.schemas.current_user import CurrentUser
+from src.core.security.schemas.jwt_payload import JwtPayload
 from src.core.utils.logger import get_logger
-from src.schemas.extras.current_user import CurrentUser
 from src.core.config import settings
-from src.schemas.extras.jwt_payload import JwtPayload
 
 
 def on_auth_error(conn: HTTPConnection, exc: Exception):

@@ -1,8 +1,8 @@
 from fastapi import APIRouter
-from .document import document_router
-from .folder import folder_router
-from .highlight import highlight_router
-from .conversation import conv_router
+from src.modules.document.api.v1 import document_router
+from src.modules.folder.api.v1 import folder_router
+from ...modules.highlight.api.v1 import highlight_router
+from ...modules.conversation.api.v1 import conv_router
 
 v1_router = APIRouter(prefix="/v1")
 

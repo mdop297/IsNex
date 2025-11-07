@@ -3,16 +3,20 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.core.database.session import get_session
-from src.repositories.conversation import ConversationRepository
-from src.repositories.document import DocumentRepository
-from src.repositories.folder import FolderRepository
-from src.repositories.highlight import HighlightRepository
-from src.repositories.workspace import WorkspaceRepository
-from src.services.conversation import ConversationService
-from src.services.document import DocumentService
-from src.services.folder import FolderService
-from src.services.highlight import HighlightService
-from src.services.obj_storage import MinioService, get_minio_session, MinioSession
+from src.modules.conversation.repository import ConversationRepository
+from src.modules.document.repository import DocumentRepository
+from src.modules.folder.repository import FolderRepository
+from src.modules.highlight.repository import HighlightRepository
+from src.modules.workspace.repository import WorkspaceRepository
+from src.modules.conversation.service import ConversationService
+from src.modules.document.service import DocumentService
+from src.modules.folder.service import FolderService
+from src.modules.highlight.service import HighlightService
+from src.modules.object_storage.service import (
+    MinioService,
+    get_minio_session,
+    MinioSession,
+)
 
 
 class Factory:
