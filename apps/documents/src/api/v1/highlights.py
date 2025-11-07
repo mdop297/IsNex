@@ -8,7 +8,7 @@ from src.schemas.responses.highlight import HighlightResponse
 
 logger = get_logger(__name__)
 
-highlight_router = APIRouter(prefix="/highlights", tags=["highlights"])
+highlight_router = APIRouter(prefix="/hls", tags=["highlights"])
 
 
 @highlight_router.post("/", response_model=HighlightResponse)
@@ -27,4 +27,10 @@ async def update_hl(
     highlight_service: HighlightServiceDep,
 ):
     result = await highlight_service.update(request.user.id, id, data)
+    return result
+
+
+@highlight_router.get("/{id}", response_model=HighlightResponse)
+async def get_hl(request: Request, id: UUID, highlight_service: HighlightServiceDep):
+    result = await highlight_service.get_by_id(request.user.id, id)
     return result
