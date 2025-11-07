@@ -85,8 +85,12 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
         return entity
 
     async def get_by(
-        self, field: str, value: str | int | bool | float | UUID
-    ) -> ModelType | None:
+        self,
+        field: str,
+        value: str | int | bool | float | UUID,
+        skip: int = 0,
+        limit: int = 100,
+    ) -> Sequence[ModelType] | None:
         """
         Returns the model instance matching the field and value.
 
@@ -94,9 +98,14 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
         :param value: The value to match.
         :return: The model instance.
         """
-        stmt = select(self.model_class).where(getattr(self.model_class, field) == value)
+        stmt = (
+            select(self.model_class)
+            .where(getattr(self.model_class, field) == value)
+            .offset(skip)
+            .limit(limit)
+        )
         results = await self.session.exec(stmt)
-        return results.one_or_none()
+        return results.all()
 
     async def count(self) -> int:
         """
@@ -105,6 +114,16 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
         :return: The count of the records.
         """
         stmt = select(func.count()).select_from(self.model_class)
+        result = await self.session.exec(stmt)
+        return result.one()
+
+    async def count_by(self, field: str, value: str | int | bool | float | UUID) -> int:
+        """
+        Returns the count of the records.
+
+        :return: The count of the records.
+        """
+        stmt = select(func.count()).where(getattr(self.model_class, field) == value)
         result = await self.session.exec(stmt)
         return result.one()
 

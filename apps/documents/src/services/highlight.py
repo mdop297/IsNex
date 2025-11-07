@@ -7,7 +7,10 @@ from src.models.highlight import Highlight
 from src.repositories.document import DocumentRepository
 from src.repositories.highlight import HighlightRepository
 from src.schemas.requests.highlight import HighlightCreate, HighlightUpdate
-from src.schemas.responses.highlight import HighlightResponse
+from src.schemas.responses.highlight import (
+    HighlightResponse,
+    PaginatedHighlightResponse,
+)
 
 logger = get_logger(__name__)
 
@@ -55,13 +58,31 @@ class HighlightService(
         return hls
 
     async def get_all(
-        self, skip: int = 0, limit: int = 100
+        self, field: str, value: str, skip: int = 0, limit: int = 100
     ) -> Sequence[HighlightResponse]:
-        highlights = await self.repository.get_all(skip, limit)
-        results = [
-            HighlightResponse.model_validate(highlight) for highlight in highlights
-        ]
-        return results
+        # TODO: Add pagination
+        result = await self.repository.get_all(skip, limit)
+        highlights = [HighlightResponse.model_validate(h) for h in result]
+        return highlights
+
+    async def get_by_user_id(
+        self, user_id: UUID, skip: int = 0, limit: int = 25
+    ) -> PaginatedHighlightResponse:
+        highlights = await self.repository.get_by(
+            field="user_id", value=user_id, skip=skip, limit=limit
+        )
+
+        if not highlights:
+            return PaginatedHighlightResponse(items=[], total=0, skip=skip, limit=limit)
+
+        total = await self.repository.count_by(field="user_id", value=user_id)
+
+        return PaginatedHighlightResponse(
+            items=[HighlightResponse.model_validate(h) for h in highlights],
+            total=total,
+            skip=skip,
+            limit=limit,
+        )
 
     async def __validate_document(self, user_id: UUID, document_id: UUID):
         document = await self.document_repository.get_by_id(document_id)

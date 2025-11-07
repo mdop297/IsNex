@@ -17,3 +17,10 @@ class HighlightResponse(BaseModel):
     text: Optional[str] = None
     image: Optional[bytes]
     position: Position
+
+
+class PaginatedHighlightResponse(BaseModel):
+    items: list[HighlightResponse]
+    total: int
+    skip: int
+    limit: int

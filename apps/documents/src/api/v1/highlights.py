@@ -1,9 +1,12 @@
 from uuid import UUID
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 from src.api.depends.factory import HighlightServiceDep
 from src.core.utils.logger import get_logger
 from src.schemas.requests.highlight import HighlightCreate, HighlightUpdate
-from src.schemas.responses.highlight import HighlightResponse
+from src.schemas.responses.highlight import (
+    HighlightResponse,
+    PaginatedHighlightResponse,
+)
 
 
 logger = get_logger(__name__)
@@ -42,3 +45,19 @@ async def get_hls_of_document(
 ):
     result = await highlight_service.get_all_by_doc_id(request.user.id, doc_id)
     return result
+
+
+@highlight_router.get("/user", response_model=PaginatedHighlightResponse)
+async def get_all(
+    request: Request,
+    highlight_service: HighlightServiceDep,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(25, ge=1, le=100),
+):
+    try:
+        result = await highlight_service.get_by_user_id(
+            user_id=request.user.id, skip=skip, limit=limit
+        )
+        return result
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to fetch highlights")
