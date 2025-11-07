@@ -4,6 +4,7 @@ from uuid import UUID
 from src.core.service.base import BaseService
 from src.core.utils.logger import get_logger
 from src.models.highlight import Highlight
+from src.repositories.document import DocumentRepository
 from src.repositories.highlight import HighlightRepository
 from src.schemas.requests.highlight import HighlightCreate, HighlightUpdate
 from src.schemas.responses.highlight import HighlightResponse
@@ -21,13 +22,13 @@ class HighlightService(
     ]
 ):
     def __init__(
-        self,
-        repository: HighlightRepository,
+        self, repository: HighlightRepository, document_repository: DocumentRepository
     ):
         super().__init__(Highlight, repository)
+        self.document_repository = document_repository
 
     async def create(self, user_id: UUID, entity: HighlightCreate) -> HighlightResponse:
-        # TODO: validate document belong to user using document repository
+        await self.__validate_document(user_id, entity.document_id)
         result = await self.repository.create(entity)
         return HighlightResponse.model_validate(result)
 
@@ -56,4 +57,9 @@ class HighlightService(
         ]
         return results
 
-    # async def validate_document(self, )
+    async def __validate_document(self, user_id: UUID, document_id: UUID):
+        document = await self.document_repository.get_by_id(document_id)
+        if not document:
+            raise Exception("Document not found")
+        if document.user_id != user_id:
+            raise Exception("Document does not belong to user")

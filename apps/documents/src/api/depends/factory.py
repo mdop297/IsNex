@@ -35,7 +35,10 @@ class Factory:
     def get_highlight_service(
         self, db_session=Depends(get_session)
     ) -> HighlightService:
-        return HighlightService(repository=HighlightRepository(db_session))
+        return HighlightService(
+            repository=HighlightRepository(db_session),
+            document_repository=DocumentRepository(db_session),
+        )
 
 
 factory = Factory()

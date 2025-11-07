@@ -10,9 +10,9 @@ logger = get_logger(__name__)
 highlight_router = APIRouter(prefix="/highlights", tags=["highlights"])
 
 
-@highlight_router.post("/")
+@highlight_router.post("/", response_model=HighlightResponse)
 async def create_highlight(
     request: Request, data: HighlightCreate, highlight_service: HighlightServiceDep
 ):
-    await highlight_service.create(request.user.id, data)
-    return
+    highlight = await highlight_service.create(request.user.id, data)
+    return highlight
