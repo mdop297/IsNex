@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class NoteCreate(BaseModel):
-    user_id: UUID
+    user_id: Optional[UUID] = None
     parent_id: Optional[UUID] = None
     title: str
     icon: Optional[str] = None

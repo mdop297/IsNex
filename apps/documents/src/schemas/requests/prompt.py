@@ -5,7 +5,7 @@ from src.models.prompt import PromptType
 
 
 class PromptCreate(BaseModel):
-    user_id: UUID
+    user_id: Optional[UUID] = None
     workspace_id: Optional[UUID] = None
     name: str
     content: str

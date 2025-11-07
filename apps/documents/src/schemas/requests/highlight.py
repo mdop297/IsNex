@@ -6,6 +6,7 @@ from src.models.highlight import HighlightType, Position
 
 
 class HighlightBase(BaseModel):
+    user_id: Optional[UUID] = None
     document_id: UUID
     page_number: int
     color: str

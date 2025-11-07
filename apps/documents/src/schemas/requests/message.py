@@ -6,7 +6,7 @@ from src.models.message import ReactionType, SenderType
 
 
 class MessageCreate(BaseModel):
-    user_id: UUID = Field(..., description="ID of the user sending the message")
+    user_id: Optional[UUID] = None
     conv_id: UUID = Field(..., description="ID of the conversation")
     sender: Optional[SenderType] = Field(
         default=None, description="Sender type: user or system"

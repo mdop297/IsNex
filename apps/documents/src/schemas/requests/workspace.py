@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class WorkspaceCreate(BaseModel):
-    user_id: UUID
+    user_id: Optional[UUID] = None
     name: str
     icon: Optional[str]
     description: Optional[str] = ""

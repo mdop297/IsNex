@@ -18,6 +18,7 @@ highlight_router = APIRouter(prefix="/hls", tags=["highlights"])
 async def create_highlight(
     request: Request, data: HighlightCreate, highlight_service: HighlightServiceDep
 ):
+    data.user_id = request.user.id
     highlight = await highlight_service.create(request.user.id, data)
     return highlight
 

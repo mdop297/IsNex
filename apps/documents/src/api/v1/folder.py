@@ -14,6 +14,7 @@ folder_router = APIRouter(prefix="/folders", tags=["folders"])
 @folder_router.post("/", response_model=FolderResponse)
 def create(request: Request, data: FolderCreate, folder_service: FolderServiceDep):
     # get user_id -> check folder name -> check parent_id belong to user_id -> create folder
+    data.user_id = request.user.id
     result = folder_service.create(request.user.id, data)
     return result
 

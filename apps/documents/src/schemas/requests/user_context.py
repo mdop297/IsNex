@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class PersonalContextCreate(BaseModel):
-    user_id: UUID
+    # user_id: UUID
     content: str
 
 

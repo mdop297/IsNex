@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class ConversationCreate(BaseModel):
-    user_id: UUID = Field(..., description="User who creates the conversation")
+    user_id: Optional[UUID] = None
     workspace_id: Optional[UUID] = Field(
         default=None, description="Associated workspace ID"
     )

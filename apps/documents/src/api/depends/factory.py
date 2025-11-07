@@ -3,9 +3,12 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.core.database.session import get_session
+from src.repositories.conversation import ConversationRepository
 from src.repositories.document import DocumentRepository
 from src.repositories.folder import FolderRepository
 from src.repositories.highlight import HighlightRepository
+from src.repositories.workspace import WorkspaceRepository
+from src.services.conversation import ConversationService
 from src.services.document import DocumentService
 from src.services.folder import FolderService
 from src.services.highlight import HighlightService
@@ -40,6 +43,14 @@ class Factory:
             document_repository=DocumentRepository(db_session),
         )
 
+    def get_conversation_service(
+        self, db_session=Depends(get_session)
+    ) -> ConversationService:
+        return ConversationService(
+            repository=ConversationRepository(db_session),
+            workspace_repository=WorkspaceRepository(db_session),
+        )
+
 
 factory = Factory()
 
@@ -49,4 +60,8 @@ DocumentServiceDep = Annotated[DocumentService, Depends(factory.get_document_ser
 
 HighlightServiceDep = Annotated[
     HighlightService, Depends(factory.get_highlight_service)
+]
+
+ConversationServiceDep = Annotated[
+    ConversationService, Depends(factory.get_conversation_service)
 ]
