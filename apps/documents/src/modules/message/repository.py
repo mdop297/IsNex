@@ -3,7 +3,7 @@ from src.core.utils.logger import get_logger
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.modules.message.model import Message
-from src.modules.message.dtos.request_dtos import MessageCreate, MessageUpdate
+from src.modules.message.dtos.request import MessageCreate, MessageUpdate
 
 
 logger = get_logger(__name__)

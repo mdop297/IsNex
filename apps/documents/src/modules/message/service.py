@@ -6,8 +6,8 @@ from src.core.utils.logger import get_logger
 from src.modules.conversation.repository import ConversationRepository
 from src.modules.message.model import Message
 from src.modules.message.repository import MessageRepository
-from src.modules.message.dtos.request_dtos import MessageCreate, MessageUpdate
-from src.modules.message.dtos.response_dtos import MessageResponse
+from src.modules.message.dtos.request import MessageCreate, MessageUpdate
+from src.modules.message.dtos.response import MessageResponse
 
 logger = get_logger(__name__)
 
@@ -26,12 +26,17 @@ class MessageService(
         self.conversation_repository = conversation_repository
 
     async def create(self, user_id: UUID, entity: MessageCreate) -> MessageResponse:
+        # TODO: handle case message is not from current conversation
         await self.__validate_conversation_ownership(entity.conv_id, user_id)
         result = await self.repository.create(entity)
         return MessageResponse.model_validate(result)
 
-    async def update(self, entity: Message, obj: MessageUpdate) -> MessageResponse:
-        result = await self.repository.update(entity, obj)
+    async def update(
+        self, user_id: UUID, id: UUID, obj: MessageUpdate
+    ) -> MessageResponse:
+        message = await self.__check_message_ownership(message_id=id, user_id=user_id)
+
+        result = await self.repository.update(entity=message, obj=obj)
         return MessageResponse.model_validate(result)
 
     async def delete(self, id: UUID) -> bool:
@@ -68,4 +73,14 @@ class MessageService(
             raise Exception("Message not found")
         if message.conv_id != conv_id:
             raise Exception("Message does not belong to conversation")
+        return message
+
+    async def __check_message_ownership(
+        self, message_id: UUID, user_id: UUID
+    ) -> Message:
+        message = await self.repository.get_by_id(message_id)
+        if not message:
+            raise Exception("Message not found")
+        if message.user_id != user_id:
+            raise Exception("Message does not belong to user")
         return message
