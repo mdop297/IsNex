@@ -1,7 +1,5 @@
-from typing import Sequence
+from typing import Optional, Sequence
 from uuid import UUID
-
-from pydantic import Field
 
 from src.core.service.base import BaseService
 from src.core.utils.logger import get_logger
@@ -20,8 +18,7 @@ class FolderService(
         super().__init__(Folder, repository)
 
     async def create(self, user_id: UUID, entity: FolderCreate) -> FolderResponse:
-        # check folder name exists (use constraint)
-        # check parent_id belong to user_id
+        # Validate parent folder exists and belongs to user
         if entity.parent_id:
             await self.__validate_folder(entity.parent_id, user_id)
 
@@ -31,9 +28,20 @@ class FolderService(
     async def update(
         self, user_id: UUID, id: UUID, obj: FolderUpdate
     ) -> FolderResponse:
-        folder = await self.__validate_folder(id, user_id)
-        if obj.parent_id:
+        # Get folder with minimal fields
+        folder = await self.repository.get_by_id(
+            id, fields=["id", "user_id", "parent_id"]
+        )
+        if not folder:
+            raise Exception("Folder not found")
+        if folder.user_id != user_id:
+            raise Exception("Folder does not belong to user")
+
+        # Only validate parent_id if it changes
+        if obj.parent_id is not None and obj.parent_id != folder.parent_id:
             await self.__validate_folder(obj.parent_id, user_id)
+            # Prevent circular reference
+            await self.__validate_no_circular_reference(id, obj.parent_id)
 
         result = await self.repository.update(folder, obj)
         return FolderResponse.model_validate(result)
@@ -44,11 +52,7 @@ class FolderService(
         return result
 
     async def get_by_id(self, user_id: UUID, id: UUID) -> FolderResponse:
-        folder = await self.repository.get_by_id(id)
-        if not folder:
-            raise Exception("Folder not found")
-        if folder.user_id != user_id:
-            raise Exception("Folder does not belong to user")
+        folder = await self.__validate_folder(id, user_id)
         return FolderResponse.model_validate(folder)
 
     async def get_all(
@@ -58,14 +62,32 @@ class FolderService(
         results = [FolderResponse.model_validate(folder) for folder in folders]
         return results
 
-    async def __validate_folder(
-        self,
-        id: UUID = Field(description="folder id"),
-        user_id: UUID = Field(description="user id"),
-    ) -> Folder:
+    async def __validate_folder(self, id: UUID, user_id: UUID) -> Folder:
+        """Validate folder exists and belongs to user"""
         folder = await self.repository.get_by_id(id)
         if not folder:
             raise Exception("Folder not found")
         if folder.user_id != user_id:
             raise Exception("Folder does not belong to user")
         return folder
+
+    async def __validate_no_circular_reference(
+        self, folder_id: UUID, new_parent_id: UUID
+    ) -> None:
+        """Prevent folder from being its own ancestor"""
+        current_id: Optional[UUID] = new_parent_id
+        visited: set[UUID] = set()
+
+        while current_id is not None:
+            if current_id == folder_id:
+                raise Exception(
+                    "Circular reference detected: folder cannot be its own ancestor"
+                )
+
+            if current_id in visited:
+                break
+
+            visited.add(current_id)
+
+            parent = await self.repository.get_by_id(current_id, fields=["parent_id"])
+            current_id = parent.parent_id if parent else None
