@@ -39,8 +39,8 @@ class PromptService(
         result = await self.repository.delete(id)
         return result
 
-    async def get_by_id(self, id: UUID) -> PromptResponse:
-        prompt = await self.repository.get_by_id(id)
+    async def get_by_id(self, user_id: UUID, id: UUID) -> PromptResponse:
+        prompt = await self.__validate_prompt_ownership(prompt_id=id, user_id=user_id)
         if not prompt:
             raise Exception("Prompt not found")
         return PromptResponse.model_validate(prompt)
