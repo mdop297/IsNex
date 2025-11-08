@@ -81,7 +81,10 @@ class Factory:
         )
 
     def get_prompt_service(self, db_session=Depends(get_session)) -> PromptService:
-        return PromptService(repository=PromptRepository(db_session))
+        return PromptService(
+            repository=PromptRepository(db_session),
+            workspace_repository=WorkspaceRepository(db_session),
+        )
 
 
 factory = Factory()
