@@ -28,7 +28,8 @@ class NoteService(
         result = await self.repository.update(entity, obj)
         return NoteResponse.model_validate(result)
 
-    async def delete(self, id: UUID) -> bool:
+    async def delete(self, user_id: UUID, id: UUID) -> bool:
+        await self.__validate_note_ownership(id, user_id)
         result = await self.repository.delete(id)
         return result
 

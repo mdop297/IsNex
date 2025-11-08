@@ -39,3 +39,9 @@ def get_note(request: Request, id: UUID, note_service: NoteServiceDep):
 def get_all(request: Request, note_service: NoteServiceDep):
     result = note_service.get_all(user_id=request.user.id)
     return result
+
+
+@note_router.delete("/{id}", response_model=bool)
+async def delete_note(request: Request, id: UUID, note_service: NoteServiceDep):
+    result = await note_service.delete(user_id=request.user.id, id=id)
+    return result
