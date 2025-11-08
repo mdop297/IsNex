@@ -28,7 +28,10 @@ class PromptService(
         result = await self.repository.create(entity)
         return PromptResponse.model_validate(result)
 
-    async def update(self, entity: Prompt, obj: PromptUpdate) -> PromptResponse:
+    async def update(
+        self, user_id: UUID, id: UUID, obj: PromptUpdate
+    ) -> PromptResponse:
+        entity = await self.__validate_prompt_ownership(id, user_id)
         result = await self.repository.update(entity, obj)
         return PromptResponse.model_validate(result)
 
@@ -56,9 +59,12 @@ class PromptService(
         if workspace.user_id != user_id:
             raise Exception("You are not the owner of this workspace")
 
-    async def __validate_prompt_ownership(self, prompt_id: UUID, user_id: UUID):
+    async def __validate_prompt_ownership(
+        self, prompt_id: UUID, user_id: UUID
+    ) -> Prompt:
         prompt = await self.repository.get_by_id(prompt_id)
         if not prompt:
             raise Exception("Prompt not found")
         if prompt.user_id != user_id:
             raise Exception("You are not the owner of this prompt")
+        return prompt
