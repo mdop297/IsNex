@@ -3,6 +3,7 @@ from uuid import UUID
 
 from src.core.service.base import BaseService
 from src.core.utils.logger import get_logger
+from src.modules.conversation.repository import ConversationRepository
 from src.modules.message.model import Message
 from src.modules.message.repository import MessageRepository
 from src.modules.message.dtos.request_dtos import MessageCreate, MessageUpdate
@@ -16,10 +17,16 @@ class MessageService(
         Message, MessageCreate, MessageUpdate, MessageResponse, MessageRepository
     ]
 ):
-    def __init__(self, repository: MessageRepository):
+    def __init__(
+        self,
+        repository: MessageRepository,
+        conversation_repository: ConversationRepository,
+    ):
         super().__init__(Message, repository)
+        self.conversation_repository = conversation_repository
 
-    async def create(self, entity: MessageCreate) -> MessageResponse:
+    async def create(self, user_id: UUID, entity: MessageCreate) -> MessageResponse:
+        await self.__validate_conversation_ownership(entity.conv_id, user_id)
         result = await self.repository.create(entity)
         return MessageResponse.model_validate(result)
 
@@ -43,3 +50,22 @@ class MessageService(
         result = await self.repository.get_all(skip, limit)
         messages = [MessageResponse.model_validate(message) for message in result]
         return messages
+
+    # get conversation and check if it belongs to user
+    async def __validate_conversation_ownership(self, conv_id: UUID, user_id: UUID):
+        conv = await self.conversation_repository.get_by_id(conv_id)
+        if not conv:
+            raise Exception("Conversation not found")
+        if conv.user_id != user_id:
+            raise Exception("Conversation does not belong to user")
+
+    # get message and check if it belongs to conversation
+    async def __get_message_conversation(
+        self, message_id: UUID, conv_id: UUID
+    ) -> Message:
+        message = await self.repository.get_by_id(message_id)
+        if not message:
+            raise Exception("Message not found")
+        if message.conv_id != conv_id:
+            raise Exception("Message does not belong to conversation")
+        return message

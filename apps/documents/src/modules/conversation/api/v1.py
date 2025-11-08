@@ -7,7 +7,10 @@ from src.modules.conversation.dtos.request_dtos import (
     ConversationCreate,
     ConversationUpdate,
 )
-from src.modules.conversation.dtos.response_dtos import ConversationResponse
+from src.modules.conversation.dtos.response_dtos import (
+    ConversationResponse,
+    PaginatedConversationResponse,
+)
 
 logger = get_logger(__name__)
 
@@ -41,13 +44,15 @@ def get_conv(request: Request, id: UUID, conv_service: ConversationServiceDep):
 
 
 # we will get user_id from token, not from request param
-@conv_router.get("/user", response_model=list[ConversationResponse])
+@conv_router.get("/user", response_model=PaginatedConversationResponse)
 def get_all_conv(request: Request, conv_service: ConversationServiceDep):
     result = conv_service.get_by_user_id(user_id=request.user.id, skip=0, limit=20)
     return result
 
 
-@conv_router.get("/workspace/{workspace_id}", response_model=list[ConversationResponse])
+@conv_router.get(
+    "/workspace/{workspace_id}", response_model=PaginatedConversationResponse
+)
 def get_by_ws(req: Request, workspace_id: UUID, conv_service: ConversationServiceDep):
     result = conv_service.get_by_workspace_id(
         user_id=req.user.id, workspace_id=workspace_id, skip=0, limit=20
