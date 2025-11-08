@@ -32,8 +32,8 @@ class NoteService(
         result = await self.repository.delete(id)
         return result
 
-    async def get_by_id(self, id: UUID) -> NoteResponse:
-        note = await self.repository.get_by_id(id)
+    async def get_by_id(self, user_id: UUID, id: UUID) -> NoteResponse:
+        note = await self.__validate_note_ownership(note_id=id, user_id=user_id)
         if not note:
             raise Exception("Note not found")
         return NoteResponse.model_validate(note)

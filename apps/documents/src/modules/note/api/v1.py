@@ -27,3 +27,9 @@ async def update_note(
 ):
     result = await note_service.update(request.user.id, id, data)
     return result
+
+
+@note_router.get("/{id}", response_model=NoteResponse)
+def get_note(request: Request, id: UUID, note_service: NoteServiceDep):
+    result = note_service.get_by_id(user_id=request.user.id, id=id)
+    return result
