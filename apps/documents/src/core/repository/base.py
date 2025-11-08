@@ -50,14 +50,26 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
         records = results.all()
         return records
 
-    async def get_by_id(self, id: UUID) -> ModelType | None:
+    async def get_by_id(
+        self, id: UUID, fields: list[str] | None = None
+    ) -> ModelType | None:
         """
-        Returns the model instance matching the id.
+        Returns the model instance with optional field selection.
 
-        :param id: The id to match.
-        :return: The model instance or None if no match is found.
+        Args:
+            :param id: The id to match.
+            :param fields: List of fields to load (None = load all)
+
+        Returns:
+            :return: The model instance or None if no match is found.
         """
-        stmt = select(self.model_class).where(self.model_class.id == id)
+        if fields:
+            # Load only specified columns
+            cols = [getattr(self.model_class, f) for f in fields]
+            stmt = select(*cols).where(self.model_class.id == id)
+        else:
+            stmt = select(self.model_class).where(self.model_class.id == id)
+
         results = await self.session.exec(stmt)
         return results.one_or_none()
 

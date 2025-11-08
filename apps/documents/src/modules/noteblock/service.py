@@ -3,6 +3,8 @@ from uuid import UUID
 
 from src.core.service.base import BaseService
 from src.core.utils.logger import get_logger
+from src.modules.note.repository import NoteRepository
+from src.modules.note.service import NoteService
 from src.modules.noteblock.dtos.response_dtos import NoteBlockResponse
 from src.modules.noteblock.model import NoteBlock
 from src.modules.noteblock.repository import NoteBlockRepository
@@ -20,10 +22,16 @@ class NoteBlockService(
         NoteBlockRepository,
     ]
 ):
-    def __init__(self, repository: NoteBlockRepository):
+    def __init__(
+        self, repository: NoteBlockRepository, note_repository: NoteRepository
+    ):
         super().__init__(NoteBlock, repository)
+        self.note_repository = note_repository
 
-    async def create(self, entity: NoteBlockCreate) -> NoteBlockResponse:
+    async def create(self, user_id: UUID, entity: NoteBlockCreate) -> NoteBlockResponse:
+        await self.__validate_note_ownership(note_id=entity.note_id, user_id=user_id)
+        if entity.parent_id:
+            await self.__validate_parent_block(entity.parent_id, user_id)
         result = await self.repository.create(entity)
         return NoteBlockResponse.model_validate(result)
 
@@ -51,3 +59,27 @@ class NoteBlockService(
             NoteBlockResponse.model_validate(noteblock) for noteblock in noteblocks
         ]
         return result
+
+    async def __validate_note_ownership(self, note_id: UUID, user_id: UUID):
+        note = await self.note_repository.get_by_id(note_id, fields=["id", "user_id"])
+        if not note:
+            raise Exception("Note not found")
+        if note.user_id != user_id:
+            raise Exception("Note does not belong to the user")
+
+    async def __validate_parent_block(self, parent_id: UUID, note_id: UUID):
+        parent_block = await self.repository.get_by_id(
+            parent_id, fields=["id", "note_id"]
+        )
+        if not parent_block:
+            raise Exception("Parent block not found")
+        if parent_block.note_id != note_id:
+            raise Exception("Parent block does not belong to the note")
+
+    async def __validate_noteblock(self, block_id: UUID, note_id: UUID) -> NoteBlock:
+        noteblock = await self.repository.get_by_id(block_id)
+        if not noteblock:
+            raise Exception("NoteBlock not found")
+        if noteblock.note_id != note_id:
+            raise Exception("NoteBlock does not belong to the note")
+        return noteblock
