@@ -26,3 +26,22 @@ async def update_messae(
     request: Request, id: UUID, data: MessageUpdate, message_service: MessageServiceDep
 ):
     return await message_service.update(request.user.id, id, data)
+
+
+@message_router.get("/{id}", response_model=MessageResponse)
+async def get_message(request: Request, id: UUID, message_service: MessageServiceDep):
+    return await message_service.get_by_id(request.user.id, id)
+
+
+@message_router.get("/conv/{id}", response_model=list[MessageResponse])
+async def get_messages_of_conv(
+    request: Request, id: UUID, message_service: MessageServiceDep
+):
+    return await message_service.get_messages_of_conv(request.user.id, id)
+
+
+@message_router.delete("/{id}", response_model=bool)
+async def delete_message(
+    request: Request, id: UUID, message_service: MessageServiceDep
+):
+    return await message_service.delete(request.user.id, id)

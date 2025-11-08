@@ -34,20 +34,29 @@ class MessageService(
     async def update(
         self, user_id: UUID, id: UUID, obj: MessageUpdate
     ) -> MessageResponse:
-        message = await self.__check_message_ownership(message_id=id, user_id=user_id)
+        message = await self.__check_message_by_userid(message_id=id, user_id=user_id)
 
         result = await self.repository.update(entity=message, obj=obj)
         return MessageResponse.model_validate(result)
 
-    async def delete(self, id: UUID) -> bool:
+    async def delete(self, user_id: UUID, id: UUID) -> bool:
+        await self.__check_message_by_userid(message_id=id, user_id=user_id)
         result = await self.repository.delete(id)
         return result
 
-    async def get_by_id(self, id: UUID) -> MessageResponse:
-        message = await self.repository.get_by_id(id)
-        if not message:
-            raise Exception("Message not found")
+    async def get_by_id(self, user_id: UUID, id: UUID) -> MessageResponse:
+        message = await self.__check_message_by_userid(message_id=id, user_id=user_id)
         return MessageResponse.model_validate(message)
+
+    async def get_messages_of_conv(
+        self, user_id: UUID, conv_id: UUID
+    ) -> Sequence[MessageResponse]:
+        await self.__validate_conversation_ownership(conv_id, user_id)
+        result = await self.repository.get_by(field="conv_id", value=conv_id)
+        if not result:
+            return []
+        messages = [MessageResponse.model_validate(message) for message in result]
+        return messages
 
     async def get_all(
         self, skip: int = 0, limit: int = 100
@@ -75,7 +84,7 @@ class MessageService(
             raise Exception("Message does not belong to conversation")
         return message
 
-    async def __check_message_ownership(
+    async def __check_message_by_userid(
         self, message_id: UUID, user_id: UUID
     ) -> Message:
         message = await self.repository.get_by_id(message_id)

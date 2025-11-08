@@ -105,7 +105,7 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
             .limit(limit)
         )
         results = await self.session.exec(stmt)
-        return results.all() or []
+        return results.all()
 
     async def count(self) -> int:
         """
