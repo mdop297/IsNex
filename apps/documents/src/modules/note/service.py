@@ -23,7 +23,8 @@ class NoteService(
         result = await self.repository.create(entity)
         return NoteResponse.model_validate(result)
 
-    async def update(self, entity: Note, obj: NoteUpdate) -> NoteResponse:
+    async def update(self, user_id: UUID, id: UUID, obj: NoteUpdate) -> NoteResponse:
+        entity = await self.__validate_note_ownership(id, user_id)
         result = await self.repository.update(entity, obj)
         return NoteResponse.model_validate(result)
 
@@ -48,3 +49,11 @@ class NoteService(
             raise Exception("Parent note not found")
         if parent_note.user_id != user_id:
             raise Exception("Parent note does not belong to the user")
+
+    async def __validate_note_ownership(self, note_id: UUID, user_id: UUID) -> Note:
+        note = await self.repository.get_by_id(note_id)
+        if not note:
+            raise Exception("Note not found")
+        if note.user_id != user_id:
+            raise Exception("Note does not belong to the user")
+        return note
