@@ -88,8 +88,8 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
         self,
         field: str,
         value: str | int | bool | float | UUID,
-        skip: int = 0,
-        limit: int = 100,
+        skip: int | None = None,
+        limit: int | None = None,
     ) -> Sequence[ModelType] | None:
         """
         Returns the model instance matching the field and value.
@@ -98,14 +98,21 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
         :param value: The value to match.
         :return: The model instance.
         """
-        stmt = (
-            select(self.model_class)
-            .where(getattr(self.model_class, field) == value)
-            .offset(skip)
-            .limit(limit)
-        )
-        results = await self.session.exec(stmt)
-        return results.all()
+        if skip and limit:
+            stmt = (
+                select(self.model_class)
+                .where(getattr(self.model_class, field) == value)
+                .offset(skip)
+                .limit(limit)
+            )
+            results = await self.session.exec(stmt)
+            return results.all()
+        else:
+            stmt = select(self.model_class).where(
+                getattr(self.model_class, field) == value
+            )
+            results = await self.session.exec(stmt)
+            return results.all()
 
     async def count(self) -> int:
         """

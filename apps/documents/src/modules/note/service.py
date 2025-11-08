@@ -38,8 +38,12 @@ class NoteService(
             raise Exception("Note not found")
         return NoteResponse.model_validate(note)
 
-    async def get_all(self, skip: int = 0, limit: int = 100) -> Sequence[NoteResponse]:
-        notes = await self.repository.get_all(skip, limit)
+    async def get_all(
+        self, user_id: UUID, skip: int = 0, limit: int = 100
+    ) -> Sequence[NoteResponse]:
+        notes = await self.repository.get_by(field="user_id", value=user_id)
+        if not notes:
+            return []
         result = [NoteResponse.model_validate(note) for note in notes]
         return result
 
