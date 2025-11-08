@@ -40,3 +40,9 @@ async def get_all_prompts(request: Request, prompt_service: PromptServiceDep):
 async def get_prompt(request: Request, id: UUID, prompt_service: PromptServiceDep):
     result = await prompt_service.get_by_id(request.user.id, id)
     return result
+
+
+@prompt_router.delete("/{id}", response_model=bool)
+async def delete_prompt(request: Request, id: UUID, prompt_service: PromptServiceDep):
+    result = await prompt_service.delete(user_id=request.user.id, id=id)
+    return result
