@@ -32,6 +32,20 @@ async def update_nb(
 
 
 @noteblock_router.delete("/{id}", response_model=bool)
-def delete_nb(request: Request, id: UUID, noteblock_service: NoteBlockServiceDep):
-    result = noteblock_service.delete(user_id=request.user.id, id=id)
+async def delete_nb(request: Request, id: UUID, noteblock_service: NoteBlockServiceDep):
+    result = await noteblock_service.delete(user_id=request.user.id, id=id)
+    return result
+
+
+@noteblock_router.get("/{id}", response_model=NoteBlockResponse)
+async def get_nb(request: Request, id: UUID, noteblock_service: NoteBlockServiceDep):
+    result = await noteblock_service.get_by_id(request.user.id, id)
+    return result
+
+
+@noteblock_router.get("/note/{note_id}", response_model=list[NoteBlockResponse])
+async def get_nbs_of_note(
+    request: Request, note_id: UUID, noteblock_service: NoteBlockServiceDep
+):
+    result = await noteblock_service.get_by_note_id(request.user.id, note_id)
     return result

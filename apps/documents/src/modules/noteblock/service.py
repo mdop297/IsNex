@@ -73,11 +73,25 @@ class NoteBlockService(
 
         return await self.repository.delete(block.id)
 
-    async def get_by_id(self, id: UUID) -> NoteBlockResponse:
+    async def get_by_id(self, user_id: UUID, id: UUID) -> NoteBlockResponse:
         noteblock = await self.repository.get_by_id(id)
         if not noteblock:
             raise Exception("NoteBlock not found")
+        await self.__validate_note_ownership(note_id=noteblock.note_id, user_id=user_id)
+
         return NoteBlockResponse.model_validate(noteblock)
+
+    async def get_by_note_id(
+        self, user_id: UUID, note_id: UUID
+    ) -> Sequence[NoteBlockResponse]:
+        await self.__validate_note_ownership(note_id=note_id, user_id=user_id)
+        noteblocks = await self.repository.get_by(field="note_id", value=note_id)
+        if not noteblocks:
+            return []
+        result = [
+            NoteBlockResponse.model_validate(noteblock) for noteblock in noteblocks
+        ]
+        return result
 
     async def get_all(
         self, skip: int = 0, limit: int = 100
