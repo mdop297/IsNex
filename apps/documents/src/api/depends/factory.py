@@ -13,6 +13,8 @@ from src.modules.note.repository import NoteRepository
 from src.modules.note.service import NoteService
 from src.modules.noteblock.repository import NoteBlockRepository
 from src.modules.noteblock.service import NoteBlockService
+from src.modules.prompt.repository import PromptRepository
+from src.modules.prompt.service import PromptService
 from src.modules.workspace.repository import WorkspaceRepository
 from src.modules.conversation.service import ConversationService
 from src.modules.document.service import DocumentService
@@ -78,6 +80,9 @@ class Factory:
             note_repository=NoteRepository(db_session),
         )
 
+    def get_prompt_service(self, db_session=Depends(get_session)) -> PromptService:
+        return PromptService(repository=PromptRepository(db_session))
+
 
 factory = Factory()
 
@@ -100,3 +105,5 @@ NoteServiceDep = Annotated[NoteService, Depends(factory.get_note_service)]
 NoteBlockServiceDep = Annotated[
     NoteBlockService, Depends(factory.get_noteblock_service)
 ]
+
+PromptServiceDep = Annotated[PromptService, Depends(factory.get_prompt_service)]
