@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from typing import Generic, Sequence, Type, TypeVar
-from uuid import UUID
 from pydantic import BaseModel
 
 from src.core.repository.base import BaseRepository

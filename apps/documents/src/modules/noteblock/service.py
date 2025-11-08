@@ -4,7 +4,6 @@ from uuid import UUID
 from src.core.service.base import BaseService
 from src.core.utils.logger import get_logger
 from src.modules.note.repository import NoteRepository
-from src.modules.note.service import NoteService
 from src.modules.noteblock.dtos.response_dtos import NoteBlockResponse
 from src.modules.noteblock.model import NoteBlock
 from src.modules.noteblock.repository import NoteBlockRepository
@@ -31,14 +30,31 @@ class NoteBlockService(
     async def create(self, user_id: UUID, entity: NoteBlockCreate) -> NoteBlockResponse:
         await self.__validate_note_ownership(note_id=entity.note_id, user_id=user_id)
         if entity.parent_id:
-            await self.__validate_parent_block(entity.parent_id, user_id)
+            await self.__validate_parent_block(entity.parent_id, entity.note_id)
         result = await self.repository.create(entity)
         return NoteBlockResponse.model_validate(result)
 
     async def update(
-        self, entity: NoteBlock, obj: NoteBlockUpdate
+        self, user_id: UUID, id: UUID, obj: NoteBlockUpdate
     ) -> NoteBlockResponse:
-        result = await self.repository.update(entity, obj)
+        block = await self.repository.get_by_id(
+            id,
+            fields=["id", "note_id", "parent_id"],
+        )
+        if not block:
+            raise Exception("NoteBlock not found")
+
+        # Validate ownership
+        await self.__validate_note_ownership(note_id=block.note_id, user_id=user_id)
+
+        # only validate parent_id if it changes
+        if obj.parent_id is not None and obj.parent_id != block.parent_id:
+            await self.__validate_parent_block(obj.parent_id, block.note_id)
+            # validate no circular reference
+            await self.__validate_no_circular_reference(id, obj.parent_id)
+
+        # Update not null fields
+        result = await self.repository.update(block, obj)
         return NoteBlockResponse.model_validate(result)
 
     async def delete(self, id: UUID) -> bool:
@@ -83,3 +99,20 @@ class NoteBlockService(
         if noteblock.note_id != note_id:
             raise Exception("NoteBlock does not belong to the note")
         return noteblock
+
+    async def __validate_no_circular_reference(
+        self, block_id: UUID, new_parent_id: UUID
+    ):
+        """Prevent block from being its own ancestor"""
+        current_id: UUID | None = new_parent_id
+        visited: set[UUID] = set()
+
+        while current_id:
+            if current_id == block_id:
+                raise Exception("Circular reference detected")
+            if current_id in visited:
+                break
+            visited.add(current_id)
+
+            parent = await self.repository.get_by_id(current_id, fields=["parent_id"])
+            current_id = parent.parent_id if parent else None
