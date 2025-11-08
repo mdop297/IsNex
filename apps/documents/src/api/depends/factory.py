@@ -9,6 +9,8 @@ from src.modules.folder.repository import FolderRepository
 from src.modules.highlight.repository import HighlightRepository
 from src.modules.message.repository import MessageRepository
 from src.modules.message.service import MessageService
+from src.modules.note.repository import NoteRepository
+from src.modules.note.service import NoteService
 from src.modules.workspace.repository import WorkspaceRepository
 from src.modules.conversation.service import ConversationService
 from src.modules.document.service import DocumentService
@@ -63,6 +65,9 @@ class Factory:
             conversation_repository=ConversationRepository(db_session),
         )
 
+    def get_note_service(self, db_session=Depends(get_session)) -> NoteService:
+        return NoteService(repository=NoteRepository(db_session))
+
 
 factory = Factory()
 
@@ -79,3 +84,5 @@ ConversationServiceDep = Annotated[
 ]
 
 MessageServiceDep = Annotated[MessageService, Depends(factory.get_message_service)]
+
+NoteServiceDep = Annotated[NoteService, Depends(factory.get_note_service)]
