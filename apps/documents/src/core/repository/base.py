@@ -102,7 +102,7 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
         value: str | int | bool | float | UUID,
         skip: int | None = None,
         limit: int | None = None,
-    ) -> Sequence[ModelType] | None:
+    ) -> Sequence[ModelType]:
         """
         Returns the model instance matching the field and value.
 

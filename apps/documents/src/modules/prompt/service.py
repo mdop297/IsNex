@@ -52,6 +52,15 @@ class PromptService(
         result = [PromptResponse.model_validate(prompt) for prompt in prompts]
         return result
 
+    async def get_by_user_id(
+        self, user_id: UUID, skip: int = 0, limit: int = 30
+    ) -> Sequence[PromptResponse]:
+        prompts = await self.repository.get_by(
+            field="user_id", value=user_id, skip=skip, limit=limit
+        )
+        result = [PromptResponse.model_validate(prompt) for prompt in prompts]
+        return result
+
     async def __validate_workspace_ownership(self, workspace_id: UUID, user_id: UUID):
         workspace = await self.workspace_repository.get_by_id(workspace_id)
         if not workspace:

@@ -28,3 +28,9 @@ async def update_prompt(
 ):
     result = await prompt_service.update(request.user.id, id, data)
     return result
+
+
+@prompt_router.get("/", response_model=list[PromptResponse])
+async def get_all_prompts(request: Request, prompt_service: PromptServiceDep):
+    result = await prompt_service.get_by_user_id(request.user.id)
+    return result
