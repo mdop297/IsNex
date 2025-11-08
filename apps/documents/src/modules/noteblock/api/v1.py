@@ -29,3 +29,9 @@ async def update_nb(
 ):
     result = await noteblock_service.update(user_id=request.user.id, id=id, obj=data)
     return result
+
+
+@noteblock_router.delete("/{id}", response_model=bool)
+def delete_nb(request: Request, id: UUID, noteblock_service: NoteBlockServiceDep):
+    result = noteblock_service.delete(user_id=request.user.id, id=id)
+    return result

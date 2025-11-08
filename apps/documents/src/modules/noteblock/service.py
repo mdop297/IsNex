@@ -50,16 +50,28 @@ class NoteBlockService(
         # only validate parent_id if it changes
         if obj.parent_id is not None and obj.parent_id != block.parent_id:
             await self.__validate_parent_block(obj.parent_id, block.note_id)
-            # validate no circular reference
             await self.__validate_no_circular_reference(id, obj.parent_id)
 
         # Update not null fields
         result = await self.repository.update(block, obj)
         return NoteBlockResponse.model_validate(result)
 
-    async def delete(self, id: UUID) -> bool:
-        result = await self.repository.delete(id)
-        return result
+    async def delete(self, user_id: UUID, id: UUID) -> bool:
+        # get block to get note_id
+        block = await self.repository.get_by_id(id, fields=["id", "note_id"])
+        if not block:
+            raise ValueError("NoteBlock not found")
+
+        # Validate note ownership
+        note = await self.note_repository.get_by_id(
+            block.note_id, fields=["id", "user_id"]
+        )
+        if not note:
+            raise ValueError("Note not found")
+        if note.user_id != user_id:
+            raise PermissionError("Note does not belong to the user")
+
+        return await self.repository.delete(block.id)
 
     async def get_by_id(self, id: UUID) -> NoteBlockResponse:
         noteblock = await self.repository.get_by_id(id)
@@ -91,14 +103,6 @@ class NoteBlockService(
             raise Exception("Parent block not found")
         if parent_block.note_id != note_id:
             raise Exception("Parent block does not belong to the note")
-
-    async def __validate_noteblock(self, block_id: UUID, note_id: UUID) -> NoteBlock:
-        noteblock = await self.repository.get_by_id(block_id)
-        if not noteblock:
-            raise Exception("NoteBlock not found")
-        if noteblock.note_id != note_id:
-            raise Exception("NoteBlock does not belong to the note")
-        return noteblock
 
     async def __validate_no_circular_reference(
         self, block_id: UUID, new_parent_id: UUID
