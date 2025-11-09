@@ -7,8 +7,6 @@ from src.modules.document.model import FileType
 
 class DocumentCreate(BaseModel):
     user_id: Optional[UUID] = Field(None, exclude=True)
-
-    workspace_id: Optional[UUID] = Field(default=None)
     folder_id: Optional[UUID] = Field(default=None)
     name: str = Field(default="Untitled")
     file_url: str
@@ -37,6 +35,5 @@ class DocumentCreate(BaseModel):
 
 
 class DocumentUpdate(BaseModel):
-    workspace_id: Optional[UUID] = Field(default=None)
     folder_id: Optional[UUID] = Field(default=None)
     name: Optional[str] = Field(default=None)
