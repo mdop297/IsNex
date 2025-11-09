@@ -24,7 +24,7 @@ async def create_highlight(
 
 
 @highlight_router.patch("/{id}", response_model=HighlightResponse)
-async def update_hl(
+async def update_highlight(
     request: Request,
     id: UUID,
     data: HighlightUpdate,
@@ -35,13 +35,15 @@ async def update_hl(
 
 
 @highlight_router.get("/{id}", response_model=HighlightResponse)
-async def get_hl(request: Request, id: UUID, highlight_service: HighlightServiceDep):
+async def get_highlight_by_id(
+    request: Request, id: UUID, highlight_service: HighlightServiceDep
+):
     result = await highlight_service.get_by_id(request.user.id, id)
     return result
 
 
 @highlight_router.get("/doc/{doc_id}", response_model=list[HighlightResponse])
-async def get_hls_of_document(
+async def get_all_highlights_by_document(
     request: Request, doc_id: UUID, highlight_service: HighlightServiceDep
 ):
     result = await highlight_service.get_all_by_doc_id(request.user.id, doc_id)
@@ -49,7 +51,7 @@ async def get_hls_of_document(
 
 
 @highlight_router.get("/user", response_model=PaginatedHighlightResponse)
-async def get_all(
+async def get_all_highlights_by_user(
     request: Request,
     highlight_service: HighlightServiceDep,
     skip: int = Query(0, ge=0),
@@ -65,6 +67,8 @@ async def get_all(
 
 
 @highlight_router.delete("/{id}", response_model=bool)
-async def delete_hl(request: Request, id: UUID, highlight_service: HighlightServiceDep):
+async def delete_highlight(
+    request: Request, id: UUID, highlight_service: HighlightServiceDep
+):
     result = await highlight_service.delete(id)
     return result

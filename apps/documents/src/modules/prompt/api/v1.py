@@ -31,13 +31,15 @@ async def update_prompt(
 
 
 @prompt_router.get("/", response_model=list[PromptResponse])
-async def get_all_prompts(request: Request, prompt_service: PromptServiceDep):
+async def get_all_prompts_by_user(request: Request, prompt_service: PromptServiceDep):
     result = await prompt_service.get_by_user_id(request.user.id)
     return result
 
 
 @prompt_router.get("/{id}", response_model=PromptResponse)
-async def get_prompt(request: Request, id: UUID, prompt_service: PromptServiceDep):
+async def get_prompt_by_id(
+    request: Request, id: UUID, prompt_service: PromptServiceDep
+):
     result = await prompt_service.get_by_id(request.user.id, id)
     return result
 

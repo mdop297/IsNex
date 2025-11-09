@@ -21,7 +21,7 @@ ws_router = APIRouter(
 
 # create workspace
 @ws_router.post("/", response_model=WorkspaceResponse)
-async def create(
+async def create_workspace(
     request: Request, data: WorkspaceCreate, ws_service: WorkspaceServiceDep
 ):
     result = await ws_service.create(user_id=request.user.id, entity=data)
@@ -30,21 +30,23 @@ async def create(
 
 # get all workspace by user
 @ws_router.get("/", response_model=list[WorkspaceResponse])
-async def get_all(request: Request, ws_service: WorkspaceServiceDep):
+async def get_all_workspaces_by_user(request: Request, ws_service: WorkspaceServiceDep):
     result = await ws_service.get_all(user_id=request.user.id)
     return result
 
 
 # get/load workspace (load documents, conversations, notes)
 @ws_router.get("/{workspace_id}", response_model=WorkspaceResponse)
-async def get(request: Request, workspace_id: UUID, ws_service: WorkspaceServiceDep):
+async def get_workspace_by_id(
+    request: Request, workspace_id: UUID, ws_service: WorkspaceServiceDep
+):
     result = await ws_service.get_by_id(user_id=request.user.id, id=workspace_id)
     return result
 
 
 # update workspace
 @ws_router.patch("/{workspace_id}", response_model=WorkspaceResponse)
-async def update(
+async def update_workspace(
     request: Request,
     workspace_id: UUID,
     data: WorkspaceUpdate,
@@ -55,7 +57,7 @@ async def update(
 
 
 @ws_router.get("/meta/{workspace_id}", response_model=WorkspaceMetaResponse)
-async def get_meta(
+async def get_workspace_meta(
     request: Request, workspace_id: UUID, ws_service: WorkspaceServiceDep
 ):
     result = await ws_service.get_meta(
@@ -98,7 +100,9 @@ async def remove_document_from_workspace(
 
 # delete workspace
 @ws_router.delete("/{workspace_id}", response_model=bool)
-async def delete(request: Request, workspace_id: UUID, ws_service: WorkspaceServiceDep):
+async def delete_workspace(
+    request: Request, workspace_id: UUID, ws_service: WorkspaceServiceDep
+):
     result = await ws_service.delete(user_id=request.user.id, id=workspace_id)
     return result
 

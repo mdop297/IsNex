@@ -18,7 +18,7 @@ conv_router = APIRouter(prefix="/convs", tags=["conversations"])
 
 
 @conv_router.post("/", response_model=ConversationResponse)
-async def create_conv(
+async def create_conversation(
     request: Request, data: ConversationCreate, conv_service: ConversationServiceDep
 ):
     data.user_id = request.user.id
@@ -27,7 +27,7 @@ async def create_conv(
 
 
 @conv_router.patch("/{id}", response_model=ConversationResponse)
-async def update_conv(
+async def update_conversation(
     request: Request,
     id: UUID,
     data: ConversationUpdate,
@@ -38,14 +38,14 @@ async def update_conv(
 
 
 @conv_router.get("/{id}", response_model=ConversationResponse)
-def get_conv(request: Request, id: UUID, conv_service: ConversationServiceDep):
+def get_conversation(request: Request, id: UUID, conv_service: ConversationServiceDep):
     result = conv_service.get_by_id(user_id=request.user.id, id=id)
     return result
 
 
 # we will get user_id from token, not from request param
 @conv_router.get("/user", response_model=PaginatedConversationResponse)
-def get_all_conv(request: Request, conv_service: ConversationServiceDep):
+def get_all_conversations(request: Request, conv_service: ConversationServiceDep):
     result = conv_service.get_by_user_id(user_id=request.user.id, skip=0, limit=20)
     return result
 
@@ -53,7 +53,9 @@ def get_all_conv(request: Request, conv_service: ConversationServiceDep):
 @conv_router.get(
     "/workspace/{workspace_id}", response_model=PaginatedConversationResponse
 )
-def get_by_ws(req: Request, workspace_id: UUID, conv_service: ConversationServiceDep):
+def get_conversations_by_workspace(
+    req: Request, workspace_id: UUID, conv_service: ConversationServiceDep
+):
     result = conv_service.get_by_workspace_id(
         user_id=req.user.id, workspace_id=workspace_id, skip=0, limit=20
     )
@@ -61,6 +63,8 @@ def get_by_ws(req: Request, workspace_id: UUID, conv_service: ConversationServic
 
 
 @conv_router.delete("/{id}", response_model=bool)
-async def delete_conv(request: Request, id: UUID, conv_service: ConversationServiceDep):
+async def delete_conversation(
+    request: Request, id: UUID, conv_service: ConversationServiceDep
+):
     result = await conv_service.delete(user_id=request.user.id, id=id)
     return result

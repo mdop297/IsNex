@@ -29,7 +29,9 @@ async def update_messae(
 
 
 @message_router.get("/{id}", response_model=MessageResponse)
-async def get_message(request: Request, id: UUID, message_service: MessageServiceDep):
+async def get_message_by_id(
+    request: Request, id: UUID, message_service: MessageServiceDep
+):
     return await message_service.get_by_id(request.user.id, id)
 
 

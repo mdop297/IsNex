@@ -13,7 +13,7 @@ noteblock_router = APIRouter(prefix="/noteblocks", tags=["noteblocks"])
 
 
 @noteblock_router.post("/", response_model=NoteBlockResponse)
-async def create_nb(
+async def create_noteblock(
     request: Request, data: NoteBlockCreate, noteblock_service: NoteBlockServiceDep
 ):
     result = await noteblock_service.create(request.user.id, data)
@@ -21,7 +21,7 @@ async def create_nb(
 
 
 @noteblock_router.patch("/{id}", response_model=NoteBlockResponse)
-async def update_nb(
+async def update_noteblock(
     request: Request,
     id: UUID,
     data: NoteBlockUpdate,
@@ -32,19 +32,23 @@ async def update_nb(
 
 
 @noteblock_router.delete("/{id}", response_model=bool)
-async def delete_nb(request: Request, id: UUID, noteblock_service: NoteBlockServiceDep):
+async def delete_noteblock(
+    request: Request, id: UUID, noteblock_service: NoteBlockServiceDep
+):
     result = await noteblock_service.delete(user_id=request.user.id, id=id)
     return result
 
 
 @noteblock_router.get("/{id}", response_model=NoteBlockResponse)
-async def get_nb(request: Request, id: UUID, noteblock_service: NoteBlockServiceDep):
+async def get_noteblock(
+    request: Request, id: UUID, noteblock_service: NoteBlockServiceDep
+):
     result = await noteblock_service.get_by_id(request.user.id, id)
     return result
 
 
 @noteblock_router.get("/note/{note_id}", response_model=list[NoteBlockResponse])
-async def get_nbs_of_note(
+async def get_all_noteblocks_of_note(
     request: Request, note_id: UUID, noteblock_service: NoteBlockServiceDep
 ):
     result = await noteblock_service.get_by_note_id(request.user.id, note_id)

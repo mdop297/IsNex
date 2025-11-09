@@ -36,7 +36,7 @@ def get_note(request: Request, id: UUID, note_service: NoteServiceDep):
 
 
 @note_router.get("/all", response_model=list[NoteResponse])
-def get_all(request: Request, note_service: NoteServiceDep):
+def get_all_notes_by_user(request: Request, note_service: NoteServiceDep):
     result = note_service.get_all(user_id=request.user.id)
     return result
 

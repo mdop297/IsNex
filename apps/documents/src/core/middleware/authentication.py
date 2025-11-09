@@ -18,7 +18,14 @@ def on_auth_error(conn: HTTPConnection, exc: Exception):
     return JSONResponse({"error rồi bro": str(exc)}, status_code=401)
 
 
-PUBLIC_PREFIXES = ["/docs", "/redoc", "/openapi.json", "/api/public", "/api/health"]
+PUBLIC_PREFIXES = [
+    "/docs",
+    "/redoc",
+    "/openapi.json",
+    "/testapi",
+    "/api/public",
+    "/api/health",
+]
 
 logger = get_logger(__name__)
 
