@@ -1,8 +1,9 @@
+from uuid import UUID
 from fastapi import APIRouter, Request
 
 from src.api.depends.factory import WorkspaceServiceDep
 from src.core.utils.logger import get_logger
-from src.modules.workspace.dtos.request_dtos import WorkspaceCreate
+from src.modules.workspace.dtos.request_dtos import WorkspaceCreate, WorkspaceUpdate
 from src.modules.workspace.dtos.response_dtos import WorkspaceResponse
 
 
@@ -33,7 +34,18 @@ async def get_all(request: Request, ws_service: WorkspaceServiceDep):
 
 # get/load workspace (load documents, conversations, notes)
 
+
 # update workspace
+@ws_router.patch("/{workspace_id}", response_model=WorkspaceResponse)
+async def update(
+    request: Request,
+    workspace_id: UUID,
+    data: WorkspaceUpdate,
+    ws_service: WorkspaceServiceDep,
+):
+    result = await ws_service.update(user_id=request.user.id, id=workspace_id, obj=data)
+    return result
+
 
 # add document to workspace
 

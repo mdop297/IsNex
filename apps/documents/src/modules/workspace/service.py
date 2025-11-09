@@ -41,8 +41,15 @@ class WorkspaceService(
         return WorkspaceResponse.model_validate(result)
 
     async def update(
-        self, entity: Workspace, obj: WorkspaceUpdate
+        self, user_id: UUID, id: UUID, obj: WorkspaceUpdate
     ) -> WorkspaceResponse:
+        entity = await self.__validate_workspace_ownership(user_id, id)
+        if obj.active_conv is not None:
+            await self.__validate_conversation_ownership(user_id, obj.active_conv)
+        if obj.active_doc is not None:
+            await self.__validate_document_ownership(user_id, obj.active_doc)
+        if obj.active_note is not None:
+            await self.__validate_note_ownership(user_id, obj.active_note)
         result = await self.repository.update(entity, obj)
         return WorkspaceResponse.model_validate(result)
 
@@ -67,12 +74,15 @@ class WorkspaceService(
         ]
         return result
 
-    async def __validate_workspace_ownership(self, user_id: UUID, workspace_id: UUID):
+    async def __validate_workspace_ownership(
+        self, user_id: UUID, workspace_id: UUID
+    ) -> Workspace:
         workspace = await self.repository.get_by_id(workspace_id)
         if not workspace:
             raise Exception("Workspace not found")
         if workspace.user_id != user_id:
             raise Exception("Workspace does not belong to user")
+        return workspace
 
     async def __validate_document_ownership(self, user_id: UUID, document_id: UUID):
         document = await self.document_repository.get_by_id(document_id)
