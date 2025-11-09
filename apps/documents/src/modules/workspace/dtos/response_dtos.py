@@ -17,3 +17,15 @@ class WorkspaceResponse(BaseModel):
     active_note: Optional[UUID]
     created_at: datetime
     updated_at: datetime
+
+
+class WorkspaceMetaResponse(BaseModel):
+    id: UUID
+    name: str
+    description: str | None
+    created_at: datetime
+    updated_at: datetime
+    last_opened_at: datetime | None
+
+    num_documents: int
+    num_conversations: int

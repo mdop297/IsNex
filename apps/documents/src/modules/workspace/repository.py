@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlmodel import select
+from sqlmodel import func, select
 from src.core.repository.base import BaseRepository
 from src.core.utils.logger import get_logger
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -35,3 +35,18 @@ class WorkspaceRepository(BaseRepository[Workspace, WorkspaceCreate, WorkspaceUp
             await self.session.delete(link)
             await self.session.commit()
         return True
+
+    async def count_document(self, workspace_id: UUID) -> int:
+        """Get number of document of workspace
+
+        Args:
+            workspace_id (UUID): _workspace_id
+
+        Returns:
+            int: number of documents
+        """
+        stmt = select(func.count()).where(
+            DocumentWorkspaceLink.workspace_id == workspace_id
+        )
+        result = await self.session.exec(stmt)
+        return result.one()

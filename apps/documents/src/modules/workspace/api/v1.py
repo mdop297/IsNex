@@ -4,7 +4,10 @@ from fastapi import APIRouter, Request
 from src.api.depends.factory import WorkspaceServiceDep
 from src.core.utils.logger import get_logger
 from src.modules.workspace.dtos.request_dtos import WorkspaceCreate, WorkspaceUpdate
-from src.modules.workspace.dtos.response_dtos import WorkspaceResponse
+from src.modules.workspace.dtos.response_dtos import (
+    WorkspaceMetaResponse,
+    WorkspaceResponse,
+)
 
 
 logger = get_logger(__name__)
@@ -48,6 +51,16 @@ async def update(
     ws_service: WorkspaceServiceDep,
 ):
     result = await ws_service.update(user_id=request.user.id, id=workspace_id, obj=data)
+    return result
+
+
+@ws_router.get("/meta/{workspace_id}", response_model=WorkspaceMetaResponse)
+async def get_meta(
+    request: Request, workspace_id: UUID, ws_service: WorkspaceServiceDep
+):
+    result = await ws_service.get_meta(
+        user_id=request.user.id, workspace_id=workspace_id
+    )
     return result
 
 

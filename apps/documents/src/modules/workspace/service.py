@@ -9,7 +9,10 @@ from src.modules.note.repository import NoteRepository
 from src.modules.workspace.model import Workspace
 from src.modules.workspace.repository import WorkspaceRepository
 from src.modules.workspace.dtos.request_dtos import WorkspaceCreate, WorkspaceUpdate
-from src.modules.workspace.dtos.response_dtos import WorkspaceResponse
+from src.modules.workspace.dtos.response_dtos import (
+    WorkspaceMetaResponse,
+    WorkspaceResponse,
+)
 
 logger = get_logger(__name__)
 
@@ -79,6 +82,25 @@ class WorkspaceService(
     async def get_by_id(self, user_id: UUID, id: UUID) -> WorkspaceResponse:
         workspace = await self.__validate_workspace_ownership(user_id, id)
         return WorkspaceResponse.model_validate(workspace)
+
+    async def get_meta(
+        self, user_id: UUID, workspace_id: UUID
+    ) -> WorkspaceMetaResponse:
+        workspace = await self.__validate_workspace_ownership(user_id, workspace_id)
+        num_docs = await self.repository.count_document(workspace_id)
+        num_convs = await self.conversation_repository.count_by_workspace_id(
+            workspace_id
+        )
+        workspace_dict = (
+            workspace.model_dump()
+            if hasattr(workspace, "model_dump")
+            else workspace.__dict__
+        )
+        workspace_dict["num_documents"] = num_docs
+        workspace_dict["num_conversations"] = num_convs
+
+        result = WorkspaceMetaResponse.model_validate(workspace_dict)
+        return result
 
     async def get_all(
         self, user_id: UUID, skip: int = 0, limit: int = 100
