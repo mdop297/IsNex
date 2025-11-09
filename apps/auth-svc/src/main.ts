@@ -5,8 +5,24 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { PrismaClient } from '@prisma/client';
+
+async function checkDatabaseConnection() {
+  const prisma = new PrismaClient();
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    console.log('✅ Database connection OK');
+  } catch (err) {
+    console.error('❌ Database connection failed:', err);
+    process.exit(1);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
 
 async function bootstrap() {
+  await checkDatabaseConnection();
+
   const app = await NestFactory.create(AppModule);
 
   app.connectMicroservice<MicroserviceOptions>({
@@ -52,7 +68,7 @@ async function bootstrap() {
 
   await app.startAllMicroservices();
 
-  const port = process.env.PORT || 3001;
+  const port = process.env.PORT || 3000;
   await app.listen(port);
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,

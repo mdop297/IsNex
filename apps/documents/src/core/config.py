@@ -12,17 +12,22 @@ _base_config: SettingsConfigDict = SettingsConfigDict(
 )
 
 
-class AppSettings(BaseSettings):
+class Settings(BaseSettings):
     APP_NAME: str = "FastShip"
     APP_DOMAIN: str = "localhost:8000"
 
-
-class DatabaseSettings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_USER: str
     DATABASE_NAME: str
     DATABASE_HOST: str
     DATABASE_PORT: str
+
+    JWT_ACCESS_SECRET: str
+    JWT_ACCESS_EXPIRE: int
+    JWT_REFRESH_SECRET: str
+    JWT_REFRESH_EXPIRE: int
+    JWT_ALGORITHM: str = "HS256"
+    ENVIRONMENT: str = "development"
 
     model_config = _base_config
 
@@ -31,15 +36,4 @@ class DatabaseSettings(BaseSettings):
         return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
 
 
-class SecuritySettings(BaseSettings):
-    JWT_ACCESS_SECRET: str
-    JWT_ACCESS_EXPIRE: int
-    JWT_REFRESH_SECRET: str
-    JWT_REFRESH_EXPIRE: int
-
-    model_config = _base_config
-
-
-app_settings = AppSettings()
-db_settings = DatabaseSettings()  # type: ignore
-security_settings = SecuritySettings()  # type: ignore
+settings = Settings()  # type: ignore

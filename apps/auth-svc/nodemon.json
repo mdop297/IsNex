@@ -1,8 +1,0 @@
-{
-  "watch": ["./src", "./prisma"],
-
-  "ext": "ts,json,prisma",
-  "exec": "./entrypoint.dev.sh",
-  "legacyWatch": true,
-  "verbose": true
-}

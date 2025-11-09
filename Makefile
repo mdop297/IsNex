@@ -73,6 +73,14 @@ documents-revision:
 documents-upgrade:
 	docker exec documents-svc uv run upgrade
 
+auth-migrate-dev:
+	docker exec auth-svc npx prisma migrate dev --name "$(m)"
+# we dont need to run generate after this command
+
+auth-generate: 
+	docker exec auth-svc npx prisma generate
+
+
 # Start services in development mode with code sync
 up-dev: up-network up-kafka up-db
 	@echo "🔧 Starting all services in development mode (single stack)..."
@@ -100,6 +108,15 @@ build-notification:
 	@echo "✅ Notification service build completed!"
 
 
+build-auth: 
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) build auth-svc
+
+build-documents: 
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) build documents-svc
+
+build-kong:
+	docker compose -f $(COMPOSE_API_GATEWAY) build kong
+
 # Apply Kong config manually
 kong-config:
 	@echo "🔧 Applying Kong configuration..."
@@ -125,9 +142,20 @@ ps:
 
 
 # View logs for all services
-logs:
+logs-all:
 	@echo "📋 Showing logs for all services..."
 	docker compose -f $(COMPOSE_FILE) logs -f --tail=100
+
+# View logs of auth-svc
+logs-auth:
+	@echo "📋 Showing logs for auth service..."
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) logs -f --tail=100 auth-svc
+
+
+#View logs of core service
+logs-core:
+	@echo "📋 Showing logs for core service..."
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) logs -f --tail=100 documents-svc
 
 # Access the auth service container
 exec-auth:

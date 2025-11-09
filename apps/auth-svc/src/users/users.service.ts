@@ -51,13 +51,6 @@ export class UsersService {
       };
     }
 
-    if (filter.address) {
-      where.address = {
-        contains: filter.address,
-        mode: 'insensitive',
-      };
-    }
-
     return this.prisma.user.findMany({ where });
   }
 

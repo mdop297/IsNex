@@ -9,10 +9,11 @@ services:
       - ../../apps/auth-svc/prisma:/isnex/apps/auth-svc/prisma
       # - ./envs/auth.env:/isnex/envs/auth.env:ro
     ports:
-      - 2001:3001
-      - 2211:4211
+      - 3001:3000
+      - 4211:4211
     depends_on:
-      - isnex-db
+      isnex-db:
+        condition: service_healthy
     env_file:
       - ../../envs/.env.dev
       - ../../apps/auth-svc/.env.dev
@@ -23,7 +24,7 @@ services:
       context: ../../
       dockerfile: apps/client/Dockerfile.dev
     ports:
-      - 3000:5000
+      - 5000:5000
     volumes:
       - ../../apps/client:/isnex/apps/client
       - ../../apps/client/node_modules:/isnex/apps/client/node_modules
@@ -33,6 +34,9 @@ services:
     build:
       context: ../../apps/documents
       dockerfile: Dockerfile.dev
+    depends_on:
+      isnex-db:
+        condition: service_healthy
     ports:
       - "4000:8000"
     volumes:
@@ -42,6 +46,7 @@ services:
       - ../../apps/documents/pyproject.toml:/app/pyproject.toml
       - ../../apps/documents/uv.lock:/app/uv.lock
       - ../../apps/documents/scripts:/app/scripts
+      - ../../apps/documents/logs:/app/logs
     develop:
       watch:
         - action: sync
