@@ -52,12 +52,16 @@ class DocumentService(
         )
 
         # upload file
-        path, filename, file_size = await self.upload_to_object_storage(file, user_id)
+        object_name, filename, file_size = await self.upload_to_object_storage(
+            file, user_id
+        )
 
         # Create document
         try:
             file_size_str = format_file_size(file_size)
-            data.file_url = path
+            data.file_url = (
+                object_name  # str(user_id) + "/" + filename == path in minio
+            )
             data.file_size = file_size_str
             document = await self.repository.create(data)
             return DocumentResponse.model_validate(document)
@@ -66,12 +70,11 @@ class DocumentService(
             # Rollback: delete uploaded file from MinIO
             try:
                 await self.minio_service.remove_obj(
-                    self.minio_service.bucket_name,
                     object_name=filename,
                     user_id=user_id,
                 )
             except Exception as cleanup_error:
-                logger.error(f"Failed to cleanup file {path}: {cleanup_error}")
+                logger.error(f"Failed to cleanup file {object_name}: {cleanup_error}")
 
             raise DocumentError(f"Failed to create document record: {str(e)}") from e
 
@@ -85,12 +88,21 @@ class DocumentService(
         return DocumentResponse.model_validate(result)
 
     async def delete(self, user_id: UUID, id: UUID) -> bool:
-        await self.__validate_document_ownership(document_id=id, user_id=user_id)
+        document = await self.__validate_document_ownership(
+            document_id=id, user_id=user_id
+        )
         result = await self.repository.delete(id)
+        try:
+            await self.minio_service.remove_obj(
+                object_name=document.file_url,
+                user_id=user_id,
+            )
+        except Exception as e:
+            raise StorageError(f"Failed to delete file from storage: {str(e)}") from e
         return result
 
     async def get_by_id(self, user_id: UUID, id: UUID) -> DocumentResponse:
-        document = self.__validate_document_ownership(id, user_id)
+        document = await self.__validate_document_ownership(id, user_id)
         return DocumentResponse.model_validate(document)
 
     async def get_presigned_url(
@@ -99,8 +111,17 @@ class DocumentService(
         document = await self.__validate_document_ownership(
             document_id=document_id, user_id=user_id
         )
-        url = self.minio_service.generate_presigned_url(file_name=document.file_url)
-        return PresignedUrlResponse(url=url)
+        try:
+            url = self.minio_service.generate_presigned_url(file_name=document.file_url)
+            return PresignedUrlResponse(url=url)
+        except S3Error as e:
+            logger.error(
+                f"Failed to generate presigned URL for document {document_id}: {e}"
+            )
+            raise StorageError(f"Failed to generate download URL: {str(e)}") from e
+        except Exception as e:
+            logger.error(f"Unexpected error generating presigned URL: {e}")
+            raise DocumentError(f"Failed to generate download URL: {str(e)}") from e
 
     async def get_all(
         self, skip: int = 0, limit: int = 100
@@ -114,14 +135,14 @@ class DocumentService(
     ) -> tuple[str, str, int]:
         # Upload file to MinIO
         try:
-            path, filename, file_size = await self.minio_service.upload_file(
+            object_name, filename, file_size = await self.minio_service.upload_file(
                 file, str(user_id)
             )
 
         except S3Error as e:
             raise StorageError(f"Failed to upload file: {str(e)}") from e
 
-        return path, filename, file_size
+        return object_name, filename, file_size
 
     async def __validate_document_ownership(
         self, document_id: UUID, user_id: UUID
@@ -182,7 +203,6 @@ class DocumentService(
 
             # TODO : publish event to update document id / remove document id in vector db
             await self.minio_service.remove_obj(
-                self.minio_service.bucket_name,
                 object_name=file.filename,
                 user_id=user_id,
             )

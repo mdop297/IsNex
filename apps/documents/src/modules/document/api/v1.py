@@ -81,35 +81,11 @@ async def delete_document(
 
 
 # download document
-
-
-# @document_router.get("")
-# async def root(request: Request):
-#     logger.info("Current user info: %s", request.user.json())
-#     return {
-#         "message": "Hello World",
-#         "user": request.user.dict(),  # convert Pydantic model -> dict
-#     }
-
-
-# @document_router.get("/download/{filename}")
-# async def download_file(filename: str):
-#     try:
-#         try:
-#             minio_client.stat_object(bucket_name, filename)
-#         except S3Error:
-#             raise HTTPException(status_code=404, detail="File not found") from None
-
-#         response = minio_client.get_object(bucket_name, filename)
-
-#         return StreamingResponse(
-#             io.BytesIO(response.read()),
-#             media_type="application/octet-stream",
-#             headers={"Content-Disposition": f"attachment; filename={filename}"},
-#         )
-#     except HTTPException:
-#         raise
-#     except S3Error as e:
-#         raise HTTPException(status_code=500, detail=f"MinIO error: {str(e)}") from e
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"Server error: {str(e)}") from e
+@document_router.get("/download/{id}", response_model=PresignedUrlResponse)
+async def download_document(
+    request: Request, id: UUID, document_service: DocumentServiceDep
+):
+    presigned_url = await document_service.get_presigned_url(
+        user_id=request.user.id, document_id=id
+    )
+    return presigned_url

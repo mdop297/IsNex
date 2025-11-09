@@ -59,9 +59,9 @@ class MinioService:
         file.file.seek(0)
 
         result = self.client.put_object(
-            self.bucket_name,
-            user_id + "/" + file.filename,
-            file.file,
+            bucket_name=self.bucket_name,
+            object_name=user_id + "/" + file.filename,
+            data=file.file,
             length=file_size,
             content_type=file.content_type or "application/octet-stream",
         )
@@ -72,7 +72,7 @@ class MinioService:
         url = self.client.presigned_get_object(
             bucket_name=self.bucket_name,
             object_name=file_name,
-            expires=timedelta(minutes=20),
+            expires=timedelta(hours=3),
         )
         return url
 
@@ -143,10 +143,11 @@ class MinioService:
                 f"Failed to rename object {object_name} to {new_name}"
             ) from e
 
-    async def remove_obj(self, bucket_name: str, object_name: str, user_id: UUID):
+    async def remove_obj(self, object_name: str, user_id: UUID):
         try:
             self.client.remove_object(
-                bucket_name=bucket_name, object_name=str(user_id) + "/" + object_name
+                bucket_name=self.bucket_name,
+                object_name=str(user_id) + "/" + object_name,
             )
         except S3Error as e:
             raise ValueError(f"Failed to delete object {object_name}") from e
