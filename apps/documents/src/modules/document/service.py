@@ -110,10 +110,8 @@ class DocumentService(
         result = await self.repository.delete(id)
         return result
 
-    async def get_by_id(self, id: UUID) -> DocumentResponse:
-        document = await self.repository.get_by_id(id)
-        if not document:
-            raise Exception("Document not found")
+    async def get_by_id(self, user_id: UUID, id: UUID) -> DocumentResponse:
+        document = self.__validate_document_ownership(id, user_id)
         return DocumentResponse.model_validate(document)
 
     async def get_all(
@@ -122,3 +120,13 @@ class DocumentService(
         documents = await self.repository.get_all(skip, limit)
         results = [DocumentResponse.model_validate(doc) for doc in documents]
         return results
+
+    async def __validate_document_ownership(
+        self, document_id: UUID, user_id: UUID
+    ) -> Document:
+        document = await self.repository.get_by_id(document_id)
+        if not document:
+            raise DocumentError("Document not found")
+        if document.user_id != user_id:
+            raise DocumentError("You are not the owner of this document")
+        return document

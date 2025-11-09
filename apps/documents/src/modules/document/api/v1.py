@@ -1,8 +1,10 @@
+from uuid import UUID
 from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
 from minio import S3Error
 
-from src.api.depends.factory import Factory
+from src.api.depends.factory import DocumentServiceDep, Factory
 from src.core.utils.logger import get_logger
+from src.modules.document.dtos.response_dtos import DocumentResponse
 from src.modules.document.service import DocumentService
 
 logger = get_logger(__name__)
@@ -30,6 +32,25 @@ async def upload_file(
         raise HTTPException(status_code=500, detail=f"MinIO error: {str(e)}") from e
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Server error: {str(e)}") from e
+
+
+# get document meta
+@document_router.get("/{id}", response_model=DocumentResponse)
+async def get_document_meta(
+    request: Request, id: UUID, document_service: DocumentServiceDep
+):
+    result = await document_service.get_by_id(user_id=request.user.id, id=id)
+    return result
+
+
+# load documment
+
+
+# update document
+
+# delete document
+
+# download document
 
 
 # @document_router.get("")
