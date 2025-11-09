@@ -18,3 +18,7 @@ class DocumentResponse(BaseModel):
     file_size: str
     created_at: datetime
     updated_at: datetime
+
+
+class PresignedUrlResponse(BaseModel):
+    url: str

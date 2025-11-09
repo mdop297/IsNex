@@ -10,7 +10,10 @@ from src.modules.document.exeptions import DocumentError, StorageError
 from src.modules.document.model import Document
 from src.modules.document.repository import DocumentRepository
 from src.modules.document.dtos.request_dtos import DocumentCreate, DocumentUpdate
-from src.modules.document.dtos.response_dtos import DocumentResponse
+from src.modules.document.dtos.response_dtos import (
+    DocumentResponse,
+    PresignedUrlResponse,
+)
 from src.modules.object_storage.service import MinioService
 
 logger = get_logger(__name__)
@@ -89,6 +92,15 @@ class DocumentService(
     async def get_by_id(self, user_id: UUID, id: UUID) -> DocumentResponse:
         document = self.__validate_document_ownership(id, user_id)
         return DocumentResponse.model_validate(document)
+
+    async def get_presigned_url(
+        self, user_id: UUID, document_id: UUID
+    ) -> PresignedUrlResponse:
+        document = await self.__validate_document_ownership(
+            document_id=document_id, user_id=user_id
+        )
+        url = self.minio_service.generate_presigned_url(file_name=document.file_url)
+        return PresignedUrlResponse(url=url)
 
     async def get_all(
         self, skip: int = 0, limit: int = 100

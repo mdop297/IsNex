@@ -5,7 +5,10 @@ from minio import S3Error
 from src.api.depends.factory import DocumentServiceDep, Factory
 from src.core.utils.logger import get_logger
 from src.modules.document.dtos.request_dtos import DocumentCreate, DocumentUpdate
-from src.modules.document.dtos.response_dtos import DocumentResponse
+from src.modules.document.dtos.response_dtos import (
+    DocumentResponse,
+    PresignedUrlResponse,
+)
 from src.modules.document.service import DocumentService
 
 logger = get_logger(__name__)
@@ -46,6 +49,14 @@ async def get_document_meta(
 
 
 # load documment
+@document_router.get("/load/{id}", response_model=PresignedUrlResponse)
+async def load_document(
+    request: Request, id: UUID, document_service: DocumentServiceDep
+):
+    presigned_url = document_service.get_presigned_url(
+        user_id=request.user.id, document_id=id
+    )
+    return presigned_url
 
 
 # update document

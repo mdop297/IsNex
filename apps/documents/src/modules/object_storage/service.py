@@ -1,4 +1,5 @@
 # obj_storage.py
+from datetime import timedelta
 from functools import lru_cache
 from typing import BinaryIO, Generator
 from dataclasses import dataclass
@@ -66,6 +67,14 @@ class MinioService:
         )
 
         return result.object_name, file.filename, file_size
+
+    def generate_presigned_url(self, file_name: str) -> str:
+        url = self.client.presigned_get_object(
+            bucket_name=self.bucket_name,
+            object_name=file_name,
+            expires=timedelta(minutes=20),
+        )
+        return url
 
     async def download_file(self, filename: str) -> bytes:
         try:
