@@ -68,6 +68,20 @@ async def add_document_to_workspace(
 
 
 # remove document from workspace
+@ws_router.delete(
+    "/{workspace_id}/document/{document_id}", response_model=WorkspaceResponse
+)
+async def remove_document_from_workspace(
+    request: Request,
+    workspace_id: UUID,
+    document_id: UUID,
+    ws_service: WorkspaceServiceDep,
+):
+    result = await ws_service.remove_document_from_workspace(
+        user_id=request.user.id, workspace_id=workspace_id, document_id=document_id
+    )
+    return result
+
 
 # add conversation to workspace
 

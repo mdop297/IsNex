@@ -62,6 +62,15 @@ class WorkspaceService(
             workspace_id, document_id
         )
 
+    async def remove_document_from_workspace(
+        self, user_id: UUID, workspace_id: UUID, document_id: UUID
+    ):
+        await self.__validate_workspace_ownership(user_id, workspace_id)
+        await self.__validate_document_ownership(user_id, document_id)
+        return await self.repository.remove_document_from_workspace(
+            workspace_id, document_id
+        )
+
     async def delete(self, id: UUID) -> bool:
         result = await self.repository.delete(id)
         return result
