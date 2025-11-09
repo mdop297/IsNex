@@ -31,6 +31,7 @@ class Workspace(BaseTable, table=True):
     icon: Optional[str]
     description: Optional[str] = Field(sa_column=Column(postgresql.TEXT))
 
+    # conversation được mở trước khi đóng workspace
     # Sử dụng use_alter=True cho circular foreign keys
     active_conv: Optional[UUID] = Field(
         default=None,
@@ -42,6 +43,7 @@ class Workspace(BaseTable, table=True):
             nullable=True,
         ),
     )
+    # document được mở trước khi đóng workspace
     active_doc: Optional[UUID] = Field(
         default=None,
         sa_column=Column(
@@ -50,6 +52,7 @@ class Workspace(BaseTable, table=True):
             nullable=True,
         ),
     )
+    # note được mở trước khi đóng workspace
     active_note: Optional[UUID] = Field(
         default=None,
         sa_column=Column(

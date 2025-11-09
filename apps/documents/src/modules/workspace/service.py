@@ -3,6 +3,9 @@ from uuid import UUID
 
 from src.core.service.base import BaseService
 from src.core.utils.logger import get_logger
+from src.modules.conversation.repository import ConversationRepository
+from src.modules.document.repository import DocumentRepository
+from src.modules.note.repository import NoteRepository
 from src.modules.workspace.model import Workspace
 from src.modules.workspace.repository import WorkspaceRepository
 from src.modules.workspace.dtos.request_dtos import WorkspaceCreate, WorkspaceUpdate
@@ -20,10 +23,20 @@ class WorkspaceService(
         WorkspaceRepository,
     ]
 ):
-    def __init__(self, repository: WorkspaceRepository):
+    def __init__(
+        self,
+        repository: WorkspaceRepository,
+        document_repo: DocumentRepository,
+        conversation_repository: ConversationRepository,
+        note_repository: NoteRepository,
+    ):
         super().__init__(Workspace, repository)
+        self.document_repository = document_repo
+        self.conversation_repository = conversation_repository
+        self.note_repository = note_repository
 
-    async def create(self, entity: WorkspaceCreate) -> WorkspaceResponse:
+    async def create(self, user_id: UUID, entity: WorkspaceCreate) -> WorkspaceResponse:
+        entity.user_id = user_id
         result = await self.repository.create(entity)
         return WorkspaceResponse.model_validate(result)
 
@@ -51,3 +64,33 @@ class WorkspaceService(
             WorkspaceResponse.model_validate(workspace) for workspace in workspaces
         ]
         return result
+
+    async def __validate_workspace_ownership(self, user_id: UUID, workspace_id: UUID):
+        workspace = await self.repository.get_by_id(workspace_id)
+        if not workspace:
+            raise Exception("Workspace not found")
+        if workspace.user_id != user_id:
+            raise Exception("Workspace does not belong to user")
+
+    async def __validate_document_ownership(self, user_id: UUID, document_id: UUID):
+        document = await self.document_repository.get_by_id(document_id)
+        if not document:
+            raise Exception("Document not found")
+        if document.user_id != user_id:
+            raise Exception("Document does not belong to user")
+
+    async def __validate_conversation_ownership(
+        self, user_id: UUID, conversation_id: UUID
+    ):
+        conversation = await self.conversation_repository.get_by_id(conversation_id)
+        if not conversation:
+            raise Exception("Conversation not found")
+        if conversation.user_id != user_id:
+            raise Exception("Conversation does not belong to user")
+
+    async def __validate_note_ownership(self, user_id: UUID, note_id: UUID):
+        note = await self.note_repository.get_by_id(note_id)
+        if not note:
+            raise Exception("Note not found")
+        if note.user_id != user_id:
+            raise Exception("Note does not belong to user")

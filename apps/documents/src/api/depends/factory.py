@@ -25,6 +25,7 @@ from src.modules.object_storage.service import (
     get_minio_session,
     MinioSession,
 )
+from src.modules.workspace.service import WorkspaceService
 
 
 class Factory:
@@ -86,6 +87,16 @@ class Factory:
             workspace_repository=WorkspaceRepository(db_session),
         )
 
+    def get_workspace_service(
+        self, db_session=Depends(get_session)
+    ) -> WorkspaceService:
+        return WorkspaceService(
+            repository=WorkspaceRepository(db_session),
+            document_repo=DocumentRepository(db_session),
+            conversation_repository=ConversationRepository(db_session),
+            note_repository=NoteRepository(db_session),
+        )
+
 
 factory = Factory()
 
@@ -110,3 +121,7 @@ NoteBlockServiceDep = Annotated[
 ]
 
 PromptServiceDep = Annotated[PromptService, Depends(factory.get_prompt_service)]
+
+WorkspaceServiceDep = Annotated[
+    WorkspaceService, Depends(factory.get_workspace_service)
+]

@@ -1,10 +1,10 @@
 from typing import Optional
 from uuid import UUID
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class WorkspaceCreate(BaseModel):
-    user_id: Optional[UUID] = None
+    user_id: Optional[UUID] = Field(None, exclude=True)
     name: str
     icon: Optional[str]
     description: Optional[str] = ""
