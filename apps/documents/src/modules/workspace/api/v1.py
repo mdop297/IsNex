@@ -24,9 +24,14 @@ async def create(
     return result
 
 
-# get all workspace
+# get all workspace by user
+@ws_router.get("/", response_model=list[WorkspaceResponse])
+async def get_all(request: Request, ws_service: WorkspaceServiceDep):
+    result = await ws_service.get_all(user_id=request.user.id)
+    return result
 
-# get/load workspace
+
+# get/load workspace (load documents, conversations, notes)
 
 # update workspace
 

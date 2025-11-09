@@ -57,9 +57,11 @@ class WorkspaceService(
         return WorkspaceResponse.model_validate(workspace)
 
     async def get_all(
-        self, skip: int = 0, limit: int = 100
+        self, user_id: UUID, skip: int = 0, limit: int = 100
     ) -> Sequence[WorkspaceResponse]:
-        workspaces = await self.repository.get_all(skip, limit)
+        workspaces = await self.repository.get_by(
+            field="user_id", value=user_id, skip=skip, limit=limit
+        )
         result = [
             WorkspaceResponse.model_validate(workspace) for workspace in workspaces
         ]
