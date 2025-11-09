@@ -53,14 +53,21 @@ class WorkspaceService(
         result = await self.repository.update(entity, obj)
         return WorkspaceResponse.model_validate(result)
 
+    async def add_document_to_workspace(
+        self, user_id: UUID, workspace_id: UUID, document_id: UUID
+    ):
+        await self.__validate_workspace_ownership(user_id, workspace_id)
+        await self.__validate_document_ownership(user_id, document_id)
+        return await self.repository.add_document_to_workspace(
+            workspace_id, document_id
+        )
+
     async def delete(self, id: UUID) -> bool:
         result = await self.repository.delete(id)
         return result
 
-    async def get_by_id(self, id: UUID) -> WorkspaceResponse:
-        workspace = await self.repository.get_by_id(id)
-        if not workspace:
-            raise Exception("Workspace not found")
+    async def get_by_id(self, user_id: UUID, id: UUID) -> WorkspaceResponse:
+        workspace = await self.__validate_workspace_ownership(user_id, id)
         return WorkspaceResponse.model_validate(workspace)
 
     async def get_all(

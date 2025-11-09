@@ -33,6 +33,10 @@ async def get_all(request: Request, ws_service: WorkspaceServiceDep):
 
 
 # get/load workspace (load documents, conversations, notes)
+@ws_router.get("/{workspace_id}", response_model=WorkspaceResponse)
+async def get(request: Request, workspace_id: UUID, ws_service: WorkspaceServiceDep):
+    result = await ws_service.get_by_id(user_id=request.user.id, id=workspace_id)
+    return result
 
 
 # update workspace
@@ -48,6 +52,20 @@ async def update(
 
 
 # add document to workspace
+@ws_router.post(
+    "/{workspace_id}/document/{document_id}", response_model=WorkspaceResponse
+)
+async def add_document_to_workspace(
+    request: Request,
+    workspace_id: UUID,
+    document_id: UUID,
+    ws_service: WorkspaceServiceDep,
+):
+    result = await ws_service.add_document_to_workspace(
+        user_id=request.user.id, workspace_id=workspace_id, document_id=document_id
+    )
+    return result
+
 
 # remove document from workspace
 
