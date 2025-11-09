@@ -1,11 +1,12 @@
 from typing import Optional
 from uuid import UUID
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from src.modules.prompt.model import PromptType
 
 
 class PromptCreate(BaseModel):
-    user_id: Optional[UUID] = None
+    user_id: Optional[UUID] = Field(None, exclude=True)
+
     workspace_id: Optional[UUID] = None
     name: str
     content: str

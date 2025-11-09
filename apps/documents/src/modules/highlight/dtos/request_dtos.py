@@ -1,12 +1,13 @@
 from typing import Optional
 from uuid import UUID
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.modules.highlight.model import HighlightType, Position
 
 
 class HighlightBase(BaseModel):
-    user_id: Optional[UUID] = None
+    user_id: Optional[UUID] = Field(None, exclude=True)
+
     document_id: UUID
     page_number: int
     color: str

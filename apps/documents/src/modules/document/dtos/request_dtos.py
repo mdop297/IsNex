@@ -6,7 +6,8 @@ from src.modules.document.model import FileType
 
 
 class DocumentCreate(BaseModel):
-    user_id: Optional[UUID] = None
+    user_id: Optional[UUID] = Field(None, exclude=True)
+
     workspace_id: Optional[UUID] = Field(default=None)
     folder_id: Optional[UUID] = Field(default=None)
     name: str = Field(default="Untitled")

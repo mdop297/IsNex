@@ -1,11 +1,12 @@
 from typing import Optional
 from uuid import UUID
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class NoteCreate(BaseModel):
-    user_id: Optional[UUID] = None
+    user_id: Optional[UUID] = Field(None, exclude=True)
+
     parent_id: Optional[UUID] = None
     title: str
     icon: Optional[str] = None
