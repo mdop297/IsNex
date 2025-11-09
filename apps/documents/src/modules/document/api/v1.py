@@ -4,6 +4,7 @@ from minio import S3Error
 
 from src.api.depends.factory import DocumentServiceDep, Factory
 from src.core.utils.logger import get_logger
+from src.modules.document.dtos.request_dtos import DocumentCreate, DocumentUpdate
 from src.modules.document.dtos.response_dtos import DocumentResponse
 from src.modules.document.service import DocumentService
 
@@ -15,18 +16,19 @@ document_router = APIRouter(prefix="/documents", tags=["documents"])
 
 
 # api/v1/documents/
-@document_router.post("")
+@document_router.post("/", response_model=DocumentResponse)
 async def upload_file(
     request: Request,
+    data: DocumentCreate,
     file: UploadFile = File(...),
     document_service: DocumentService = Depends(Factory().get_document_service),
 ):
     try:
-        document = await document_service.upload_document(
-            file=file, user_id=request.user.id, allow_overwrite=False
+        document = await document_service.create(
+            file=file, user_id=request.user.id, data=data
         )
 
-        return {"message": "File uploaded successfully", "object": document.file_url}
+        return document
 
     except S3Error as e:
         raise HTTPException(status_code=500, detail=f"MinIO error: {str(e)}") from e
@@ -47,6 +49,16 @@ async def get_document_meta(
 
 
 # update document
+@document_router.patch("/{id}", response_model=DocumentResponse)
+async def update_document(
+    request: Request,
+    id: UUID,
+    data: DocumentUpdate,
+    document_service: DocumentServiceDep,
+):
+    result = await document_service.update(user_id=request.user.id, id=id, obj=data)
+    return result
+
 
 # delete document
 

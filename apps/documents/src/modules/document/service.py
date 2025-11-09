@@ -33,18 +33,20 @@ class DocumentService(
         self,
         file: UploadFile,
         user_id: UUID,
-        entity: DocumentCreate,
+        data: DocumentCreate,
         allow_overwrite: bool = False,
     ) -> DocumentResponse:
         # add user_id from request to entity
-        entity.user_id = user_id
+        data.user_id = user_id
         # Validate folder exists and belongs to user
-        if entity.folder_id:
+        if data.folder_id:
             await self.__validate_folder_ownership(
-                folder_id=entity.folder_id, user_id=user_id
+                folder_id=data.folder_id, user_id=user_id
             )
         # Validate file
-        await self._validate_file(file=file, user_id=user_id, allow_overwrite=False)
+        await self._validate_file(
+            file=file, user_id=user_id, allow_overwrite=allow_overwrite
+        )
 
         # upload file
         path, filename, file_size = await self.upload_to_object_storage(file, user_id)
@@ -52,15 +54,9 @@ class DocumentService(
         # Create document
         try:
             file_size_str = format_file_size(file_size)
-            entity = DocumentCreate(
-                user_id=user_id,
-                file_url=path,
-                name=filename,
-                type=FileType.PDF,
-                num_pages=0,
-                file_size=file_size_str,
-            )
-            document = await self.repository.create(entity)
+            data.file_url = path
+            data.file_size = file_size_str
+            document = await self.repository.create(data)
             return DocumentResponse.model_validate(document)
 
         except Exception as e:
@@ -76,7 +72,12 @@ class DocumentService(
 
             raise DocumentError(f"Failed to create document record: {str(e)}") from e
 
-    async def update(self, entity: Document, obj: DocumentUpdate) -> DocumentResponse:
+    async def update(
+        self, user_id: UUID, id: UUID, obj: DocumentUpdate
+    ) -> DocumentResponse:
+        entity = await self.__validate_document_ownership(
+            document_id=id, user_id=user_id
+        )
         result = await self.repository.update(entity, obj)
         return DocumentResponse.model_validate(result)
 

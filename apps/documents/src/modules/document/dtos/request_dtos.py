@@ -9,7 +9,7 @@ class DocumentCreate(BaseModel):
     user_id: Optional[UUID] = Field(None, exclude=True)
     folder_id: Optional[UUID] = Field(default=None)
     name: str = Field(default="Untitled")
-    file_url: str
+    file_url: str = Field(exclude=True)
     type: FileType = Field(
         default=FileType.PDF,
         description="type of the file, only pdf for now",
@@ -22,7 +22,7 @@ class DocumentCreate(BaseModel):
         ],
     )
     num_pages: Optional[int] = Field(..., description="number of pages in the file")
-    file_size: str = Field(..., description="size of the file in bytes")
+    file_size: str = Field(..., description="size of the file in bytes", exclude=True)
 
     @field_validator("type")
     @classmethod
