@@ -7,7 +7,7 @@ from src.core.service.base import BaseService
 from src.core.utils.logger import get_logger
 from src.core.utils.utils import format_file_size
 from src.modules.document.exeptions import DocumentError, StorageError
-from src.modules.document.model import Document, FileType
+from src.modules.document.model import Document
 from src.modules.document.repository import DocumentRepository
 from src.modules.document.dtos.request_dtos import DocumentCreate, DocumentUpdate
 from src.modules.document.dtos.response_dtos import DocumentResponse
@@ -81,7 +81,8 @@ class DocumentService(
         result = await self.repository.update(entity, obj)
         return DocumentResponse.model_validate(result)
 
-    async def delete(self, id: UUID) -> bool:
+    async def delete(self, user_id: UUID, id: UUID) -> bool:
+        await self.__validate_document_ownership(document_id=id, user_id=user_id)
         result = await self.repository.delete(id)
         return result
 

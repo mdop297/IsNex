@@ -61,6 +61,13 @@ async def update_document(
 
 
 # delete document
+@document_router.delete("/{id}", response_model=bool)
+async def delete_document(
+    request: Request, id: UUID, document_service: DocumentServiceDep
+):
+    result = await document_service.delete(user_id=request.user.id, id=id)
+    return result
+
 
 # download document
 
