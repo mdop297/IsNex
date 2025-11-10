@@ -17,7 +17,6 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { routes } from '@/lib/constants';
 
@@ -25,7 +24,6 @@ export function SignInForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
-  const router = useRouter();
   const { login, isLoading } = useAuth();
 
   const form = useForm<z.infer<typeof LoginRequestSchema>>({
@@ -39,10 +37,8 @@ export function SignInForm({
   const onSubmit = async (data: z.infer<typeof LoginRequestSchema>) => {
     try {
       const res: LoginResponse | undefined = await login(data);
-      console.log(data);
-
-      if (res && res.accessToken) {
-        router.push('/home'); // redirect
+      if (res) {
+        console.log(res);
       }
     } catch (err) {
       console.error(err);

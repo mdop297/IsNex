@@ -9,7 +9,6 @@ import {
   RegisterResponse,
   User,
 } from '@/lib/api/auth';
-import { AxiosError } from 'axios';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import z from 'zod';
@@ -29,7 +28,6 @@ type AuthContextType = {
   checkAuth: () => Promise<boolean>;
   refresh: () => Promise<RefreshResponse | null>;
   clearError: () => void;
-  getAccessToken: () => string | null;
   // verify: (token: string) => Promise<VerifyResponse>;
 };
 
@@ -40,37 +38,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const accessTokenRef = useRef<string | null>(null);
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const clearError = () => setError(null);
-
-  const getAccessToken = () => accessTokenRef.current;
-
-  const setAccessToken = (token: string | null) => {
-    accessTokenRef.current = token;
-
-    if (token) {
-      // Set up auto refresh 1 minute before token expires (14 minutes)
-      if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current);
-      }
-
-      refreshIntervalRef.current = setInterval(
-        async () => {
-          console.log('Auto refreshing token...');
-          await refresh();
-        },
-        14 * 60 * 1000,
-      ); // 14 minutes
-    } else {
-      // Clear refresh interval
-      if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current);
-        refreshIntervalRef.current = null;
-      }
-    }
-  };
 
   const checkAuth = async (): Promise<boolean> => {
     try {
@@ -78,16 +48,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const refreshData = await authApi.refresh();
 
-      setAccessToken(refreshData.accessToken);
       setUser(refreshData.user);
       setIsAuthenticated(true);
       setError(null);
       return true;
     } catch (error) {
       console.error('Auth check failed:', error);
-
-      // Clear memory token
-      setAccessToken(null);
 
       setUser(null);
       setIsAuthenticated(false);
@@ -104,7 +70,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsLoading(true);
       clearError();
       const loginResponse: LoginResponse = await authApi.login(credentials);
-      setAccessToken(loginResponse.accessToken);
       setUser(loginResponse.user);
       setIsAuthenticated(true);
       return loginResponse;
@@ -149,7 +114,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       toast.error(message);
       setError(message);
-      setAccessToken(null);
     } finally {
       setIsLoading(false);
     }
@@ -160,7 +124,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsLoading(true);
       await authApi.logout();
       bc.postMessage('logout');
-      setAccessToken(null);
       setUser(null);
       setIsAuthenticated(false);
       setError(null);
@@ -178,8 +141,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setIsLoading(true);
       const refreshData = await authApi.refresh();
-
-      setAccessToken(refreshData.accessToken);
 
       setUser(refreshData.user);
       setIsAuthenticated(true);
@@ -203,7 +164,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     bc.onmessage = (event) => {
       if (event.data === 'logout') {
-        setAccessToken(null);
         setUser(null);
         setIsAuthenticated(false);
       }
@@ -233,7 +193,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         checkAuth,
         clearError,
         refresh,
-        getAccessToken,
       }}
     >
       {children}
