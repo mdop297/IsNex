@@ -10,17 +10,29 @@ import { PrismaService } from '../prisma/prisma.service';
 import { FindUserDto } from './dto/find-user.dto';
 import { Prisma, User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: Prisma.UserCreateInput): Promise<User> {
-    return await this.prisma.user.create({
-      data: {
-        ...data,
-      },
-    });
+  async create(data: CreateUserDto): Promise<User> {
+    try {
+      return await this.prisma.user.create({
+        data: {
+          ...data,
+          username: data.username!,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException('Email already exists');
+      }
+      throw new InternalServerErrorException();
+    }
   }
 
   async findAll() {

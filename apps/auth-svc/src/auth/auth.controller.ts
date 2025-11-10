@@ -42,6 +42,7 @@ export class AuthController {
   async login(@Body() body: LoginDto, @Res() res: Response) {
     console.log('backend Login called');
     const result = await this.authService.login(body, res);
+    console.log('backend Login Success');
     return res.json(result);
   }
 

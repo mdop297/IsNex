@@ -4,8 +4,9 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { MicroserviceOptions } from '@nestjs/microservices';
 import { PrismaClient } from '@prisma/client';
+import { kafkaConfig } from './config/kafka.config';
 
 async function checkDatabaseConnection() {
   const prisma = new PrismaClient();
@@ -25,21 +26,7 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.KAFKA,
-    options: {
-      client: {
-        clientId: 'auth-svc',
-        brokers: ['broker:29092'],
-      },
-      consumer: {
-        groupId: 'auth-service-consumer',
-      },
-      producer: {
-        allowAutoTopicCreation: true,
-      },
-    },
-  });
+  app.connectMicroservice<MicroserviceOptions>(kafkaConfig);
 
   app.use(cookieParser());
   // app.enableCors({

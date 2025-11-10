@@ -20,7 +20,7 @@ import { Response } from 'express';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 import { LoginDto } from './dtos/login.dto';
 import { ClientKafka } from '@nestjs/microservices';
-import { UserCreatedEvent } from 'src/proto/auth';
+import { UserCreatedEvent } from '../proto/auth';
 
 export interface JwtPayload {
   user_id: string;
@@ -69,12 +69,12 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     const user = await this.userService.findByEmail(email);
 
     if (!user) {
-      return null;
+      throw new NotFoundException('User not found');
     }
     if (user && this.isValidPassword(password, user.password)) {
       return user;
     } else {
-      return null;
+      throw new UnauthorizedException('Invalid credentials');
     }
   }
 
@@ -87,8 +87,6 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     }
 
     try {
-      console.log('Register reached!!!');
-
       const result = this.getHashPassword(userDto.password);
       userDto.password = result;
       if (!userDto.username) {
@@ -169,10 +167,6 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
 
   async login(body: LoginDto, response: Response) {
     const validUser = await this.validateUser(body.email, body.password);
-
-    if (!validUser) {
-      throw new NotFoundException('Invalid credentials');
-    }
 
     const payload: JwtPayload = {
       user_id: validUser.id,
