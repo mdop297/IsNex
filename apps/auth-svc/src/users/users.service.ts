@@ -4,19 +4,19 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UserUpdateDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
-import { FindUserDto } from './dto/find-user.dto';
+import { FindUserDto } from './dto/response-user.dto';
 import { Prisma, User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { CreateUserDto } from './dto/create-user.dto';
+import { UserCreateDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreateUserDto): Promise<User> {
+  async create(data: UserCreateDto): Promise<User> {
     try {
       return await this.prisma.user.create({
         data: {
@@ -66,16 +66,18 @@ export class UsersService {
     return this.prisma.user.findMany({ where });
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UserUpdateDto): Promise<User> {
     try {
-      const { id, ...data } = updateUserDto;
-      const result = this.prisma.user.update({
+      const dataToUpdate = { ...updateUserDto };
+
+      const updatedUser = await this.prisma.user.update({
         where: { id: id },
-        data: { ...data },
+        data: dataToUpdate,
       });
-      return result;
-    } catch (error) {
-      this.handlePrismaError(error);
+
+      return updatedUser;
+    } catch {
+      throw new InternalServerErrorException('Failed to update user');
     }
   }
 

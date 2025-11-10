@@ -1,6 +1,6 @@
-import { User } from '@prisma/client';
 import { IsOptional, IsString } from 'class-validator';
 import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
+import { Role } from '@prisma/client';
 
 export class FindUserDto {
   @ApiPropertyOptional({ description: 'Filter by username' })
@@ -9,7 +9,7 @@ export class FindUserDto {
   username?: string;
 }
 
-export class UserDto {
+export class UserResponseDto {
   @ApiProperty({ example: 'uuid-string' })
   id: string;
 
@@ -19,15 +19,18 @@ export class UserDto {
   @ApiProperty({ example: 'johndoe' })
   username: string;
 
+  @ApiProperty({ example: 'user' })
+  role: Role;
+
   @ApiProperty({ example: true })
   isVerified: boolean;
 }
 
-export function toUserDto(user: User): UserDto {
-  return {
-    id: user.id,
-    email: user.email,
-    username: user.username,
-    isVerified: user.isVerified,
-  };
-}
+// export function toUserDto(user: User): UserDto {
+//   return {
+//     id: user.id,
+//     email: user.email,
+//     username: user.username,
+//     isVerified: user.isVerified,
+//   };
+// }

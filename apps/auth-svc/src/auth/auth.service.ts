@@ -12,15 +12,17 @@ import {
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateUserDto } from '../users/dto/create-user.dto';
+import { UserCreateDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
-import { LoginDto } from './dtos/login.dto';
+import { SigninDto } from './dtos/signin.dto';
 import { ClientKafka } from '@nestjs/microservices';
 import { UserCreatedEvent } from '../proto/auth';
+import { SignUpResponseDto } from './dtos/signup.dto';
+import { UserResponseDto } from '../users/dto/response-user.dto';
 
 export interface JwtPayload {
   user_id: string;
@@ -78,9 +80,7 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async register(
-    userDto: CreateUserDto,
-  ): Promise<{ status: number; message: string; userId?: string }> {
+  async register(userDto: UserCreateDto): Promise<SignUpResponseDto> {
     const user = await this.userService.findByEmail(userDto.email);
     if (user && user.isVerified) {
       throw new ConflictException('This email is already registered');
@@ -120,9 +120,8 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
       });
 
       return {
-        status: HttpStatus.CREATED,
         userId: newUser.id,
-        message: 'User registered successfully',
+        message: 'Verification email sent. Please verify your email',
       };
     } catch (err) {
       this.logger.error('Registration failed', err);
@@ -165,7 +164,7 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async login(body: LoginDto, response: Response) {
+  async login(body: SigninDto, response: Response): Promise<UserResponseDto> {
     const validUser = await this.validateUser(body.email, body.password);
 
     const payload: JwtPayload = {
@@ -194,12 +193,11 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     });
 
     return {
-      user: {
-        userId: validUser.id,
-        email: validUser.email,
-        username: validUser.username,
-        role: validUser.role,
-      },
+      id: validUser.id,
+      email: validUser.email,
+      username: validUser.username,
+      role: validUser.role,
+      isVerified: validUser.isVerified,
     };
   }
 

@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   Inject,
@@ -10,19 +11,23 @@ import {
   Res,
   UnauthorizedException,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { CreateUserDto } from '../users/dto/create-user.dto';
+import { UserCreateDto } from '../users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
 import { Public, CurrentUser } from '../decorators/customize';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { IUser } from '../users/user.interface';
-import { LoginDto } from './dtos/login.dto';
+import { SigninDto } from './dtos/signin.dto';
 import { ClientKafka } from '@nestjs/microservices';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { SignUpResponseDto } from './dtos/signup.dto';
+import { UserResponseDto } from '../users/dto/response-user.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
@@ -37,9 +42,9 @@ export class AuthController {
     summary: 'Register a new user account',
     operationId: 'signUp',
   })
-  async signUp(@Body() body: CreateUserDto, @Res() res: Response) {
+  async signUp(@Body() body: UserCreateDto): Promise<SignUpResponseDto> {
     const result = await this.authService.register(body);
-    return res.json(result);
+    return result;
   }
 
   @Public()
@@ -49,11 +54,14 @@ export class AuthController {
     summary: 'Login and issue authentication tokens',
     operationId: 'login',
   })
-  async login(@Body() body: LoginDto, @Res() res: Response) {
+  async login(
+    @Body() body: SigninDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<UserResponseDto> {
     this.logger.debug('backend Login called');
     const result = await this.authService.login(body, res);
     this.logger.debug('backend Login Success');
-    return res.json(result);
+    return result;
   }
 
   @Get('/profile/:id')
