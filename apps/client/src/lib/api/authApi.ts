@@ -10,12 +10,28 @@
  * ---------------------------------------------------------------
  */
 
-export interface UpdateUserDto {
-  /**
-   * User ID
-   * @example "b5f5c19c-87d2-4f77-ae8c-2dbdca09b3cb"
-   */
+export interface UserResponseDto {
+  /** @example "uuid-string" */
   id: string;
+  /** @example "user@example.com" */
+  email: string;
+  /** @example "johndoe" */
+  username: string;
+  /** @example "user" */
+  role: string;
+  /** @example true */
+  isVerified: boolean;
+}
+
+export interface PaginatedUserResponseDto {
+  data: UserResponseDto[];
+  /** @example 1 */
+  page: number;
+  /** @example 10 */
+  total: number;
+}
+
+export interface UserUpdateDto {
   /**
    * Mark user as verified
    * @example true
@@ -23,7 +39,7 @@ export interface UpdateUserDto {
   isVerified?: boolean;
 }
 
-export interface CreateUserDto {
+export interface UserCreateDto {
   /**
    * User email address
    * @example "john@example.com"
@@ -40,14 +56,16 @@ export interface CreateUserDto {
    * @example "JohnDoe"
    */
   username?: string;
-  /**
-   * Email verification status
-   * @example false
-   */
-  isVerified?: boolean;
 }
 
-export interface LoginDto {
+export interface SignUpResponseDto {
+  /** @example "a1b2c3d4" */
+  userId: string;
+  /** @example "User registered successfully. Please verify your email." */
+  message: string;
+}
+
+export interface SigninDto {
   /**
    * User email used for login
    * @example "john@example.com"
@@ -59,6 +77,29 @@ export interface LoginDto {
    * @example "strongPassword123"
    */
   password: string;
+}
+
+export interface UserProfileResponseDto {
+  /** @example "uuid-string" */
+  id: string;
+  /** @example "user@example.com" */
+  email: string;
+  /** @example "johndoe" */
+  username: string;
+  /** @example "user" */
+  role: string;
+  /** @example true */
+  isVerified: boolean;
+  /**
+   * @format date-time
+   * @example "2023-08-01T12:34:56.789Z"
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   * @example "2023-08-01T12:34:56.789Z"
+   */
+  updatedAt: string;
 }
 
 import type {
@@ -255,10 +296,11 @@ export class Api<
      * @summary Get all users
      * @request GET:/api/users
      */
-    getUsers: (params: RequestParams = {}) =>
-      this.request<void, any>({
+    getUsers: (page: number, params: RequestParams = {}) =>
+      this.request<PaginatedUserResponseDto, any>({
         path: `/api/users`,
         method: 'GET',
+        format: 'json',
         ...params,
       }),
 
@@ -271,9 +313,10 @@ export class Api<
      * @request GET:/api/users/by-id/{id}
      */
     getUserById: (id: string, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<UserResponseDto, void>({
         path: `/api/users/by-id/${id}`,
         method: 'GET',
+        format: 'json',
         ...params,
       }),
 
@@ -286,9 +329,10 @@ export class Api<
      * @request GET:/api/users/by-email/{email}
      */
     getUserByEmail: (email: string, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<UserResponseDto, void>({
         path: `/api/users/by-email/${email}`,
         method: 'GET',
+        format: 'json',
         ...params,
       }),
 
@@ -301,31 +345,10 @@ export class Api<
      * @request GET:/api/users/by-username/{username}
      */
     getUserByUsername: (username: string, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<UserResponseDto, void>({
         path: `/api/users/by-username/${username}`,
         method: 'GET',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Users
-     * @name FilterUsers
-     * @summary Filter users by query
-     * @request GET:/api/users/filter
-     */
-    filterUsers: (
-      query?: {
-        /** Filter by username */
-        username?: string;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/api/users/filter`,
-        method: 'GET',
-        query: query,
+        format: 'json',
         ...params,
       }),
 
@@ -337,12 +360,13 @@ export class Api<
      * @summary Update user by ID
      * @request PATCH:/api/users/{id}
      */
-    updateUser: (id: string, data: UpdateUserDto, params: RequestParams = {}) =>
-      this.request<void, any>({
+    updateUser: (id: string, data: UserUpdateDto, params: RequestParams = {}) =>
+      this.request<UserResponseDto, void>({
         path: `/api/users/${id}`,
         method: 'PATCH',
         body: data,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -355,9 +379,26 @@ export class Api<
      * @request DELETE:/api/users/{id}
      */
     deleteUser: (id: string, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<any, void>({
         path: `/api/users/${id}`,
         method: 'DELETE',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Users
+     * @name CountUsers
+     * @summary Count number of users
+     * @request GET:/api/users/count
+     */
+    countUsers: (params: RequestParams = {}) =>
+      this.request<any, any>({
+        path: `/api/users/count`,
+        method: 'GET',
+        format: 'json',
         ...params,
       }),
 
@@ -369,12 +410,13 @@ export class Api<
      * @summary Register a new user account
      * @request POST:/api/auth/signup
      */
-    signUp: (data: CreateUserDto, params: RequestParams = {}) =>
-      this.request<void, any>({
+    signUp: (data: UserCreateDto, params: RequestParams = {}) =>
+      this.request<SignUpResponseDto, any>({
         path: `/api/auth/signup`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -386,12 +428,13 @@ export class Api<
      * @summary Login and issue authentication tokens
      * @request POST:/api/auth/signin
      */
-    login: (data: LoginDto, params: RequestParams = {}) =>
-      this.request<void, any>({
+    login: (data: SigninDto, params: RequestParams = {}) =>
+      this.request<UserResponseDto, any>({
         path: `/api/auth/signin`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -404,9 +447,10 @@ export class Api<
      * @request GET:/api/auth/profile/{id}
      */
     getProfile: (id: string, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<UserProfileResponseDto, any>({
         path: `/api/auth/profile/${id}`,
         method: 'GET',
+        format: 'json',
         ...params,
       }),
 
@@ -419,9 +463,10 @@ export class Api<
      * @request GET:/api/auth/me
      */
     whoAmI: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<UserResponseDto, any>({
         path: `/api/auth/me`,
         method: 'GET',
+        format: 'json',
         ...params,
       }),
 
@@ -434,9 +479,10 @@ export class Api<
      * @request POST:/api/auth/signout
      */
     signOut: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<any, any>({
         path: `/api/auth/signout`,
         method: 'POST',
+        format: 'json',
         ...params,
       }),
 
@@ -449,9 +495,10 @@ export class Api<
      * @request POST:/api/auth/refresh
      */
     refreshToken: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<UserResponseDto, any>({
         path: `/api/auth/refresh`,
         method: 'POST',
+        format: 'json',
         ...params,
       }),
 
@@ -464,9 +511,10 @@ export class Api<
      * @request GET:/api/auth/verify/{token}
      */
     verifyEmail: (token: string, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<any, any>({
         path: `/api/auth/verify/${token}`,
         method: 'GET',
+        format: 'json',
         ...params,
       }),
   };
