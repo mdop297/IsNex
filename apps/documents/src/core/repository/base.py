@@ -1,12 +1,13 @@
 from abc import ABC
-from typing import Generic, Sequence, Type, TypeVar
+from typing import TYPE_CHECKING, Generic, Sequence, Type, TypeVar
 from uuid import UUID
 from pydantic import BaseModel
 from sqlmodel import func
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 
-from src.core.database.base import BaseTable
+if TYPE_CHECKING:
+    from src.core.database.base import BaseTable
 
 ModelType = TypeVar("ModelType", bound=BaseTable)
 ModelCreated = TypeVar("ModelCreated", bound=BaseModel)
