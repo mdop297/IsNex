@@ -22,7 +22,11 @@ import { SigninDto } from './dtos/signin.dto';
 import { ClientKafka } from '@nestjs/microservices';
 import { UserCreatedEvent } from '../proto/auth';
 import { SignUpResponseDto } from './dtos/signup.dto';
-import { UserResponseDto } from '../users/dto/response-user.dto';
+import {
+  UserProfileResponseDto,
+  UserResponseDto,
+} from '../users/dto/response-user.dto';
+import { plainToInstance } from 'class-transformer';
 
 export interface JwtPayload {
   user_id: string;
@@ -201,17 +205,20 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     };
   }
 
-  async getProfile(userId: string) {
+  async getProfile(userId: string): Promise<UserProfileResponseDto> {
     const user = await this.userService.findById(userId);
 
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new NotFoundException('User not found');
     }
 
-    return user;
+    return plainToInstance(UserProfileResponseDto, user);
   }
 
-  async refreshToken(refreshToken: string, response: Response) {
+  async refreshToken(
+    refreshToken: string,
+    response: Response,
+  ): Promise<UserResponseDto> {
     try {
       const payload: JwtPayload = this.jwtService.verify(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
@@ -237,29 +244,22 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
         path: '/api/auth/refresh',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
-      return {
-        accessToken: tokens.accessToken,
-        user: {
-          userId: user.id,
-          email: user.email,
-          username: user.username,
-          role: user.role,
-        },
-      };
+      return plainToInstance(UserResponseDto, user);
     } catch (e) {
       console.error('Refresh token error:', e);
       throw new UnauthorizedException('Invalid refresh token 2');
     }
   }
 
-  signOut(response: Response) {
+  signOut(response: Response): boolean {
     // TODO: Also invalidate the refresh token server-side (e.g. delete from DB or Redis)
     // to prevent reuse of old tokens after logout.
     if (!response) {
       throw new Error('Response object is undefined');
     }
     response.clearCookie('refresh_token');
-    return { message: 'Logged out successfully' };
+    response.clearCookie('access_token');
+    return true;
   }
 
   private async generateTokens(payload: JwtPayload) {

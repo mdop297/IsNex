@@ -35,12 +35,22 @@ export class UsersService {
     }
   }
 
-  async findAll() {
-    return await this.prisma.user.findMany();
+  async getAll(page: number = 1, limit: number = 10): Promise<User[]> {
+    const skip = (page - 1) * limit;
+    const users = await this.prisma.user.findMany({
+      skip,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+    });
+    return users;
+  }
+
+  async count(): Promise<number> {
+    return this.prisma.user.count();
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.prisma.user.findUnique({ where: { id } });
+    return await this.prisma.user.findUnique({ where: { id } });
   }
 
   async findByEmail(email: string): Promise<User | null> {

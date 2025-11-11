@@ -9,7 +9,10 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserUpdateDto } from './dto/update-user.dto';
-import { UserResponseDto } from './dto/response-user.dto';
+import {
+  PaginatedUserResponseDto,
+  UserResponseDto,
+} from './dto/response-user.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 
@@ -23,10 +26,14 @@ export class UsersController {
     summary: 'Get all users',
     operationId: 'getUsers',
   })
-  async findAll(): Promise<UserResponseDto[]> {
-    const users = await this.usersService.findAll();
-
-    return plainToInstance(UserResponseDto, users);
+  async getAll(@Param('page') page: number): Promise<PaginatedUserResponseDto> {
+    const users = await this.usersService.getAll(page);
+    const total = await this.usersService.count();
+    return plainToInstance(PaginatedUserResponseDto, {
+      data: users,
+      page,
+      total,
+    });
   }
 
   @Get('by-id/:id')
@@ -78,6 +85,15 @@ export class UsersController {
     const updated = await this.usersService.update(id, updateUserResponseDto);
     if (!updated) throw new NotFoundException(`User with id ${id} not found`);
     return plainToInstance(UserResponseDto, updated);
+  }
+
+  @Get('count')
+  @ApiOperation({
+    summary: 'Count number of users',
+    operationId: 'countUsers',
+  })
+  async countUsers(): Promise<number> {
+    return this.usersService.count();
   }
 
   @Delete(':id')

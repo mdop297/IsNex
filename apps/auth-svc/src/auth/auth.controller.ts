@@ -23,7 +23,10 @@ import { SigninDto } from './dtos/signin.dto';
 import { ClientKafka } from '@nestjs/microservices';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SignUpResponseDto } from './dtos/signup.dto';
-import { UserResponseDto } from '../users/dto/response-user.dto';
+import {
+  UserProfileResponseDto,
+  UserResponseDto,
+} from '../users/dto/response-user.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -69,8 +72,10 @@ export class AuthController {
     summary: 'Get user profile by ID',
     operationId: 'getProfile',
   })
-  getProfile(@Param('id') param: string) {
-    return this.authService.getProfile(param);
+  async getProfile(
+    @Param('id') param: string,
+  ): Promise<UserProfileResponseDto> {
+    return await this.authService.getProfile(param);
   }
 
   @Get('/me')
@@ -102,7 +107,7 @@ export class AuthController {
   async refreshToken(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
-  ) {
+  ): Promise<UserResponseDto> {
     const refreshToken = req.cookies['refresh_token'] as string;
     if (!refreshToken) {
       throw new UnauthorizedException('No refresh token provided');
@@ -117,8 +122,10 @@ export class AuthController {
     summary: 'Verify email confirmation token',
     operationId: 'verifyEmail',
   })
-  async verify(@Param('token') token: string, @Res() res: Response) {
+  async verify(
+    @Param('token') token: string,
+  ): Promise<{ status: number; message: string }> {
     const verified = await this.authService.verify(token);
-    return res.json(verified);
+    return verified;
   }
 }
