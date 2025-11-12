@@ -35,10 +35,15 @@ type AuthContextType = {
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<UserResponseDto | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<UserResponseDto | null>(() => {
+    if (typeof window !== 'undefined') {
+      const savedUser = localStorage.getItem('user');
+      return savedUser ? JSON.parse(savedUser) : null;
+    }
+    return null;
+  });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
@@ -61,25 +66,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         () => {
           refreshToken();
         },
-        1000 * 60 * 60,
+        1000 * 60 * 60 * 5,
       );
     } else if (refreshIntervalRef.current) {
       clearInterval(refreshIntervalRef.current);
     }
-    // Cleanup. This will run when the component unmounts or when the state (user) changes
     return () => {
       if (refreshIntervalRef.current) clearInterval(refreshIntervalRef.current);
     };
   }, [user]);
 
-  // load user from local storage when mount
-  useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setLoading(false);
-  }, []);
+  // XÓA useEffect load user từ localStorage (đã move vào useState initializer)
+  // useEffect(() => {
+  //   const savedUser = localStorage.getItem('user');
+  //   if (savedUser) {
+  //     setUser(JSON.parse(savedUser));
+  //   }
+  //   setLoading(false);
+  // }, []);
 
   // sync user with local storage when user state changes
   useEffect(() => {
