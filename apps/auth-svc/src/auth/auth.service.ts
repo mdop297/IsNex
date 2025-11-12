@@ -84,7 +84,7 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async register(userDto: UserCreateDto): Promise<SignUpResponseDto> {
+  async signUp(userDto: UserCreateDto): Promise<SignUpResponseDto> {
     const user = await this.userService.findByEmail(userDto.email);
     if (user && user.isVerified) {
       throw new ConflictException('This email is already registered');
@@ -168,7 +168,7 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async login(body: SigninDto, response: Response): Promise<UserResponseDto> {
+  async signIn(body: SigninDto, response: Response): Promise<UserResponseDto> {
     const validUser = await this.validateUser(body.email, body.password);
 
     const payload: JwtPayload = {
@@ -249,17 +249,6 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
       console.error('Refresh token error:', e);
       throw new UnauthorizedException('Invalid refresh token 2');
     }
-  }
-
-  signOut(response: Response): boolean {
-    // TODO: Also invalidate the refresh token server-side (e.g. delete from DB or Redis)
-    // to prevent reuse of old tokens after logout.
-    if (!response) {
-      throw new Error('Response object is undefined');
-    }
-    response.clearCookie('refresh_token');
-    response.clearCookie('access_token');
-    return true;
   }
 
   private async generateTokens(payload: JwtPayload) {

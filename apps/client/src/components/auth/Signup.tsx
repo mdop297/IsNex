@@ -12,27 +12,55 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { RegisterRequestSchema } from '@/lib/api/auth';
-import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { useAuth } from '@/context/AuthContext';
 import { routes } from '@/lib/constants';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
+
+const signUpSchema = z.object({
+  email: z.string().email('Invalid email address').min(1, 'Email is required'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+});
+
+type SignUpFormValues = z.infer<typeof signUpSchema>;
 
 const SignUpForm = () => {
-  const { register, isLoading } = useAuth();
+  const { signUp, loading } = useAuth();
 
-  const form = useForm<z.infer<typeof RegisterRequestSchema>>({
+  const form = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       email: '',
       password: '',
     },
-    resolver: zodResolver(RegisterRequestSchema),
+    // Optional: Set mode to 'onBlur' or 'onChange' for real-time validation
+    mode: 'onBlur',
   });
 
-  const onSubmit = async (data: z.infer<typeof RegisterRequestSchema>) => {
-    await register(data);
+  const onSubmit = async (data: SignUpFormValues) => {
+    try {
+      await signUp(data);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (
+          error.response?.status === 409 ||
+          error.message?.includes('already exists')
+        ) {
+          form.setError('email', {
+            type: 'manual',
+            message: 'This email is already registered',
+          });
+        }
+      } else {
+        form.setError('root', {
+          type: 'manual',
+          message: 'Something went wrong. Please try again',
+        });
+      }
+    }
   };
 
   return (
@@ -59,6 +87,12 @@ const SignUpForm = () => {
             className="w-full space-y-4"
             onSubmit={form.handleSubmit(onSubmit)}
           >
+            {form.formState.errors.root && (
+              <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+                {form.formState.errors.root.message}
+              </div>
+            )}
+
             <FormField
               control={form.control}
               name="email"
@@ -95,8 +129,8 @@ const SignUpForm = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="mt-4 w-full">
-              {isLoading ? 'Signing up...' : 'Continue with Email'}
+            <Button type="submit" className="mt-4 w-full" disabled={loading}>
+              {loading ? 'Signing up...' : 'Continue with Email'}
             </Button>
           </form>
         </Form>

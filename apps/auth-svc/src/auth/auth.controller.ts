@@ -3,6 +3,7 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  HttpCode,
   Inject,
   Logger,
   Param,
@@ -54,7 +55,7 @@ export class AuthController {
     type: SignUpResponseDto,
   })
   async signUp(@Body() body: UserCreateDto): Promise<SignUpResponseDto> {
-    return this.authService.register(body);
+    return this.authService.signUp(body);
   }
 
   /** ----------------- SIGN IN ----------------- */
@@ -63,19 +64,19 @@ export class AuthController {
   @Post('/signin')
   @ApiOperation({
     summary: 'Login and issue authentication tokens',
-    operationId: 'login',
+    operationId: 'signIn',
   })
   @ApiResponse({
     status: 200,
     description: 'User successfully logged in',
     type: UserResponseDto,
   })
-  async login(
+  async signIn(
     @Body() body: SigninDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<UserResponseDto> {
     this.logger.debug('backend Login called');
-    const result = await this.authService.login(body, res);
+    const result = await this.authService.signIn(body, res);
     this.logger.debug('backend Login Success');
     return result;
   }
@@ -113,6 +114,7 @@ export class AuthController {
   /** ----------------- SIGN OUT ----------------- */
   @Public()
   @Post('/signout')
+  @HttpCode(200)
   @ApiOperation({
     summary: 'Sign out and clear authentication cookies',
     operationId: 'signOut',
@@ -120,13 +122,11 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'User successfully signed out',
-    schema: {
-      example: { status: 200, message: 'Signed out successfully' },
-    },
   })
-  signOut(@Res() res: Response) {
-    const result = this.authService.signOut(res);
-    return res.json(result);
+  signOut(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('refresh_token');
+    res.clearCookie('access_token');
+    return { message: 'Signed out successfully' };
   }
 
   /** ----------------- REFRESH TOKEN ----------------- */

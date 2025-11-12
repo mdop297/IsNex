@@ -6,9 +6,6 @@ import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
-import { LoginRequestSchema, LoginResponse } from '@/lib/api/auth';
-import { zodResolver } from '@hookform/resolvers/zod';
-import z from 'zod';
 import {
   Form,
   FormControl,
@@ -19,29 +16,44 @@ import {
 } from '../ui/form';
 import { useAuth } from '@/context/AuthContext';
 import { routes } from '@/lib/constants';
+import { SigninDto } from '@/lib/api/auth/data-contracts';
+import { AxiosError } from 'axios';
 
 export function SignInForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
-  const { login, isLoading } = useAuth();
+  const { signIn, loading } = useAuth();
 
-  const form = useForm<z.infer<typeof LoginRequestSchema>>({
+  const form = useForm<SigninDto>({
     defaultValues: {
       email: '',
       password: '',
     },
-    resolver: zodResolver(LoginRequestSchema),
   });
 
-  const onSubmit = async (data: z.infer<typeof LoginRequestSchema>) => {
+  const onSubmit = async (data: SigninDto) => {
     try {
-      const res: LoginResponse | undefined = await login(data);
-      if (res) {
-        console.log(res);
-      }
+      await signIn(data);
     } catch (err) {
-      console.error(err);
+      if (err instanceof AxiosError) {
+        if (err.response?.status === 404) {
+          form.setError('email', {
+            type: 'manual',
+            message: 'This email is not registered',
+          });
+        } else if (err.response?.status === 401) {
+          form.setError('password', {
+            type: 'manual',
+            message: 'Incorrect password',
+          });
+        }
+      } else {
+        form.setError('root', {
+          type: 'manual',
+          message: 'Something went wrong. Please try again',
+        });
+      }
     }
   };
 
@@ -51,6 +63,12 @@ export function SignInForm({
         <CardContent className="grid p-0 md:grid-cols-2">
           <Form {...form}>
             <form className="p-6 md:p-8" onSubmit={form.handleSubmit(onSubmit)}>
+              {form.formState.errors.root && (
+                <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+                  {form.formState.errors.root.message}
+                </div>
+              )}
+
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center text-center">
                   <h1 className="text-2xl font-bold">Welcome back</h1>
@@ -103,7 +121,7 @@ export function SignInForm({
                   )}
                 />
                 <Button type="submit" className="w-full ">
-                  {isLoading ? 'Logging in...' : 'Login'}
+                  {loading ? 'Logging in...' : 'Login'}
                 </Button>
                 <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                   <span className="bg-card text-muted-foreground relative z-10 px-2">

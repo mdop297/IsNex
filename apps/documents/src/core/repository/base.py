@@ -9,7 +9,7 @@ from sqlmodel import select
 if TYPE_CHECKING:
     from src.core.database.base import BaseTable
 
-ModelType = TypeVar("ModelType", bound=BaseTable)
+ModelType = TypeVar("ModelType", bound="BaseTable")
 ModelCreated = TypeVar("ModelCreated", bound=BaseModel)
 ModelUpdated = TypeVar("ModelUpdated", bound=BaseModel)
 # JoinedModel = TypeVar("JoinedModel", bound="SQLModel")

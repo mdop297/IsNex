@@ -29,17 +29,16 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>(kafkaConfig);
 
   app.use(cookieParser());
-  // app.enableCors({
-  //   origin: ['http://localhost:5000'],
-  //   credentials: true,
-  // });
+
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
-  const reflector = app.get(Reflector);
+
   //do JwtAuthGuard có constructor cần reflector nên cần truyền refector vào
+  const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.useGlobalPipes(new ValidationPipe());
 
+  // Swagger setup
   const config = new DocumentBuilder()
     .setTitle('Cats example')
     .setDescription('The cats API description')

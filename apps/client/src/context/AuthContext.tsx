@@ -1,162 +1,47 @@
 'use client';
 
+import { Api } from '@/lib/api/auth/Api';
 import {
-  authApi,
-  LoginRequestSchema,
-  LoginResponse,
-  RefreshResponse,
-  RegisterRequestSchema,
-  RegisterResponse,
-  User,
-} from '@/lib/api/auth';
+  SigninDto,
+  SignUpResponseDto,
+  UserCreateDto,
+  UserResponseDto,
+} from '@/lib/api/auth/data-contracts';
+import { routes } from '@/lib/constants';
+import { HttpStatusCode } from 'axios';
+import { useRouter } from 'next/navigation';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import z from 'zod';
+
+const authApi = new Api({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  timeout: 5000,
+  withCredentials: true,
+  headers: { 'Content-Type': 'application/json' },
+});
 
 type AuthContextType = {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
+  user: UserResponseDto | null;
+  // setUser: (user: UserResponseDto | null) => void;
+  loading: boolean;
   error: string | null;
-  login: (
-    credentials: z.infer<typeof LoginRequestSchema>,
-  ) => Promise<LoginResponse | undefined>;
-  register: (
-    payload: z.infer<typeof RegisterRequestSchema>,
-  ) => Promise<RegisterResponse | undefined>;
-  logout: () => Promise<void>;
-  checkAuth: () => Promise<boolean>;
-  refresh: () => Promise<RefreshResponse | null>;
-  clearError: () => void;
-  // verify: (token: string) => Promise<VerifyResponse>;
+  // setError: (error: string | null) => void;
+  signIn: (data: SigninDto) => Promise<UserResponseDto>;
+  signUp: (data: UserCreateDto) => Promise<SignUpResponseDto>;
+  signOut: () => Promise<void>;
+  refreshToken: () => Promise<UserResponseDto>;
+  // clearError: () => void;
+  // verifyEmail: (token: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<UserResponseDto | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  const clearError = () => setError(null);
-
-  const checkAuth = async (): Promise<boolean> => {
-    try {
-      setIsLoading(true);
-
-      const refreshData = await authApi.refresh();
-
-      setUser(refreshData.user);
-      setIsAuthenticated(true);
-      setError(null);
-      return true;
-    } catch (error) {
-      console.error('Auth check failed:', error);
-
-      setUser(null);
-      setIsAuthenticated(false);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const login = async (
-    credentials: z.infer<typeof LoginRequestSchema>,
-  ): Promise<LoginResponse | undefined> => {
-    try {
-      setIsLoading(true);
-      clearError();
-      const loginResponse: LoginResponse = await authApi.login(credentials);
-      setUser(loginResponse.user);
-      setIsAuthenticated(true);
-      return loginResponse;
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message || 'Login failed');
-      } else {
-        setError('Login failed');
-      }
-      setIsAuthenticated(false);
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const register = async (
-    payload: z.infer<typeof RegisterRequestSchema>,
-  ): Promise<RegisterResponse | undefined> => {
-    try {
-      setIsLoading(true);
-      const signupResponse: RegisterResponse | undefined =
-        await authApi.register(payload);
-
-      if (!signupResponse) return;
-
-      if (signupResponse.status === 201) {
-        toast.info('Please check your email to verify your account');
-      }
-
-      setIsAuthenticated(true);
-      return signupResponse;
-    } catch (err: unknown) {
-      let message = 'Registration failed';
-
-      // check if it's an AxiosError
-      if (err instanceof AxiosError) {
-        message = err.response?.data?.message || message;
-      } else if (err instanceof Error) {
-        message = err.message;
-      }
-
-      toast.error(message);
-      setError(message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const logout = async () => {
-    try {
-      setIsLoading(true);
-      await authApi.logout();
-      bc.postMessage('logout');
-      setUser(null);
-      setIsAuthenticated(false);
-      setError(null);
-      window.dispatchEvent(new CustomEvent('auth:logout'));
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error('Logout failed:', err);
-      } else console.error('Logout failed');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const refresh = async (): Promise<RefreshResponse | null> => {
-    try {
-      setIsLoading(true);
-      const refreshData = await authApi.refresh();
-
-      setUser(refreshData.user);
-      setIsAuthenticated(true);
-      setError(null);
-      return refreshData;
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error('Refresh failed:', err);
-      } else console.error('Refresh failed');
-      setUser(null);
-      setIsAuthenticated(false);
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const router = useRouter();
 
   // Handle automatic logout
   const bc = new BroadcastChannel('auth');
@@ -165,34 +50,120 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     bc.onmessage = (event) => {
       if (event.data === 'logout') {
         setUser(null);
-        setIsAuthenticated(false);
       }
     };
     return () => bc.close();
   }, []);
 
-  // Cleanup on unmount
   useEffect(() => {
+    if (user) {
+      refreshIntervalRef.current = setInterval(
+        () => {
+          refreshToken();
+        },
+        1000 * 60 * 60,
+      );
+    } else if (refreshIntervalRef.current) {
+      clearInterval(refreshIntervalRef.current);
+    }
+    // Cleanup. This will run when the component unmounts or when the state (user) changes
     return () => {
-      if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current);
-      }
+      if (refreshIntervalRef.current) clearInterval(refreshIntervalRef.current);
     };
+  }, [user]);
+
+  // load user from local storage when mount
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+    setLoading(false);
   }, []);
+
+  // sync user with local storage when user state changes
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+      router.push(routes.SIGNIN);
+    }
+  }, [user]);
+
+  const signIn = async (data: SigninDto): Promise<UserResponseDto> => {
+    try {
+      setLoading(true);
+      const response = await authApi.signIn(data);
+      if (response.status === HttpStatusCode.Created) {
+        setUser(response.data);
+        router.push(routes.HOME);
+      }
+      return response.data;
+    } catch (err) {
+      return Promise.reject(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signUp = async (data: UserCreateDto): Promise<SignUpResponseDto> => {
+    try {
+      setLoading(true);
+      const response = await authApi.signUp(data);
+      if (response.status === HttpStatusCode.Created) {
+        toast.success('Please check your email to verify your account', {
+          duration: 60000,
+          position: 'top-center',
+        });
+      }
+      return response.data;
+    } catch (err) {
+      console.log(err);
+      return Promise.reject(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      setLoading(true);
+      await authApi.signOut();
+      bc.postMessage('logout');
+      setUser(null);
+      setError(null);
+      window.dispatchEvent(new CustomEvent('auth:logout'));
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error('Logout failed:', err);
+      } else console.error('Logout failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refreshToken = async (): Promise<UserResponseDto> => {
+    try {
+      const response = await authApi.refreshToken();
+      setUser(response.data);
+      return response.data;
+    } catch (err) {
+      setUser(null);
+      return Promise.reject(err);
+    }
+  };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated,
-        isLoading,
+        loading,
         error,
-        login,
-        register,
-        logout,
-        checkAuth,
-        clearError,
-        refresh,
+        signIn,
+        signUp,
+        signOut,
+        refreshToken,
       }}
     >
       {children}

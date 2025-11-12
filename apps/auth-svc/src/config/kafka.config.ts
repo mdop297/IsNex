@@ -16,10 +16,13 @@ export const kafkaConfig: KafkaOptions = {
     },
     consumer: {
       groupId: process.env.KAFKA_CONSUMER_GROUP || 'auth-service-consumer',
-      sessionTimeout: 30000,
+      sessionTimeout: 10000,
       heartbeatInterval: 3000,
+      allowAutoTopicCreation: true,
       retry: {
+        initialRetryTime: 100,
         retries: 5,
+        multiplier: 2,
       },
     },
     producer: {

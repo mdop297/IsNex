@@ -28,6 +28,8 @@ services:
     volumes:
       - ../../apps/client:/isnex/apps/client
       - ../../apps/client/node_modules:/isnex/apps/client/node_modules
+    env_file:
+      - ../../apps/client/.env.dev
 
   documents-svc:
     container_name: documents-svc
