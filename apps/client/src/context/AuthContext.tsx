@@ -14,10 +14,13 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 const authApi = new Api({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  timeout: 5000,
-  withCredentials: true,
-  headers: { 'Content-Type': 'application/json' },
+  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000',
+  baseApiParams: {
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  },
 });
 
 type AuthContextType = {

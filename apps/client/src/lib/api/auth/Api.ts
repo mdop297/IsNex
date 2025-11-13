@@ -204,10 +204,9 @@ export class Api<
    * @request POST:/api/auth/signout
    */
   signOut = (params: RequestParams = {}) =>
-    this.request<any, any>({
+    this.request<void, any>({
       path: `/api/auth/signout`,
       method: 'POST',
-      format: 'json',
       ...params,
     });
   /**
