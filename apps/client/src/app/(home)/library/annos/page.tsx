@@ -1,7 +1,8 @@
+import BlocknoteViewer from '@/components/blocknote/Editor';
 import React from 'react';
 
 const AnnotationsPage = () => {
-  return <div> you can place any test ui here</div>;
+  return <BlocknoteViewer />;
 };
 
 export default AnnotationsPage;

@@ -54,7 +54,7 @@ const items = [
 ];
 
 export default function AppSidebar() {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const { state, isMobile, toggleSidebar } = useSidebar();
   const [hovered, setHovered] = useState(false);
 
@@ -63,15 +63,15 @@ export default function AppSidebar() {
     { icon: Settings, label: 'Setting', onClick: () => {} },
     {
       icon: LogOut,
-      label: 'Logout',
+      label: 'SignOut',
       destructive: true,
       onClick: () => {
-        handleLogout();
+        handleSignOut();
       },
     },
   ];
-  const handleLogout = () => {
-    logout();
+  const handleSignOut = () => {
+    signOut();
   };
 
   return (
@@ -188,7 +188,7 @@ export default function AppSidebar() {
                   }}
                 >
                   <item.icon className="h-4 w-4" />
-                  <span className={item.label === 'Logout' ? 'ml-1' : 'ml-2'}>
+                  <span className={item.label === 'SignOut' ? 'ml-1' : 'ml-2'}>
                     {item.label}
                   </span>
                 </DropdownMenuItem>

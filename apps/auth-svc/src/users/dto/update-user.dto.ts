@@ -1,10 +1,14 @@
 import { OmitType } from '@nestjs/mapped-types';
-import { CreateUserDto } from './create-user.dto';
+import { UserCreateDto } from './create-user.dto';
 import { IsOptional } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 
-export class UpdateUserDto extends OmitType(CreateUserDto, ['password']) {
-  id: string;
-
+export class UserUpdateDto extends OmitType(UserCreateDto, [
+  'password',
+] as const) {
+  @Exclude()
+  @ApiPropertyOptional({ description: 'Mark user as verified', example: true })
   @IsOptional()
-  isVerified: boolean;
+  isVerified?: boolean;
 }

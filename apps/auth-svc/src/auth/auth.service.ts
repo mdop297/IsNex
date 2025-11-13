@@ -12,15 +12,21 @@ import {
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateUserDto } from '../users/dto/create-user.dto';
+import { UserCreateDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
-import { LoginDto } from './dtos/login.dto';
+import { SigninDto } from './dtos/signin.dto';
 import { ClientKafka } from '@nestjs/microservices';
-import { UserCreatedEvent } from 'src/proto/auth';
+import { UserCreatedEvent } from '../proto/auth';
+import { SignUpResponseDto } from './dtos/signup.dto';
+import {
+  UserProfileResponseDto,
+  UserResponseDto,
+} from '../users/dto/response-user.dto';
+import { plainToInstance } from 'class-transformer';
 
 export interface JwtPayload {
   user_id: string;
@@ -69,26 +75,22 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     const user = await this.userService.findByEmail(email);
 
     if (!user) {
-      return null;
+      throw new NotFoundException('User not found');
     }
     if (user && this.isValidPassword(password, user.password)) {
       return user;
     } else {
-      return null;
+      throw new UnauthorizedException('Invalid credentials');
     }
   }
 
-  async register(
-    userDto: CreateUserDto,
-  ): Promise<{ status: number; message: string; userId?: string }> {
+  async signUp(userDto: UserCreateDto): Promise<SignUpResponseDto> {
     const user = await this.userService.findByEmail(userDto.email);
     if (user && user.isVerified) {
       throw new ConflictException('This email is already registered');
     }
 
     try {
-      console.log('Register reached!!!');
-
       const result = this.getHashPassword(userDto.password);
       userDto.password = result;
       if (!userDto.username) {
@@ -122,9 +124,8 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
       });
 
       return {
-        status: HttpStatus.CREATED,
         userId: newUser.id,
-        message: 'User registered successfully',
+        message: 'Verification email sent. Please verify your email',
       };
     } catch (err) {
       this.logger.error('Registration failed', err);
@@ -167,12 +168,8 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async login(body: LoginDto, response: Response) {
+  async signIn(body: SigninDto, response: Response): Promise<UserResponseDto> {
     const validUser = await this.validateUser(body.email, body.password);
-
-    if (!validUser) {
-      throw new NotFoundException('Invalid credentials');
-    }
 
     const payload: JwtPayload = {
       user_id: validUser.id,
@@ -200,26 +197,28 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     });
 
     return {
-      user: {
-        userId: validUser.id,
-        email: validUser.email,
-        username: validUser.username,
-        role: validUser.role,
-      },
+      id: validUser.id,
+      email: validUser.email,
+      username: validUser.username,
+      role: validUser.role,
+      isVerified: validUser.isVerified,
     };
   }
 
-  async getProfile(userId: string) {
+  async getProfile(userId: string): Promise<UserProfileResponseDto> {
     const user = await this.userService.findById(userId);
 
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new NotFoundException('User not found');
     }
 
-    return user;
+    return plainToInstance(UserProfileResponseDto, user);
   }
 
-  async refreshToken(refreshToken: string, response: Response) {
+  async refreshToken(
+    refreshToken: string,
+    response: Response,
+  ): Promise<UserResponseDto> {
     try {
       const payload: JwtPayload = this.jwtService.verify(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
@@ -245,29 +244,11 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
         path: '/api/auth/refresh',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
-      return {
-        accessToken: tokens.accessToken,
-        user: {
-          userId: user.id,
-          email: user.email,
-          username: user.username,
-          role: user.role,
-        },
-      };
+      return plainToInstance(UserResponseDto, user);
     } catch (e) {
       console.error('Refresh token error:', e);
       throw new UnauthorizedException('Invalid refresh token 2');
     }
-  }
-
-  signOut(response: Response) {
-    // TODO: Also invalidate the refresh token server-side (e.g. delete from DB or Redis)
-    // to prevent reuse of old tokens after logout.
-    if (!response) {
-      throw new Error('Response object is undefined');
-    }
-    response.clearCookie('refresh_token');
-    return { message: 'Logged out successfully' };
   }
 
   private async generateTokens(payload: JwtPayload) {

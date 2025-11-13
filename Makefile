@@ -66,6 +66,9 @@ up-client:
 up-documents: up-db
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE)  up -d documents-svc data-lake
 
+up-api-gateway:
+	docker compose -f $(COMPOSE_API_GATEWAY) up -d
+
 documents-revision:
 # how to use: make documents-revision m="message"
 	docker exec documents-svc uv run revision "$(m)"

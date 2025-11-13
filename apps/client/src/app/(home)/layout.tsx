@@ -2,25 +2,23 @@
 import AppSidebar from '@/components/AppSidebar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useAuth } from '@/context/AuthContext';
+import { routes } from '@/lib/constants';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading, checkAuth } = useAuth();
+  const { loading, user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    console.log('====> RUNNING useEffect', isAuthenticated, isLoading);
-    if (!isLoading && !isAuthenticated) {
+    console.log('>>>>> LOADING user info <<<<<');
+    if (!loading && !user) {
       console.log('not authenticated, pushing to login');
-      router.push('/auth/signin');
-    } else if (isLoading && !isAuthenticated) {
-      console.log('checking auth---');
-      checkAuth();
+      router.push(routes.SIGNIN);
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [loading, user, router]);
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         Loading...
@@ -28,7 +26,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!user) {
     return null;
   }
 
