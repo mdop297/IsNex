@@ -1,28 +1,41 @@
+import '@blocknote/core/fonts/inter.css';
+import { BlockNoteView } from '@blocknote/mantine';
+import '@blocknote/mantine/style.css';
+import {
+  BasicTextStyleButton,
+  BlockTypeSelect,
+  ColorStyleButton,
+  CreateLinkButton,
+  FileCaptionButton,
+  FileReplaceButton,
+  FormattingToolbar,
+  FormattingToolbarController,
+  NestBlockButton,
+  TextAlignButton,
+  UnnestBlockButton,
+  useCreateBlockNote,
+} from '@blocknote/react';
+
 import {
   BlockNoteSchema,
   createHeadingBlockSpec,
   defaultBlockSpecs,
 } from '@blocknote/core';
 import '@blocknote/core/fonts/inter.css';
-import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
-import { useCreateBlockNote } from '@blocknote/react';
 import { useTheme } from 'next-themes';
 import { createCodeBlockSpec } from '@blocknote/core';
 import { codeBlockOptions } from '@blocknote/code-block';
+import '@/app/globals.css';
 
 export default function App() {
   const { theme } = useTheme();
-  // Creates a new editor instance.
+
   const editor = useCreateBlockNote({
-    initialContent: [{}],
-    // TODO: check this issue for a fix: https://github.com/TypeCellOS/BlockNote/issues/2169
-    pasteHandler: ({ event, editor, defaultPasteHandler }) => {
-      if (event.clipboardData?.types.includes('text/plain')) {
-        editor.pasteMarkdown(event.clipboardData.getData('text/plain'));
-        return true;
-      }
-      return defaultPasteHandler();
+    domAttributes: {
+      block: {
+        class: 'blocknote-style',
+      },
     },
     schema: BlockNoteSchema.create().extend({
       ...defaultBlockSpecs,
@@ -46,7 +59,13 @@ export default function App() {
         },
       },
     }),
-
+    pasteHandler: ({ event, editor, defaultPasteHandler }) => {
+      if (event.clipboardData?.types.includes('text/plain')) {
+        editor.pasteMarkdown(event.clipboardData.getData('text/plain'));
+        return true;
+      }
+      return defaultPasteHandler();
+    },
     tables: {
       splitCells: true,
       cellBackgroundColor: true,
@@ -55,14 +74,71 @@ export default function App() {
     },
   });
 
-  // Renders the editor instance using a React component.
+  // Renders the editor instance.
   return (
     <div className="h-full overflow-auto minimal-scrollbar">
       <BlockNoteView
         editor={editor}
+        formattingToolbar={false}
         theme={theme === 'dark' ? 'dark' : 'light'}
         className="bg-secondary"
-      />
+      >
+        <FormattingToolbarController
+          formattingToolbar={() => (
+            <FormattingToolbar>
+              <BlockTypeSelect key={'blockTypeSelect'} />
+
+              {/* Extra button to toggle blue text & background */}
+              {/* <BlueButton key={"customButton"} /> */}
+
+              <FileCaptionButton key={'fileCaptionButton'} />
+              <FileReplaceButton key={'replaceFileButton'} />
+
+              <BasicTextStyleButton
+                basicTextStyle={'bold'}
+                key={'boldStyleButton'}
+              />
+              <BasicTextStyleButton
+                basicTextStyle={'italic'}
+                key={'italicStyleButton'}
+              />
+              <BasicTextStyleButton
+                basicTextStyle={'underline'}
+                key={'underlineStyleButton'}
+              />
+              <BasicTextStyleButton
+                basicTextStyle={'strike'}
+                key={'strikeStyleButton'}
+              />
+              {/* Extra button to toggle code styles */}
+              <BasicTextStyleButton
+                key={'codeStyleButton'}
+                basicTextStyle={'code'}
+              />
+
+              <TextAlignButton
+                textAlignment={'left'}
+                key={'textAlignLeftButton'}
+              />
+              <TextAlignButton
+                textAlignment={'center'}
+                key={'textAlignCenterButton'}
+              />
+              <TextAlignButton
+                textAlignment={'right'}
+                key={'textAlignRightButton'}
+              />
+
+              <ColorStyleButton key={'colorStyleButton'} />
+
+              <NestBlockButton key={'nestBlockButton'} />
+              <UnnestBlockButton key={'unnestBlockButton'} />
+
+              <CreateLinkButton key={'createLinkButton'} />
+            </FormattingToolbar>
+          )}
+        />
+      </BlockNoteView>
     </div>
   );
 }

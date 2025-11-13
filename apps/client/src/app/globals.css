@@ -331,4 +331,10 @@
   .icon-button {
     @apply p-2 size-8 w-fit rounded-md hover:bg-item-hover hover:cursor-pointer;
   }
+
+  .blocknote-style {
+    border-radius: 4px;
+    padding: 1px;
+    margin: 1px;
+  }
 }
