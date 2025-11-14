@@ -96,3 +96,15 @@
 > - **Dynamic/fresh → SSR/RSC**
 > - **Interactive/realtime → CSR**
 > - **Kết hợp server fetch + client interaction = pattern chuẩn Next.js 16**
+
+| Đặc điểm              | RSC                                | SSR (getServerSideProps) | CSR                |
+| --------------------- | ---------------------------------- | ------------------------ | ------------------ |
+| **JavaScript bundle** | ⚡ Minimal (chỉ Client Components) | ❌ Full bundle           | ❌ Full bundle     |
+| **Rendering**         | Server → Stream to client          | Server → HTML → Hydrate  | Client-only        |
+| **Data fetching**     | ✅ Trong component                 | ✅ getServerSideProps    | ⚠️ useEffect/hooks |
+| **Hydration**         | ✅ Không cần                       | ❌ Cần                   | ❌ Cần             |
+| **SEO**               | ✅ Perfect                         | ✅ Good                  | ❌ Poor            |
+| **Performance**       | ⚡⚡⚡ Best                        | ⚡⚡ Good                | ⚡ Slower          |
+| **Database access**   | ✅ Direct                          | ✅ Direct                | ❌ Qua API         |
+| **Streaming**         | ✅ Native                          | ❌ No                    | ❌ No              |
+| **Learning curve**    | ⚠️ Moderate                        | ✅ Easy                  | ✅ Easy            |

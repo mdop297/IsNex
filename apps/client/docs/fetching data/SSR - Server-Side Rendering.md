@@ -56,7 +56,7 @@ Ví dụ:
 - Editor page load initial doc content từ SSR → UI client tiếp quản.
 - Dashboard initializes with server data → client hydrates.
 
-  **6. Multi-tenant or region-specific content**
+**6. Multi-tenant or region-specific content**
 
 - Content khác nhau theo domain/subdomain
 - Geo-based data (location, region)
