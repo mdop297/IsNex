@@ -18,7 +18,6 @@ import { useAuth } from '@/context/AuthContext';
 import { routes } from '@/lib/constants';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AxiosError } from 'axios';
 
 const signUpSchema = z.object({
   email: z.string().email('Invalid email address').min(1, 'Email is required'),
@@ -44,21 +43,29 @@ const SignUpForm = () => {
     try {
       await signUp(data);
     } catch (error) {
-      if (error instanceof AxiosError) {
-        if (
-          error.response?.status === 409 ||
-          error.message?.includes('already exists')
-        ) {
-          form.setError('email', {
-            type: 'manual',
-            message: 'This email is already registered',
-          });
-        }
-      } else {
-        form.setError('root', {
+      if (!(error instanceof Response)) {
+        form.setError('root', { message: 'Unexpected error' });
+        return;
+      }
+
+      const msg = error.statusText.toLowerCase();
+
+      if (
+        error.status === 409 ||
+        msg.includes('already exists') ||
+        msg.includes('duplicate')
+      ) {
+        form.setError('email', {
           type: 'manual',
-          message: 'Something went wrong. Please try again',
+          message: 'This email is already registered',
         });
+      } else if (error.status === 400 && msg.includes('password')) {
+        form.setError('password', {
+          type: 'manual',
+          message: error.statusText,
+        });
+      } else {
+        form.setError('root', { type: 'manual', message: error.statusText });
       }
     }
   };

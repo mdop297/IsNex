@@ -37,7 +37,7 @@ import ChatSearch from './SearchModal';
 
 import CollapsibleNav from '@/components/CollapsibleNav';
 import { useAuth } from '@/context/AuthContext';
-import { FileUploadButton } from './file-upload/FileUploadv2';
+import { FileUploadButton } from './file-upload/FileUpload';
 
 // Menu items.
 const items = [

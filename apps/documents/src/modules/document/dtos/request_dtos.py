@@ -1,15 +1,15 @@
 from typing import Optional
 from uuid import UUID
 from pydantic import BaseModel, Field, field_validator
-
+from pydantic.json_schema import SkipJsonSchema
 from src.modules.document.model import FileType
 
 
 class DocumentCreate(BaseModel):
-    user_id: Optional[UUID] = Field(None, exclude=True)
+    user_id: SkipJsonSchema[Optional[UUID]] = Field(default=None)
     folder_id: Optional[UUID] = Field(default=None)
     name: str = Field(default="Untitled")
-    file_url: str = Field(exclude=True)
+    file_url: SkipJsonSchema[Optional[str]] = Field(default=None)
     type: FileType = Field(
         default=FileType.PDF,
         description="type of the file, only pdf for now",
@@ -22,7 +22,7 @@ class DocumentCreate(BaseModel):
         ],
     )
     num_pages: Optional[int] = Field(..., description="number of pages in the file")
-    file_size: str = Field(..., description="size of the file in bytes", exclude=True)
+    file_size: str = Field(..., description="size of the file in bytes")
 
     @field_validator("type")
     @classmethod

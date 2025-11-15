@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Inject,
@@ -79,6 +80,8 @@ export class AuthService implements OnModuleInit, OnModuleDestroy {
     }
     if (user && this.isValidPassword(password, user.password)) {
       return user;
+    } else if (user && !user.isVerified) {
+      throw new ForbiddenException('Email not verified');
     } else {
       throw new UnauthorizedException('Invalid credentials');
     }

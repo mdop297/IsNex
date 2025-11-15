@@ -56,12 +56,13 @@ services:
           max_age: 3600
 
   - name: documents-svc
-    url: http://documents:8000
+    url: http://documents-svc:8000
     routes:
       - name: documents-route
         paths:
-          - /api/v1/docs
-        strip_path: true
+          - /api/v1/documents/
+          - /api/v1/
+        strip_path: false
     plugins:
       - name: cors
         config:

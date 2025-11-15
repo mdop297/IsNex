@@ -1,5 +1,5 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 from minio import S3Error
 
 from src.api.depends.factory import DocumentServiceDep, Factory
@@ -22,11 +22,18 @@ document_router = APIRouter(prefix="/documents", tags=["documents"])
 @document_router.post("/", response_model=DocumentResponse)
 async def upload_file(
     request: Request,
-    data: DocumentCreate,
+    metadata: str = Form(...),
     file: UploadFile = File(...),
     document_service: DocumentService = Depends(Factory().get_document_service),
 ):
     try:
+        logger.info("YOU MADE IT, your document is uploaded.")
+        data = DocumentCreate.model_validate_json(metadata)
+        logger.info("YOU MADE IT, your document is uploaded.")
+
+        data.user_id = request.user.id
+        logger.error(data)
+        data.file_url = ""
         document = await document_service.create(
             file=file, user_id=request.user.id, data=data
         )

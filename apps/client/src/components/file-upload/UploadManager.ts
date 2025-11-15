@@ -1,4 +1,7 @@
-import { documentsApi } from '@/lib/api/documents';
+// import { coreApi } from '@/lib/api/documents';
+
+import { Api } from '@/lib/generated/core/Api';
+import { BodyUploadFile, FileType } from '@/lib/generated/core/data-contracts';
 
 // Type definitions
 export interface FileItem {
@@ -25,6 +28,13 @@ export interface FileUploadFormProps {
   onUploadError?: (error: string, fileId: number) => void;
   onClose?: () => void;
 }
+
+const api = new Api({
+  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000',
+  baseApiParams: {
+    credentials: 'include',
+  },
+});
 
 // Background Upload Manager with manual control
 export class BackgroundUploadManager {
@@ -144,13 +154,19 @@ export class BackgroundUploadManager {
     this.updateFileStatus(fileItem.id, { status: 'uploading', progress: 0 });
 
     try {
-      const response = await documentsApi.uploadFile(
-        fileItem.file,
-        (progress) => {
-          this.updateFileStatus(fileItem.id, { progress });
-        },
-      );
+      const documentCreateData = {
+        name: fileItem.file.name,
+        num_pages: 0,
+        file_size: fileItem.file.size.toString(),
+        type: FileType.Pdf,
+      };
 
+      const body: BodyUploadFile = {
+        file: fileItem.file,
+        metadata: JSON.stringify(documentCreateData),
+      };
+
+      const response = await api.uploadFile(body);
       console.log('Upload response:', response);
 
       this.updateFileStatus(fileItem.id, {
