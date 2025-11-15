@@ -141,7 +141,8 @@ export interface DocumentResponse {
   type: FileType;
   /** Num Pages */
   num_pages: number;
-  embedding_status: Status;
+  /** @default "UPLOADED" */
+  embedding_status?: Status;
   /** File Size */
   file_size: string;
   /**
