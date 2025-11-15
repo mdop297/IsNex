@@ -16,8 +16,15 @@ import {
 } from '../ui/form';
 import { useAuth } from '@/context/AuthContext';
 import { routes } from '@/lib/constants';
-import { SigninDto } from '@/lib/api/auth/data-contracts';
-import { AxiosError } from 'axios';
+import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const SignInSchema = z.object({
+  email: z.string().email('Invalid email address').min(1, 'Email is required'),
+  password: z.string().min(6, 'Password must be at least 8 characters'),
+});
+
+type SignInFormValues = z.infer<typeof SignInSchema>;
 
 export function SignInForm({
   className,
@@ -25,34 +32,35 @@ export function SignInForm({
 }: React.ComponentProps<'div'>) {
   const { signIn, loading } = useAuth();
 
-  const form = useForm<SigninDto>({
+  const form = useForm<SignInFormValues>({
+    resolver: zodResolver(SignInSchema),
     defaultValues: {
       email: '',
       password: '',
     },
+    mode: 'onBlur',
   });
 
-  const onSubmit = async (data: SigninDto) => {
+  const onSubmit = async (data: SignInFormValues) => {
     try {
       await signIn(data);
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        if (err.response?.status === 404) {
+    } catch (error) {
+      if (error instanceof Response) {
+        if (error.status === 404) {
+          form.setError('email', { message: 'This email is not registered' });
+        } else if (error.status === 401) {
+          form.setError('password', { message: 'Incorrect password' });
+        } else if (error.status === 403) {
           form.setError('email', {
-            type: 'manual',
-            message: 'This email is not registered',
+            message: 'Account not verified. Please check your email.',
           });
-        } else if (err.response?.status === 401) {
-          form.setError('password', {
-            type: 'manual',
-            message: 'Incorrect password',
+        } else {
+          form.setError('root', {
+            message: error.statusText || 'Sign in failed',
           });
         }
       } else {
-        form.setError('root', {
-          type: 'manual',
-          message: 'Something went wrong. Please try again',
-        });
+        form.setError('root', { message: 'Network error. Please try again.' });
       }
     }
   };

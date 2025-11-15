@@ -1,4 +1,16 @@
-import { documentsApi } from '@/lib/api/documents';
+// import { documentsApi } from '@/lib/api/documents';
+
+import { Api } from '@/lib/generated/core/Api';
+
+const documentsApi = new Api({
+  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000',
+  baseApiParams: {
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  },
+});
 
 // Type definitions
 export interface FileItem {

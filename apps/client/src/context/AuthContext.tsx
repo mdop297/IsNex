@@ -1,27 +1,16 @@
 'use client';
 
-import { Api } from '@/lib/api/auth/Api';
 import {
   SigninDto,
   SignUpResponseDto,
   UserCreateDto,
   UserResponseDto,
-} from '@/lib/api/auth/data-contracts';
+} from '@/lib/generated/auth/data-contracts';
 import { routes } from '@/lib/constants';
-import { HttpStatusCode } from 'axios';
 import { useRouter } from 'next/navigation';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-
-const authApi = new Api({
-  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000',
-  baseApiParams: {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  },
-});
+import { authApi } from '@/lib/api';
 
 type AuthContextType = {
   user: UserResponseDto | null;
@@ -99,10 +88,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [user]);
 
   const signIn = async (data: SigninDto): Promise<UserResponseDto> => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await authApi.signIn(data);
-      if (response.status === HttpStatusCode.Created) {
+
+      if (response.status === 201) {
         setUser(response.data);
         router.push(routes.HOME);
       }
@@ -115,10 +105,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signUp = async (data: UserCreateDto): Promise<SignUpResponseDto> => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await authApi.signUp(data);
-      if (response.status === HttpStatusCode.Created) {
+
+      if (response.status === 201) {
         toast.success('Please check your email to verify your account', {
           duration: 60000,
           position: 'top-center',
@@ -126,7 +117,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       return response.data;
     } catch (err) {
-      console.log(err);
       return Promise.reject(err);
     } finally {
       setLoading(false);
