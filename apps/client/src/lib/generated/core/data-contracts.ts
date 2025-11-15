@@ -59,7 +59,8 @@ export enum FileType {
 
 /** Body_upload_file */
 export interface BodyUploadFile {
-  data: DocumentCreate;
+  /** Metadata */
+  metadata: string;
   /**
    * File
    * @format binary
@@ -124,36 +125,6 @@ export interface ConversationUpdate {
    * Title of the conversation
    */
   title?: string | null;
-}
-
-/** DocumentCreate */
-export interface DocumentCreate {
-  /** User Id */
-  user_id?: string | null;
-  /** Folder Id */
-  folder_id?: string | null;
-  /**
-   * Name
-   * @default "Untitled"
-   */
-  name?: string;
-  /** File Url */
-  file_url: string;
-  /**
-   * type of the file, only pdf for now
-   * @default "pdf"
-   */
-  type?: FileType;
-  /**
-   * Num Pages
-   * number of pages in the file
-   */
-  num_pages: number | null;
-  /**
-   * File Size
-   * size of the file in bytes
-   */
-  file_size: string;
 }
 
 /** DocumentResponse */
