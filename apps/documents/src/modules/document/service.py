@@ -15,6 +15,7 @@ from src.modules.document.dtos.response_dtos import (
     PresignedUrlResponse,
 )
 from src.modules.object_storage.service import MinioService
+from src.core.config import settings
 
 logger = get_logger(__name__)
 
@@ -107,13 +108,16 @@ class DocumentService(
 
     async def get_presigned_url(
         self, user_id: UUID, document_id: UUID
-    ) -> PresignedUrlResponse:
+    ) -> str:
         document = await self.__validate_document_ownership(
             document_id=document_id, user_id=user_id
         )
         try:
             url = self.minio_service.generate_presigned_url(file_name=document.file_url)
-            return PresignedUrlResponse(url=url)
+            if settings.DATA_LAKE_DOMAIN in url:
+                return url.replace(settings.DATA_LAKE_DOMAIN, settings.APP_DOMAIN)
+            
+            return url
         except S3Error as e:
             logger.error(
                 f"Failed to generate presigned URL for document {document_id}: {e}"
@@ -124,11 +128,37 @@ class DocumentService(
             raise DocumentError(f"Failed to generate download URL: {str(e)}") from e
 
     async def get_all(
-        self, skip: int = 0, limit: int = 100
+        self, user_id: UUID, skip: int|None=None, limit: int|None=None
     ) -> Sequence[DocumentResponse]:
-        documents = await self.repository.get_all(skip, limit)
-        results = [DocumentResponse.model_validate(doc) for doc in documents]
-        return results
+        try:
+            documents = await self.repository.get_by(field="user_id",value=user_id, skip = skip, limit=limit)
+            results = [DocumentResponse.model_validate(doc) for doc in documents]
+            logger.info(f"Retrieved {len(results)} documents for user {user_id}")
+            return results
+        except Exception as e: 
+            logger.error(f"Failed to get all documents for: {str(e)}")
+            raise DocumentError(f"Failed to get all documents: {str(e)}")
+
+    async def get_by_folder_id(self, user_id: UUID, folder_id: UUID)-> Sequence[DocumentResponse]:
+        try: 
+            await self.__validate_folder_ownership(folder_id, user_id)
+            documents = await self.repository.get_by(field="folder_id",value=folder_id)
+            results = [DocumentResponse.model_validate(doc) for doc in documents]
+            logger.info(f"Retrieved {len(results)} documents for folder {folder_id}")
+            return results
+        except Exception as e: 
+            logger.error(f"Failed to get documents for: {str(e)}")
+            raise DocumentError(f"Failed to get documents: {str(e)}")
+
+    async def get_docs_at_root(self, user_id: UUID)-> Sequence[DocumentResponse]:
+        try:
+            documents = await self.repository.get_documents_at_root_by_user(user_id)
+            results = [DocumentResponse.model_validate(doc) for doc in documents]
+            logger.info(f"Retrieved {len(results)} documents at root")
+            return results
+        except Exception as e:
+            logger.error(f"Failed to get documents at root: {str(e)}")
+            raise DocumentError(f"Failed to get documents at root: {str(e)}")
 
     async def upload_to_object_storage(
         self, file: UploadFile, user_id: UUID

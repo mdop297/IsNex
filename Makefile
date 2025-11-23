@@ -63,11 +63,12 @@ up-client:
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) up -d client
 	@echo "✅ Client service started successfully!"
 
-up-documents: up-db
-	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE)  up -d documents-svc data-lake
-
 up-api-gateway:
 	docker compose -f $(COMPOSE_API_GATEWAY) up -d
+
+up-core: up-db up-api-gateway
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE)  up -d documents-svc data-lake
+
 
 documents-revision:
 # how to use: make documents-revision m="message"

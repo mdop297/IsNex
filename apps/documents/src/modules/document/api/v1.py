@@ -1,5 +1,5 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile
 from minio import S3Error
 
 from src.api.depends.factory import DocumentServiceDep, Factory
@@ -45,6 +45,42 @@ async def upload_file(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Server error: {str(e)}") from e
 
+# get all documents by user_id
+@document_router.get("/all", response_model=list[DocumentResponse])
+async def get_all_documents_by_user(
+    request: Request, document_service: DocumentServiceDep
+):
+    try: 
+        result = await document_service.get_all(user_id=request.user.id)
+        return result
+    except Exception as e:
+        logger.info(f"Failed to fetch documents for user {request.user.username}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch documents for user {request.user.username}: {str(e)}")
+
+# get documents by folder_id
+@document_router.get("/fs", response_model=list[DocumentResponse])
+async def get_documents_by_folder_id(request: Request,document_service: DocumentServiceDep, folder_id: UUID|None= Query(None) ):
+    try:
+        
+        if (folder_id is None):
+            return await document_service.get_docs_at_root(user_id=request.user.id)
+        else:
+            return await document_service.get_by_folder_id(user_id=request.user.id, folder_id=folder_id)
+    except Exception as e:
+        logger.info(f"Failed to fetch documents by folder id: {folder_id}, usename {request.user.username}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch documents by folder id: {folder_id}, usename {request.user.username}: {str(e)}")
+        
+        
+        
+# load documment
+@document_router.get("/load/{id}", response_model=str)
+async def load_document(
+    request: Request, id: UUID, document_service: DocumentServiceDep
+):
+    presigned_url = await document_service.get_presigned_url(
+        user_id=request.user.id, document_id=id
+    )
+    return presigned_url
 
 # get document meta
 @document_router.get("/{id}", response_model=DocumentResponse)
@@ -54,16 +90,6 @@ async def get_document_meta(
     result = await document_service.get_by_id(user_id=request.user.id, id=id)
     return result
 
-
-# load documment
-@document_router.get("/load/{id}", response_model=PresignedUrlResponse)
-async def load_document(
-    request: Request, id: UUID, document_service: DocumentServiceDep
-):
-    presigned_url = document_service.get_presigned_url(
-        user_id=request.user.id, document_id=id
-    )
-    return presigned_url
 
 
 # update document
