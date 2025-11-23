@@ -6,7 +6,8 @@ from dataclasses import dataclass
 from uuid import UUID
 from minio import Minio, S3Error
 from fastapi import UploadFile
-
+from src.core.config import settings
+ 
 
 """
 Singleton Minio client - chỉ tạo 1 lần duy nhất
@@ -72,7 +73,7 @@ class MinioService:
         url = self.client.presigned_get_object(
             bucket_name=self.bucket_name,
             object_name=file_name,
-            expires=timedelta(hours=3),
+            expires=timedelta(hours=5),
         )
         return url
 

@@ -100,7 +100,7 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
     async def get_by(
         self,
         field: str,
-        value: str | int | bool | float | UUID,
+        value: str | int | bool | float | UUID | None,
         skip: int | None = None,
         limit: int | None = None,
     ) -> Sequence[ModelType]:
