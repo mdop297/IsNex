@@ -100,6 +100,7 @@ async def update_document(
     data: DocumentUpdate,
     document_service: DocumentServiceDep,
 ):
+    logger.warning("YOU MADE IT, your document is updated.")
     result = await document_service.update(user_id=request.user.id, id=id, obj=data)
     return result
 
