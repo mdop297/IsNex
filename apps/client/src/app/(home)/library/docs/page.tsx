@@ -1,6 +1,4 @@
 'use client';
-import { coreApi } from '@/lib/api';
-import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import DocumentItem from './DocItem';
 import { Button } from '@/components/ui/button';
@@ -9,6 +7,7 @@ import { UploadIcon } from 'lucide-react';
 import SelectedFilesPanel from './SelectedFilesPanel';
 import { useDocumentStore } from './useDocumentStore';
 import PreviewPanel from './PreviewPanel';
+import { useDocuments } from './useDocuments';
 
 const DocumentPage = () => {
   const selectedFiles = useDocumentStore((state) => state.selectedFiles);
@@ -16,21 +15,7 @@ const DocumentPage = () => {
   const previewFileId = useDocumentStore((state) => state.previewFileId);
   const previewFile = useDocumentStore((state) => state.previewFile);
 
-  const {
-    data: documents,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ['docs'],
-    queryFn: async () => {
-      const res = await coreApi.getDocumentsByFolderId();
-      if (!res.ok) {
-        throw new Error(res.statusText);
-      }
-      return res.data;
-    },
-  });
+  const { data: documents, isLoading, isError, error } = useDocuments();
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {error.message}</div>;
 

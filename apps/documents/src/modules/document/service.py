@@ -12,7 +12,6 @@ from src.modules.document.repository import DocumentRepository
 from src.modules.document.dtos.request_dtos import DocumentCreate, DocumentUpdate
 from src.modules.document.dtos.response_dtos import (
     DocumentResponse,
-    PresignedUrlResponse,
 )
 from src.modules.object_storage.service import MinioService
 from src.core.config import settings

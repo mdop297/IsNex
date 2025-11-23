@@ -15,7 +15,7 @@ const PreviewPanel = ({
   const closePreview = useDocumentStore((state) => state.closePreview);
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['doc', 'load', fileId],
+    queryKey: ['doc', fileId],
     queryFn: async () => {
       const res = await coreApi.loadDocument(fileId);
       if (!res.ok) {

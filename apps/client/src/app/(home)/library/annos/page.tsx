@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
-import { fake_data } from '../docs/fake_docs';
+import { fake_data } from './fake_docs';
 
 type Folder = {
   name: string;
