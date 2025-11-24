@@ -1,5 +1,8 @@
-import { BodyUploadFile, FileType } from '@/lib/generated/core/data-contracts';
-import { uploadApi } from './useUploadFile';
+import {
+  BodyUploadFile,
+  DocumentResponse,
+  FileType,
+} from '@/lib/generated/core/data-contracts';
 
 // Type definitions
 export interface FileItem {
@@ -35,10 +38,17 @@ export class BackgroundUploadManager {
   private maxConcurrentUploads: number = 3;
   private listeners: Set<(files: FileItem[]) => void> = new Set();
   private isUploadingEnabled: boolean = false;
+  constructor(
+    private uploadFile: (data: BodyUploadFile) => Promise<DocumentResponse>,
+  ) {}
 
-  static getInstance(): BackgroundUploadManager {
+  static getInstance(
+    uploadFile: (data: BodyUploadFile) => Promise<DocumentResponse>,
+  ): BackgroundUploadManager {
     if (!BackgroundUploadManager.instance) {
-      BackgroundUploadManager.instance = new BackgroundUploadManager();
+      BackgroundUploadManager.instance = new BackgroundUploadManager(
+        uploadFile,
+      );
     }
     return BackgroundUploadManager.instance;
   }
@@ -157,7 +167,7 @@ export class BackgroundUploadManager {
         metadata: JSON.stringify(documentCreateData),
       };
 
-      const response = await uploadApi.uploadFile(body);
+      const response = await this.uploadFile(body);
       console.log('Upload response:', response);
 
       this.updateFileStatus(fileItem.id, {

@@ -18,7 +18,7 @@ logger = get_logger(__name__)
 document_router = APIRouter(prefix="/documents", tags=["documents"])
 
 
-# api/v1/documents/
+# api/v1/documents
 @document_router.post("/", response_model=DocumentResponse)
 async def upload_file(
     request: Request,
@@ -27,10 +27,7 @@ async def upload_file(
     document_service: DocumentService = Depends(Factory().get_document_service),
 ):
     try:
-        logger.info("YOU MADE IT, your document is uploaded.")
         data = DocumentCreate.model_validate_json(metadata)
-        logger.info("YOU MADE IT, your document is uploaded.")
-
         data.user_id = request.user.id
         logger.error(data)
         data.file_url = ""
