@@ -297,7 +297,7 @@ const DocumentPage = () => {
 
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 min-w-0">
-                            <span className="flex-shrink-0">📄</span>
+                            <span className="shrink-0">📄</span>
                             <span className="truncate text-sm">{fileName}</span>
                           </div>
                           {fileInfo && (

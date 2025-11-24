@@ -479,12 +479,12 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
                 </Button>
               )}
             </div>
-
-            <div className="max-h-60 space-y-3 overflow-y-auto minimal-scrollbar">
+            {/* File List */}
+            <div className="max-h-60 space-y-2 overflow-y-auto minimal-scrollbar">
               {files.map((fileItem) => (
-                <Card key={fileItem.id} className="py-0">
-                  <CardContent className="flex items-center p-4">
-                    <div className="mr-3 flex-shrink-0">
+                <Card key={fileItem.id} className="p-2!">
+                  <CardContent className="flex items-center gap-2 p-1">
+                    <div className="flex shrink-0 justify-center">
                       {fileItem.status === 'pending' && (
                         <Checkbox
                           checked={fileItem.selected}
@@ -498,14 +498,17 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
                       )}
                     </div>
 
-                    <div className="mr-4 flex-shrink-0">
+                    <div className="shrink-0">
                       {getFileIcon(fileItem.file.type)}
                     </div>
 
-                    <div className="flex-1 min-w-0 space-y-1">
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="truncate text-sm font-medium">
+                        <p className="truncate text-sm font-medium text-center">
                           {fileItem.file.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatFileSize(fileItem.file.size)}
                         </p>
                         <Badge
                           variant={getStatusVariant(fileItem.status)}
@@ -516,10 +519,6 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
                       </div>
 
                       <div className="flex items-center justify-between space-x-2 whitespace-nowrap">
-                        <p className="text-xs text-muted-foreground">
-                          {formatFileSize(fileItem.file.size)}
-                        </p>
-
                         {(fileItem.status === 'uploading' ||
                           fileItem.status === 'completed') && (
                           <>
