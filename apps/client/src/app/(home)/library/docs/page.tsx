@@ -21,21 +21,15 @@ const DocumentPage = () => {
 
   return (
     <>
-      <div className="flex flex-1 h-full w-full p-2 gap-2">
+      <div className="flex flex-1 h-full w-full p-2 gap-2 min-w-0 overflow-hidden">
         {/* Left Panel */}
-        <div className="flex flex-1 flex-col w-full">
+        <div className="flex flex-1 flex-col min-w-0">
           <div className="flex gap-2 items-center">
             <Input
               placeholder="Search documents..."
-              // value={searchQuery}
-              // onChange={onSearchChange}
-              className="flex-grow text-sm"
+              className="flex-1 text-sm"
             />
-            <Button
-              size="sm"
-              onClick={() => alert('Upload coming soon!')}
-              className="shrink-0"
-            >
+            <Button size="sm" className="shrink-0">
               <UploadIcon />
               <span>Upload files</span>
             </Button>
@@ -43,7 +37,6 @@ const DocumentPage = () => {
 
           <div>Breadcrumb</div>
           <div>Folders</div>
-          <div></div>
           <div>
             {documents &&
               documents.map((doc) => (
@@ -53,11 +46,12 @@ const DocumentPage = () => {
         </div>
         {/* Right Panel */}
         {(selectedFiles.size > 0 || isPreviewOpen) && (
-          <div className="flex-1 h-full max-w-1/2">
-            {isPreviewOpen && (
+          <div className="flex-1 max-w-[50%] h-full">
+            {isPreviewOpen ? (
               <PreviewPanel fileId={previewFileId!} fileName={previewFile!} />
+            ) : (
+              selectedFiles.size > 0 && <SelectedFilesPanel />
             )}
-            {!isPreviewOpen && selectedFiles.size > 0 && <SelectedFilesPanel />}
           </div>
         )}
       </div>

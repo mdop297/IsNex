@@ -77,10 +77,9 @@ const DocumentItem = ({ document }: { document: DocumentResponse }) => {
             }`}
             onClick={handleClick}
           >
-            <div className="flex items-center justify-between">
-              {/* File name - truncated when date is visible */}
+            <div className="flex items-center justify-between min-w-0">
               <p
-                className="truncate min-w-0 text-sm max-w-[600px] m-2"
+                className="truncate text-sm m-2 flex-1 min-w-0"
                 onDoubleClick={editName}
               >
                 📄 {document.name}
@@ -96,11 +95,11 @@ const DocumentItem = ({ document }: { document: DocumentResponse }) => {
                 </p>
               </div>
 
-              <div className="gap-2 hidden group-hover:flex justify-center items-center pr-2">
+              <div className="gap-2 hidden group-hover:flex justify-center items-center ">
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="group-hover:block shrink-0 text-xs m-0.5 py-0.5"
+                  className="group-hover:block shrink-0 text-xs m-0.5 py-0.5 rounded!"
                   onClick={editName}
                 >
                   Edit
@@ -110,7 +109,7 @@ const DocumentItem = ({ document }: { document: DocumentResponse }) => {
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="group-hover:block shrink-0 text-xs m-0.5 py-0.5"
+                  className="group-hover:block shrink-0 text-xs m-0.5 py-0.5 rounded!"
                   onClick={handlePreview}
                 >
                   Preview
