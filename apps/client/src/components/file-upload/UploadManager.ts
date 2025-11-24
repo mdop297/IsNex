@@ -1,7 +1,8 @@
-// import { coreApi } from '@/lib/api/documents';
-
-import { Api } from '@/lib/generated/core/Api';
-import { BodyUploadFile, FileType } from '@/lib/generated/core/data-contracts';
+import {
+  BodyUploadFile,
+  DocumentResponse,
+  FileType,
+} from '@/lib/generated/core/data-contracts';
 
 // Type definitions
 export interface FileItem {
@@ -29,13 +30,6 @@ export interface FileUploadFormProps {
   onClose?: () => void;
 }
 
-const api = new Api({
-  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000',
-  baseApiParams: {
-    credentials: 'include',
-  },
-});
-
 // Background Upload Manager with manual control
 export class BackgroundUploadManager {
   private static instance: BackgroundUploadManager;
@@ -44,10 +38,17 @@ export class BackgroundUploadManager {
   private maxConcurrentUploads: number = 3;
   private listeners: Set<(files: FileItem[]) => void> = new Set();
   private isUploadingEnabled: boolean = false;
+  constructor(
+    private uploadFile: (data: BodyUploadFile) => Promise<DocumentResponse>,
+  ) {}
 
-  static getInstance(): BackgroundUploadManager {
+  static getInstance(
+    uploadFile: (data: BodyUploadFile) => Promise<DocumentResponse>,
+  ): BackgroundUploadManager {
     if (!BackgroundUploadManager.instance) {
-      BackgroundUploadManager.instance = new BackgroundUploadManager();
+      BackgroundUploadManager.instance = new BackgroundUploadManager(
+        uploadFile,
+      );
     }
     return BackgroundUploadManager.instance;
   }
@@ -166,7 +167,7 @@ export class BackgroundUploadManager {
         metadata: JSON.stringify(documentCreateData),
       };
 
-      const response = await api.uploadFile(body);
+      const response = await this.uploadFile(body);
       console.log('Upload response:', response);
 
       this.updateFileStatus(fileItem.id, {

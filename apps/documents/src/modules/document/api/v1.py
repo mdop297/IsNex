@@ -9,6 +9,7 @@ from src.modules.document.dtos.response_dtos import (
     DocumentResponse,
     PresignedUrlResponse,
 )
+from src.modules.document.exeptions import DuplicateDocumentError
 from src.modules.document.service import DocumentService
 
 logger = get_logger(__name__)
@@ -18,7 +19,7 @@ logger = get_logger(__name__)
 document_router = APIRouter(prefix="/documents", tags=["documents"])
 
 
-# api/v1/documents/
+# api/v1/documents
 @document_router.post("/", response_model=DocumentResponse)
 async def upload_file(
     request: Request,
@@ -27,19 +28,17 @@ async def upload_file(
     document_service: DocumentService = Depends(Factory().get_document_service),
 ):
     try:
-        logger.info("YOU MADE IT, your document is uploaded.")
         data = DocumentCreate.model_validate_json(metadata)
-        logger.info("YOU MADE IT, your document is uploaded.")
-
         data.user_id = request.user.id
         logger.error(data)
         data.file_url = ""
         document = await document_service.create(
             file=file, user_id=request.user.id, data=data
         )
-
         return document
 
+    except DuplicateDocumentError:
+        raise HTTPException(status_code=409, detail="Document already exists")
     except S3Error as e:
         raise HTTPException(status_code=500, detail=f"MinIO error: {str(e)}") from e
     except Exception as e:

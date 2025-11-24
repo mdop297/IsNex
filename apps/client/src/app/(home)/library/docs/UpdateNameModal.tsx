@@ -54,42 +54,50 @@ const UpdateNameModal: React.FC<UpdateNameModalProps> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent
-        className="sm:max-w-2/5"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <DialogHeader>
-          <DialogTitle>Rename your document</DialogTitle>
-        </DialogHeader>
+    <div
+      className="w-full h-full"
+      onClick={(e) => e.stopPropagation()}
+      onContextMenu={(e) => e.stopPropagation()}
+    >
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-2/5">
+          <DialogHeader>
+            <DialogTitle>Rename your document</DialogTitle>
+          </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="document-name" className="text-right">
-              New name
-            </Label>
-            <Input
-              id="document-name"
-              ref={inputRef}
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && !isPending && handleSave()}
-              disabled={isPending}
-              className="col-span-3"
-            />
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="document-name" className="text-right">
+                New name
+              </Label>
+              <Input
+                id="document-name"
+                ref={inputRef}
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                onKeyDown={(e) =>
+                  e.key === 'Enter' && !isPending && handleSave()
+                }
+                disabled={isPending}
+                className="col-span-3"
+              />
+            </div>
           </div>
-        </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={isPending}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave} disabled={isPending || !newName.trim()}>
-            {isPending ? 'Saving...' : 'Save changes'}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DialogFooter>
+            <Button variant="outline" onClick={onClose} disabled={isPending}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={isPending || !newName.trim()}
+            >
+              {isPending ? 'Saving...' : 'Save changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 

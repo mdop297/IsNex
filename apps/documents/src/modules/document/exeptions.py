@@ -1,5 +1,6 @@
 class DocumentError(Exception):
-    pass
+    status_code = 500
+    
 
 
 class DocumentNotFoundError(DocumentError):
@@ -7,7 +8,7 @@ class DocumentNotFoundError(DocumentError):
 
 
 class DuplicateDocumentError(DocumentError):
-    pass
+    status_code = 409
 
 
 class StorageError(DocumentError):

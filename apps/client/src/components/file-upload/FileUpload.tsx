@@ -38,6 +38,7 @@ import {
   FileStatus,
   FileUploadFormProps,
 } from './UploadManager';
+import { useUploadFile } from './useUploadFile';
 
 // File type checking utilities
 const IMAGE_TYPES = [
@@ -76,8 +77,7 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
 }) => {
   const [files, setFiles] = useState<FileItem[]>([]);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  //  eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [showWarning, setShowWarning] = useState<boolean>(false);
+  const [, setShowWarning] = useState<boolean>(false);
   const [uploadStats, setUploadStats] = useState({
     total: 0,
     selected: 0,
@@ -88,7 +88,11 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
     pendingSelected: 0,
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const uploadManager = BackgroundUploadManager.getInstance();
+  const { mutateAsync: uploadFile } = useUploadFile();
+  const uploadManager = BackgroundUploadManager.getInstance(async (data) => {
+    const res = await uploadFile(data);
+    return res.data;
+  });
 
   // Listen to background upload updates
   useEffect(() => {
