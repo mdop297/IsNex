@@ -19,6 +19,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useDeleteDocument } from './useDeleteDocument';
+import { toast } from 'sonner';
 
 const DocumentItem = ({ document }: { document: DocumentResponse }) => {
   const selectedFiles = useDocumentStore((state) => state.selectedFiles);
@@ -60,6 +61,7 @@ const DocumentItem = ({ document }: { document: DocumentResponse }) => {
     if (selectedFiles.has(document.name)) {
       toggleFileSelection(document.name);
     }
+    toast.success('Document deleted successfully');
   };
 
   return (
