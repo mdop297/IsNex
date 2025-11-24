@@ -16,6 +16,9 @@ const DocumentPage = () => {
   const previewFile = useDocumentStore((state) => state.previewFile);
 
   const { data: documents, isLoading, isError, error } = useDocuments();
+
+  const showRightPanel = selectedFiles.size > 0 || isPreviewOpen;
+
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {error.message}</div>;
 
@@ -23,7 +26,9 @@ const DocumentPage = () => {
     <>
       <div className="flex flex-1 h-full w-full p-2 gap-2 min-w-0 overflow-hidden">
         {/* Left Panel */}
-        <div className="flex flex-1 flex-col min-w-0">
+        <div
+          className={`flex flex-1 flex-col min-w-0 duration-300 transition-all`}
+        >
           <div className="flex gap-2 items-center">
             <Input
               placeholder="Search documents..."
@@ -37,23 +42,30 @@ const DocumentPage = () => {
 
           <div>Breadcrumb</div>
           <div>Folders</div>
-          <div>
+          <div className="overflow-auto">
             {documents &&
               documents.map((doc) => (
                 <DocumentItem document={doc} key={doc.id} />
               ))}
           </div>
         </div>
+
         {/* Right Panel */}
-        {(selectedFiles.size > 0 || isPreviewOpen) && (
-          <div className="flex-1 max-w-[50%] h-full">
+        <div
+          className={`transition-all duration-300 ease-in-out overflow-hidden ${
+            showRightPanel
+              ? 'flex-1 max-w-[50%] opacity-100'
+              : 'w-0 max-w-0 opacity-0'
+          }`}
+        >
+          <div className="h-full w-full">
             {isPreviewOpen ? (
               <PreviewPanel fileId={previewFileId!} fileName={previewFile!} />
             ) : (
               selectedFiles.size > 0 && <SelectedFilesPanel />
             )}
           </div>
-        )}
+        </div>
       </div>
     </>
   );
