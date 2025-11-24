@@ -6,7 +6,7 @@ from minio import S3Error
 from src.core.service.base import BaseService
 from src.core.utils.logger import get_logger
 from src.core.utils.utils import format_file_size
-from src.modules.document.exeptions import DocumentError, StorageError
+from src.modules.document.exeptions import DocumentError, DuplicateDocumentError, StorageError
 from src.modules.document.model import Document
 from src.modules.document.repository import DocumentRepository
 from src.modules.document.dtos.request_dtos import DocumentCreate, DocumentUpdate
@@ -225,10 +225,7 @@ class DocumentService(
         if exists_doc:
             if not allow_overwrite:
                 logger.error(f"File '{file.filename}' already exists. ")
-                raise DocumentError(
-                    f"File '{file.filename}' already exists. "
-                    "Please upload a new file or use another name."
-                )
+                raise DuplicateDocumentError()
 
             # TODO : publish event to update document id / remove document id in vector db
             await self.minio_service.remove_obj(
