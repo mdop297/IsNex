@@ -38,7 +38,7 @@ async def get_folder_by_id(request: Request, id: UUID, folder_service: FolderSer
 async def update_folder(
     request: Request, id: UUID, data: FolderUpdate, folder_service: FolderServiceDep
 ):
-    result = folder_service.update(request.user.id, id, data)
+    result = await folder_service.update(request.user.id, id, data)
     return result
 
 
