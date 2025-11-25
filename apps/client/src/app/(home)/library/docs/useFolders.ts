@@ -16,6 +16,19 @@ export const useFolders = () =>
     staleTime: 60_000 * 30,
   });
 
+export const useFolder = (id: string) =>
+  useQuery({
+    queryKey: ['folder', id],
+    queryFn: async () => {
+      const res = await coreApi.getFolderById(id);
+      if (!res.ok) {
+        throw new Error(res.statusText);
+      }
+      return res.data;
+    },
+    staleTime: 60_000 * 30,
+  });
+
 export const useCreateFolder = (onClose?: () => void) => {
   const queryClient = useQueryClient();
   return useMutation({
