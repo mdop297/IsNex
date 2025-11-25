@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
@@ -9,3 +10,4 @@ class FolderResponse(BaseModel):
     parent_id: UUID
     name: str
     path: str
+    updated_at: datetime
