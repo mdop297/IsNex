@@ -14,6 +14,7 @@ logger = get_logger(__name__)
 
 class FolderRepository(BaseRepository[Folder, FolderCreate, FolderUpdate]):
     def __init__(self, session: AsyncSession):
+        super().__init__(Folder, session)
         self.session = session
 
     def get_all_by_user_id(self, user_id: UUID, skip: int = 0, limit: int = 100):

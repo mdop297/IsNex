@@ -22,7 +22,7 @@ const SelectedFilesPanel = () => {
           className="shrink-0"
           onClick={clearSelection}
         >
-          Close Preview <span>✕</span>
+          Remove All <span>✕</span>
         </Button>
       </div>
 
@@ -41,7 +41,7 @@ const SelectedFilesPanel = () => {
               <Button
                 size="sm"
                 variant="ghost"
-                className="shrink-0 text-xs"
+                className="shrink-0 text-xs rounded"
                 onClick={() => toggleFileSelection(fileName)}
               >
                 Remove

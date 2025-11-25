@@ -70,7 +70,7 @@ const DocumentItem = ({ document }: { document: DocumentResponse }) => {
         <ContextMenuTrigger asChild>
           <div
             key={document.id}
-            className={`group relative my-0.5 cursor-pointer rounded border transition-all ${
+            className={`group relative my-1 cursor-pointer rounded border ${
               selectedFiles.has(document.name)
                 ? 'bg-item-selected '
                 : 'border-transparent hover:bg-item-hover'
@@ -79,7 +79,7 @@ const DocumentItem = ({ document }: { document: DocumentResponse }) => {
           >
             <div className="flex items-center justify-between min-w-0">
               <p
-                className="truncate text-sm m-2 flex-1 min-w-0"
+                className="truncate text-sm m-1 flex-1 min-w-0"
                 onDoubleClick={editName}
               >
                 📄 {document.name}
@@ -95,11 +95,11 @@ const DocumentItem = ({ document }: { document: DocumentResponse }) => {
                 </p>
               </div>
 
-              <div className="gap-2 hidden group-hover:flex justify-center items-center ">
+              <div className="gap-1 hidden group-hover:flex justify-center items-center ">
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="group-hover:block shrink-0 text-xs m-0.5 py-0.5 rounded!"
+                  className="group-hover:block shrink-0 text-xs m-0.5 py-0.5 rounded! h-6! px-2!"
                   onClick={editName}
                 >
                   Edit
@@ -109,7 +109,7 @@ const DocumentItem = ({ document }: { document: DocumentResponse }) => {
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="group-hover:block shrink-0 text-xs m-0.5 py-0.5 rounded!"
+                  className="group-hover:block shrink-0 text-xs m-0.5 rounded! h-6! px-2!"
                   onClick={handlePreview}
                 >
                   Preview
