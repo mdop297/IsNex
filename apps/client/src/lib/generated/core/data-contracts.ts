@@ -167,8 +167,6 @@ export interface DocumentUpdate {
 
 /** FolderCreate */
 export interface FolderCreate {
-  /** User Id */
-  user_id?: string | null;
   /**
    * Parent Id
    * parent folder id
@@ -195,15 +193,17 @@ export interface FolderResponse {
    * @format uuid
    */
   id: string;
-  /**
-   * Parent Id
-   * @format uuid
-   */
-  parent_id: string;
+  /** Parent Id */
+  parent_id?: string | null;
   /** Name */
   name: string;
   /** Path */
   path: string;
+  /**
+   * Updated At
+   * @format date-time
+   */
+  updated_at: string;
 }
 
 /** FolderUpdate */
