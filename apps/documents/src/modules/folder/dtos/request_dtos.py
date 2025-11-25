@@ -1,10 +1,12 @@
 from typing import Optional
 from uuid import UUID
 from pydantic import BaseModel, Field
+from pydantic.json_schema import SkipJsonSchema
 
 
 class FolderCreate(BaseModel):
-    user_id: Optional[UUID] = Field(None, exclude=True)
+    user_id: SkipJsonSchema[Optional[UUID]] = Field(default=None)
+
 
     parent_id: Optional[UUID] = Field(default=None, description="parent folder id")
     name: str = Field(default="Untitled", description="name of the folder")
