@@ -11,5 +11,5 @@ export const useDocuments = () =>
       }
       return res.data;
     },
-    staleTime: 60_000 * 15,
+    staleTime: 60_000 * 30,
   });
