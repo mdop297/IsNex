@@ -4,7 +4,6 @@ import { DocumentResponse } from '@/lib/generated/core/data-contracts';
 import { formatDateTime } from '@/lib/utils';
 import React, { useState } from 'react';
 import { useDocumentStore } from './useDocumentStore';
-import UpdateNameModal from './UpdateNameModal';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -20,6 +19,8 @@ import {
 } from '@/components/ui/dialog';
 import { useDeleteDocument } from './useDeleteDocument';
 import { toast } from 'sonner';
+import RenameModal from './UpdateNameModal';
+import { useUpdateDocuments } from './useUpdateDocuments';
 
 const DocumentItem = ({ document }: { document: DocumentResponse }) => {
   const selectedFiles = useDocumentStore((state) => state.selectedFiles);
@@ -28,6 +29,7 @@ const DocumentItem = ({ document }: { document: DocumentResponse }) => {
     (state) => state.toggleFileSelection,
   );
 
+  const { mutate: updateDocumentName } = useUpdateDocuments();
   const { mutate: deleteDocument, isPending: isDeletingPending } =
     useDeleteDocument();
 
@@ -117,18 +119,21 @@ const DocumentItem = ({ document }: { document: DocumentResponse }) => {
               </div>
             </div>
 
-            <UpdateNameModal
+            <RenameModal
               isOpen={isEditing}
               onClose={() => setIsEditing(false)}
               currentName={document.name}
-              documentId={document.id}
+              entityId={document.id}
+              onRename={(id, newName) =>
+                updateDocumentName({ id, data: { name: newName } })
+              }
             />
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent>
-          <ContextMenuItem onClick={handlePreview}>Preview</ContextMenuItem>
+          {/* <ContextMenuItem onClick={handlePreview}>Preview</ContextMenuItem> */}
           <ContextMenuItem>Add to workspace</ContextMenuItem>
-          <ContextMenuItem onClick={editName}>Edit name</ContextMenuItem>
+          <ContextMenuItem onClick={editName}>Rename</ContextMenuItem>
           <ContextMenuItem
             variant="destructive"
             onClick={() => setIsDeleting(true)}

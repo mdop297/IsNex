@@ -9,25 +9,25 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import React, { useState, useEffect, useRef } from 'react';
-import { useUpdateDocuments } from './useUpdateDocuments';
 
-interface UpdateNameModalProps {
+interface RenameModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentName: string;
-  documentId: string;
+  entityId: string;
+  onRename: (id: string, newName: string) => void; // 🔥 key change
+  title?: string; // optional UI customization
 }
-
-const UpdateNameModal: React.FC<UpdateNameModalProps> = ({
+const RenameModal: React.FC<RenameModalProps> = ({
   isOpen,
   onClose,
   currentName,
-  documentId,
+  entityId,
+  onRename,
+  title = 'Rename',
 }) => {
   const [newName, setNewName] = useState(currentName);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const { mutate, isPending } = useUpdateDocuments();
 
   useEffect(() => {
     if (isOpen) {
@@ -43,14 +43,8 @@ const UpdateNameModal: React.FC<UpdateNameModalProps> = ({
     const trimmedName = newName.trim();
     if (!trimmedName || trimmedName === currentName) return onClose();
 
-    mutate(
-      { id: documentId, data: { name: trimmedName } },
-      {
-        onSuccess: () => {
-          onClose();
-        },
-      },
-    );
+    onRename(entityId, trimmedName);
+    onClose();
   };
 
   return (
@@ -62,37 +56,31 @@ const UpdateNameModal: React.FC<UpdateNameModalProps> = ({
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-2/5">
           <DialogHeader>
-            <DialogTitle>Rename your document</DialogTitle>
+            <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="document-name" className="text-right">
+              <Label htmlFor="rename-input" className="text-right">
                 New name
               </Label>
               <Input
-                id="document-name"
+                id="rename-input"
                 ref={inputRef}
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                onKeyDown={(e) =>
-                  e.key === 'Enter' && !isPending && handleSave()
-                }
-                disabled={isPending}
+                onKeyDown={(e) => e.key === 'Enter' && handleSave()}
                 className="col-span-3"
               />
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={onClose} disabled={isPending}>
+            <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button
-              onClick={handleSave}
-              disabled={isPending || !newName.trim()}
-            >
-              {isPending ? 'Saving...' : 'Save changes'}
+            <Button onClick={handleSave} disabled={!newName.trim()}>
+              Save changes
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -101,4 +89,4 @@ const UpdateNameModal: React.FC<UpdateNameModalProps> = ({
   );
 };
 
-export default UpdateNameModal;
+export default RenameModal;

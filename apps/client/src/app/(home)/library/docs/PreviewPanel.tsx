@@ -2,8 +2,7 @@ import { Button } from '@/components/ui/button';
 import React from 'react';
 import { useDocumentStore } from './useDocumentStore';
 import PDFPreview from '@/components/pdf/PDFViewer/PDFPreview';
-import { useQuery } from '@tanstack/react-query';
-import { coreApi } from '@/lib/api';
+import { useDocument } from './useDocuments';
 
 const PreviewPanel = ({
   fileId,
@@ -14,17 +13,7 @@ const PreviewPanel = ({
 }) => {
   const closePreview = useDocumentStore((state) => state.closePreview);
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['doc', fileId],
-    queryFn: async () => {
-      const res = await coreApi.loadDocument(fileId);
-      if (!res.ok) {
-        throw new Error(res.statusText);
-      }
-      console.log(res.data);
-      return res.data;
-    },
-  });
+  const { data, isLoading, isError, error } = useDocument(fileId);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {error.message}</div>;
