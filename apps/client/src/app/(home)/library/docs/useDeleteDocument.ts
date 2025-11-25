@@ -1,7 +1,6 @@
 import { coreApi } from '@/lib/api';
 import { DocumentResponse } from '@/lib/generated/core/data-contracts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { id } from 'zod/v4/locales';
 
 export const useDeleteDocument = () => {
   const queryClient = useQueryClient();
@@ -35,9 +34,12 @@ export const useDeleteDocument = () => {
       if (context?.previousDocs)
         queryClient.setQueryData(['docs'], context.previousDocs);
       if (context?.previousDoc)
-        queryClient.setQueryData(['doc', id], context.previousDoc);
+        queryClient.setQueryData(
+          ['doc', context.previousDoc.id],
+          context.previousDoc,
+        );
     },
-    onSettled: () => {
+    onSettled: (_, __, id) => {
       queryClient.invalidateQueries({ queryKey: ['docs'] });
       queryClient.invalidateQueries({ queryKey: ['doc', id] });
     },
