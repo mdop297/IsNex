@@ -21,6 +21,7 @@ import { useDeleteDocument } from './useDeleteDocument';
 import { toast } from 'sonner';
 import RenameModal from './UpdateNameModal';
 import { useUpdateDocuments } from './useUpdateDocuments';
+import { Edit2, View } from 'lucide-react';
 
 const DocumentItem = ({ document }: { document: DocumentResponse }) => {
   const selectedFiles = useDocumentStore((state) => state.selectedFiles);
@@ -82,7 +83,7 @@ const DocumentItem = ({ document }: { document: DocumentResponse }) => {
             <div className="flex items-center justify-between min-w-0">
               <p
                 className="truncate text-sm m-1 flex-1 min-w-0"
-                onDoubleClick={editName}
+                // onDoubleClick={editName}
               >
                 📄 {document.name}
               </p>
@@ -104,7 +105,7 @@ const DocumentItem = ({ document }: { document: DocumentResponse }) => {
                   className="group-hover:block shrink-0 text-xs m-0.5 py-0.5 rounded! h-6! px-2!"
                   onClick={editName}
                 >
-                  Edit
+                  <Edit2 />
                 </Button>
 
                 {/* Preview button */}
@@ -114,7 +115,7 @@ const DocumentItem = ({ document }: { document: DocumentResponse }) => {
                   className="group-hover:block shrink-0 text-xs m-0.5 rounded! h-6! px-2!"
                   onClick={handlePreview}
                 >
-                  Preview
+                  <View />
                 </Button>
               </div>
             </div>

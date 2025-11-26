@@ -1,359 +1,303 @@
 'use client';
+import React, { useState } from 'react';
+import { Folder, File, ChevronRight, ChevronDown } from 'lucide-react';
 
-import PDFPreview from '@/components/pdf/PDFViewer/PDFPreview';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useState } from 'react';
-import { fake_data } from './fake_docs';
+const FileExplorer = () => {
+  // Load từ memory hoặc có thể dùng storage API
+  const [items, setItems] = useState([
+    {
+      id: '1',
+      name: 'Documents',
+      type: 'folder',
+      parent_id: null,
+      expanded: true,
+    },
+    {
+      id: '2',
+      name: 'Pictures',
+      type: 'folder',
+      parent_id: null,
+      expanded: false,
+    },
+    { id: '3', name: 'Work', type: 'folder', parent_id: '1', expanded: false },
+    {
+      id: '4',
+      name: 'Personal',
+      type: 'folder',
+      parent_id: '1',
+      expanded: false,
+    },
+    { id: '5', name: 'report.pdf', type: 'file', parent_id: '1' },
+    {
+      id: '6',
+      name: 'Vacation',
+      type: 'folder',
+      parent_id: '2',
+      expanded: false,
+    },
+    { id: '7', name: 'photo1.jpg', type: 'file', parent_id: '2' },
+    {
+      id: '8',
+      name: 'Downloads',
+      type: 'folder',
+      parent_id: null,
+      expanded: false,
+    },
+  ]);
 
-type Folder = {
-  name: string;
-  folders: Folder[];
-  files: FileInfo[];
-};
+  const [draggedItem, setDraggedItem] = useState(null);
+  const [dropTarget, setDropTarget] = useState(null);
+  const [dropPosition, setDropPosition] = useState(null); // 'inside', 'before', 'after'
+  const [hoverTimeout, setHoverTimeout] = useState(null);
 
-type FileInfo = {
-  name: string;
-  uploadedDate: string;
-};
-
-const fileUrl1 = '/temp/48.pdf';
-
-const DocumentPage = () => {
-  const [openPreview, setOpenPreview] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [previewFile, setPreviewFile] = useState<string | null>(null);
-  const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
-  const [data] = useState<Folder>(fake_data);
-
-  // Track current folder path as array of folder names, empty = root
-  const [currentPath, setCurrentPath] = useState<string[]>([]);
-
-  // Find folder node by path recursively
-  const findFolderByPath = (folder: Folder, path: string[]): Folder => {
-    if (path.length === 0) return folder;
-    const [next, ...rest] = path;
-    const nextFolder = folder.folders.find((f) => f.name === next);
-    if (!nextFolder) return folder;
-    return findFolderByPath(nextFolder, rest);
+  const handleDragStart = (e, item) => {
+    setDraggedItem(item);
+    e.dataTransfer.effectAllowed = 'move';
   };
 
-  // Current folder node
-  const currentFolder = findFolderByPath(data, currentPath);
+  const handleDragOver = (e, item) => {
+    e.preventDefault();
+    if (!draggedItem || draggedItem.id === item.id) return;
 
-  // Handlers
-  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseY = e.clientY - rect.top;
+    const height = rect.height;
 
-  const onPreviewClick = (file: string) => {
-    setPreviewFile(file);
-    setOpenPreview(true);
-  };
-
-  const onFileSelect = (fileName: string) => {
-    setSelectedFiles((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(fileName)) {
-        newSet.delete(fileName);
+    // Xác định vùng drop: trên (20%), giữa (60%), dưới (20%)
+    let position;
+    if (item.type === 'folder') {
+      if (mouseY < height * 0.25) {
+        position = 'before';
+      } else if (mouseY > height * 0.75) {
+        position = 'after';
       } else {
-        newSet.add(fileName);
+        position = 'inside';
       }
-      return newSet;
-    });
+    } else {
+      // File chỉ có before/after
+      position = mouseY < height * 0.5 ? 'before' : 'after';
+    }
+
+    setDropTarget(item.id);
+    setDropPosition(position);
+    e.dataTransfer.dropEffect = 'move';
+
+    // Auto-expand folder sau 800ms khi hover vào giữa (inside)
+    if (item.type === 'folder' && !item.expanded && position === 'inside') {
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+      }
+
+      const timeout = setTimeout(() => {
+        setItems((prevItems) =>
+          prevItems.map((i) =>
+            i.id === item.id ? { ...i, expanded: true } : i,
+          ),
+        );
+      }, 800);
+
+      setHoverTimeout(timeout);
+    } else if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
   };
 
-  const onFolderClick = (folderName: string) => {
-    setCurrentPath((prev) => [...prev, folderName]);
-    setPreviewFile(null);
-    setOpenPreview(false);
+  const handleDragLeave = () => {
+    setDropTarget(null);
+    setDropPosition(null);
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
   };
 
-  const onBreadcrumbClick = (index: number) => {
-    setCurrentPath(currentPath.slice(0, index));
-    setPreviewFile(null);
-    setOpenPreview(false);
+  const handleDrop = (e, targetItem) => {
+    e.preventDefault();
+
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
+
+    if (!draggedItem || draggedItem.id === targetItem.id) {
+      setDropTarget(null);
+      setDropPosition(null);
+      return;
+    }
+
+    // Kiểm tra không thể move folder vào chính nó hoặc vào con của nó
+    if (
+      dropPosition === 'inside' &&
+      isDescendant(draggedItem.id, targetItem.id)
+    ) {
+      alert('Không thể di chuyển folder vào chính nó hoặc folder con của nó!');
+      setDropTarget(null);
+      setDropPosition(null);
+      setDraggedItem(null);
+      return;
+    }
+
+    let newParentId;
+
+    if (dropPosition === 'inside') {
+      // Thả vào trong folder
+      newParentId = targetItem.id;
+    } else {
+      // Thả trước/sau = cùng cấp với targetItem
+      newParentId = targetItem.parent_id;
+    }
+
+    // Cập nhật parent_id của item được kéo
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === draggedItem.id ? { ...item, parent_id: newParentId } : item,
+      ),
+    );
+
+    // Auto-expand folder đích nếu drop vào inside
+    if (dropPosition === 'inside' && targetItem.type === 'folder') {
+      setItems((prevItems) =>
+        prevItems.map((item) =>
+          item.id === targetItem.id ? { ...item, expanded: true } : item,
+        ),
+      );
+    }
+
+    setDropTarget(null);
+    setDropPosition(null);
+    setDraggedItem(null);
   };
 
-  const closePreview = () => {
-    setOpenPreview(false);
-    setPreviewFile(null);
+  const isDescendant = (parentId, childId) => {
+    let current = items.find((item) => item.id === childId);
+    while (current && current.parent_id) {
+      if (current.parent_id === parentId) return true;
+      current = items.find((item) => item.id === current.parent_id);
+    }
+    return false;
   };
 
-  const openWorkspace = () => {
-    // Tạo object workspace data để trả về
-    const workspaceData = {
-      selectedFiles: Array.from(selectedFiles),
-      currentPath: currentPath,
-      timestamp: new Date().toISOString(),
-      folderContext: currentFolder.name,
-    };
-
-    console.log('Opening workspace with:', workspaceData);
-    alert(`Workspace data: ${JSON.stringify(workspaceData, null, 2)}`);
-
-    // Trong tương lai, sẽ navigate hoặc open workspace với workspaceData
-    // router.push(`/workspace?data=${encodeURIComponent(JSON.stringify(workspaceData))}`);
+  const toggleExpand = (id) => {
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, expanded: !item.expanded } : item,
+      ),
+    );
   };
 
-  // Filter files and folders by search query if any
-  const filteredFolders = currentFolder.folders.filter((f) =>
-    f.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-  const filteredFiles = currentFolder.files.filter((f) =>
-    f.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  // Level được tính tự động khi render, không cần lưu trong database
+  const renderItems = (parentId = null, level = 0) => {
+    return items
+      .filter((item) => item.parent_id === parentId)
+      .map((item) => {
+        const hasChildren = items.some((child) => child.parent_id === item.id);
+        const isBeingDragged = draggedItem?.id === item.id;
+        const isDropZone = dropTarget === item.id;
 
-  // Helper function to format date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+        // Xác định border style dựa vào position
+        let borderClass = 'border-2 border-transparent';
+        if (isDropZone) {
+          if (dropPosition === 'before') {
+            borderClass =
+              'border-t-4 border-t-blue-500 border-x-2 border-b-2 border-transparent';
+          } else if (dropPosition === 'after') {
+            borderClass =
+              'border-b-4 border-b-blue-500 border-x-2 border-t-2 border-transparent';
+          } else if (dropPosition === 'inside') {
+            borderClass = 'border-2 border-blue-400 bg-blue-50';
+          }
+        }
+
+        return (
+          <div key={item.id}>
+            <div
+              draggable
+              onDragStart={(e) => handleDragStart(e, item)}
+              onDragOver={(e) => handleDragOver(e, item)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, item)}
+              className={`flex items-center gap-2 py-2 px-3 rounded cursor-move hover:bg-gray-100 transition-colors ${
+                isBeingDragged ? 'opacity-50 bg-blue-50' : ''
+              } ${borderClass}`}
+              style={{ marginLeft: `${level * 24}px` }}
+            >
+              {item.type === 'folder' && hasChildren && (
+                <button
+                  onClick={() => toggleExpand(item.id)}
+                  className="w-4 h-4 flex items-center justify-center hover:bg-gray-200 rounded"
+                >
+                  {item.expanded ? (
+                    <ChevronDown size={16} />
+                  ) : (
+                    <ChevronRight size={16} />
+                  )}
+                </button>
+              )}
+              {item.type === 'folder' && !hasChildren && (
+                <div className="w-4" />
+              )}
+              {item.type === 'folder' ? (
+                <Folder size={18} className="text-yellow-500" />
+              ) : (
+                <File size={18} className="text-gray-600" />
+              )}
+              <span className="text-sm select-none">{item.name}</span>
+            </div>
+            {item.type === 'folder' &&
+              item.expanded &&
+              renderItems(item.id, level + 1)}
+          </div>
+        );
+      });
   };
 
   return (
-    <div className="flex-1 flex flex-row gap-4 h-full min-w-0 w-full">
-      {/* Left Panel */}
-      <div
-        className={`flex flex-col gap-4 border rounded p-3 shadow-sm transition-all  ${
-          openPreview || selectedFiles.size > 0
-            ? 'w-[500px] shrink-0'
-            : 'flex-1 '
-        }`}
-      >
-        {/* Search & Upload */}
-        <div className="flex gap-2">
-          <Input
-            placeholder="Search documents..."
-            value={searchQuery}
-            onChange={onSearchChange}
-            className="flex-grow text-sm"
-          />
-          <Button
-            size="sm"
-            onClick={() => alert('Upload coming soon!')}
-            className="shrink-0"
-          >
-            Upload
-          </Button>
+    <div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+      <div className="mb-4">
+        <h2 className="text-xl font-bold mb-2">
+          File Explorer - Drag & Drop Demo
+        </h2>
+        <div className="text-sm text-gray-600 space-y-1">
+          <p>
+            • <strong>Thả vào giữa folder</strong>: Di chuyển vào trong folder
+          </p>
+          <p>
+            • <strong>Thả vào trên/dưới folder</strong>: Di chuyển cùng cấp với
+            folder đó
+          </p>
+          <p>• Hover 0.8s vào giữa folder đóng để tự động mở</p>
         </div>
-
-        {/* Breadcrumb */}
-        <Breadcrumb className="mb-2">
-          <BreadcrumbList>
-            <BreadcrumbItem
-              onClick={() => onBreadcrumbClick(0)}
-              className="cursor-pointer hover:underline text-sm"
-            >
-              Root
-            </BreadcrumbItem>
-            {currentPath.map((folder, idx) => (
-              <div key={idx} className="flex items-center">
-                <BreadcrumbSeparator />
-                <BreadcrumbItem
-                  onClick={() => onBreadcrumbClick(idx + 1)}
-                  className="cursor-pointer hover:underline text-sm"
-                >
-                  {folder}
-                </BreadcrumbItem>
-              </div>
-            ))}
-          </BreadcrumbList>
-        </Breadcrumb>
-
-        {/* Folders */}
-        {filteredFolders.length !== 0 && (
-          <div className="max-h-[30vh] lg:max-h-[35vh] overflow-auto">
-            <h3 className="font-semibold mb-2 text-sm lg:text-base">Folders</h3>
-            {filteredFolders.map((folder) => (
-              <div
-                key={folder.name}
-                className="p-2 cursor-pointer hover:bg-sidebar-border rounded text-sm"
-                onClick={() => onFolderClick(folder.name)}
-              >
-                📁 {folder.name}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Files */}
-        {filteredFiles.length !== 0 && (
-          <div className="max-h-[35vh] lg:max-h-[40vh] overflow-auto">
-            <h3 className="font-semibold mb-2 text-sm lg:text-base">Files</h3>
-            {filteredFiles.map((fileInfo) => (
-              <div
-                key={fileInfo.name}
-                className={`group relative p-2 cursor-pointer rounded border transition-all ${
-                  selectedFiles.has(fileInfo.name)
-                    ? 'bg-item-selected '
-                    : 'border-transparent hover:bg-item-hover'
-                }`}
-                onClick={() => onFileSelect(fileInfo.name)}
-              >
-                <div className="flex items-center justify-between">
-                  {/* File name - truncated when date is visible */}
-                  <p className="truncate min-w-0 mr-2 text-sm max-w-[600px]">
-                    📄 {fileInfo.name}
-                  </p>
-
-                  {/* Date */}
-                  <p className="text-xs text-muted-foreground whitespace-nowrap group-hover:hidden shrink-0">
-                    {formatDate(fileInfo.uploadedDate)}
-                  </p>
-
-                  {/* Preview button */}
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="group-hover:block shrink-0 text-xs h-fit py-0.5 hidden m-0"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onPreviewClick(fileInfo.name);
-                    }}
-                  >
-                    Preview
-                  </Button>
-                </div>
-
-                {/* Selected indicator */}
-                {selectedFiles.has(fileInfo.name) && (
-                  <div className="absolute top-1 right-1">
-                    <div className="w-2 h-2 file-item-selected-indicator rounded-full"></div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
-      {/* Right Panel */}
-      {(selectedFiles.size > 0 || openPreview) && (
-        <div className="flex-1 flex flex-col gap-4 min-w-0 w-full ">
-          {/* PDF Preview Panel */}
-          {openPreview && previewFile && (
-            <div className="border rounded p-3 flex flex-col flex-1 overflow-hidden">
-              <div className="mb-2 flex justify-between items-center gap-2 min-w-0">
-                <h3 className="font-semibold text-base truncate mr-2 ">
-                  {previewFile}
-                </h3>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={closePreview}
-                  className="shrink-0 items-center"
-                >
-                  Close Preview <span>✕</span>
-                </Button>
-              </div>
-              <div className="flex-1">
-                <PDFPreview fileUrl={fileUrl1} />
-              </div>
-            </div>
+      <div className="border rounded-lg p-4 bg-gray-50 min-h-[400px]">
+        {renderItems()}
+      </div>
+
+      <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+        <h3 className="font-semibold text-sm mb-2">
+          📦 Dữ liệu lưu trữ (chỉ cần id + parent_id):
+        </h3>
+        <pre className="text-xs bg-white p-3 rounded overflow-auto max-h-40">
+          {JSON.stringify(
+            items.map((item) => ({
+              id: item.id,
+              name: item.name,
+              type: item.type,
+              parent_id: item.parent_id,
+              // Không cần lưu level - tự tính khi render!
+            })),
+            null,
+            2,
           )}
-
-          {/* Selected Files Panel */}
-          {!openPreview && selectedFiles.size > 0 && (
-            <div className="flex-1 border rounded shadow-sm p-3 lg:p-4 flex flex-col max-h-screen">
-              <h3 className="font-semibold text-base lg:text-lg mb-4">
-                Selected Files ({selectedFiles.size})
-              </h3>
-
-              <div className="overflow-auto mb-4 ">
-                {Array.from(selectedFiles).map((fileName) => {
-                  const findFileInfo = (
-                    folder: Folder,
-                    name: string,
-                  ): FileInfo | null => {
-                    const fileInfo = folder.files.find((f) => f.name === name);
-                    if (fileInfo) return fileInfo;
-
-                    for (const subfolder of folder.folders) {
-                      const found = findFileInfo(subfolder, name);
-                      if (found) return found;
-                    }
-                    return null;
-                  };
-
-                  const fileInfo = findFileInfo(data, fileName);
-
-                  return (
-                    <div
-                      key={fileName}
-                      className="group p-2 cursor-pointer rounded hover:file-item-hover transition-all border border-transparent hover:border overflow-hidden"
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div className="w-2 h-2 file-item-selected-indicator rounded-full flex-shrink-0"></div>
-
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className="shrink-0">📄</span>
-                            <span className="truncate text-sm">{fileName}</span>
-                          </div>
-                          {fileInfo && (
-                            <div className="text-xs text-muted-foreground mt-1">
-                              {formatDate(fileInfo.uploadedDate)}
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="hidden group-hover:flex gap-1 flex-shrink-0">
-                          {/* Preview button */}
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="text-xs px-2 py-1 h-auto hover:bg-gray-100"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onPreviewClick(fileName);
-                            }}
-                          >
-                            Preview
-                          </Button>
-
-                          {/* Remove button */}
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs px-2 py-1 h-auto"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onFileSelect(fileName);
-                            }}
-                          >
-                            Remove
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Open Workspace Button */}
-              <Button
-                onClick={openWorkspace}
-                className="bg-blue-600 hover:bg-blue-700 w-full"
-                size="sm"
-              >
-                Open Workspace ({selectedFiles.size})
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
+        </pre>
+        <p className="text-xs text-gray-600 mt-2">
+          💡 Level được tính tự động khi render. Database chỉ cần lưu: id, name,
+          type, parent_id
+        </p>
+      </div>
     </div>
   );
 };
 
-export default DocumentPage;
+export default FileExplorer;

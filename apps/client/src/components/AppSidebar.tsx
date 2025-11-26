@@ -43,7 +43,7 @@ import { FileUploadButton } from './file-upload/FileUpload';
 const items = [
   {
     title: 'Ask AI',
-    url: '/chats',
+    url: '/home',
     icon: SquarePen,
     cn: '',
   },
