@@ -48,7 +48,12 @@ const buildDocumentTreeMap = (documents: DocumentResponse[]) => {
 };
 
 const DocumentPage = () => {
-  const { setIsCreatingFolder, setCurrentFolder } = useFolderStore();
+  const {
+    expandedFolders,
+    toggleFolder,
+    setIsCreatingFolder,
+    setCurrentFolder,
+  } = useFolderStore();
 
   const selectedFiles = useDocumentStore((state) => state.selectedFiles);
   const isPreviewOpen = useDocumentStore((state) => state.isPreviewOpen);
@@ -73,18 +78,35 @@ const DocumentPage = () => {
     level = 0,
   ): React.ReactNode => {
     return foldersTree.get(parent_id)?.map((folder) => {
+      const hasChildren =
+        foldersTree.has(folder.id) ||
+        (documents.get(folder.id)?.length ?? 0) > 0;
+      const isExpanded = expandedFolders.has(folder.id);
+
       return (
         <React.Fragment key={folder.id}>
           <FolderItem
             folder={folder}
-            key={folder.id}
-            // className={`pl-${level * 4}`} // tailwind wont know this cux it is not compiled to string
             style={{ paddingLeft: `${level * 16}px` }}
+            isExpanded={isExpanded}
+            hasChildren={hasChildren}
+            onClick={() => toggleFolder(folder.id)}
           />
-          {documents.get(folder.id)?.map((document) => {
-            return <DocumentItem document={document} key={document.id} />;
-          })}
-          {renderItems(foldersTree, documents, folder.id, level + 1)}
+
+          {isExpanded && (
+            <>
+              {documents.get(folder.id)?.map((document) => {
+                return (
+                  <DocumentItem
+                    document={document}
+                    key={document.id}
+                    style={{ paddingLeft: `${(level + 1) * 16 + 20}px` }}
+                  />
+                );
+              })}
+              {renderItems(foldersTree, documents, folder.id, level + 1)}
+            </>
+          )}
         </React.Fragment>
       );
     });

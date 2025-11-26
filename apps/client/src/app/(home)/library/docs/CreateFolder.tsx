@@ -16,8 +16,12 @@ import { useCreateFolder } from './useFolders';
 const CreateFolder = () => {
   const [folderName, setFolderName] = useState('');
 
-  const { isCreatingFolder, setIsCreatingFolder, currentFolder } =
-    useFolderStore();
+  const {
+    isCreatingFolder,
+    setIsCreatingFolder,
+    currentFolder,
+    setCurrentFolder,
+  } = useFolderStore();
   const { mutate: createFolder } = useCreateFolder();
 
   const handleCreateFolder = () => {
@@ -25,6 +29,7 @@ const CreateFolder = () => {
     if (!name) return;
     createFolder({ parent_id: currentFolder, name: name });
     setIsCreatingFolder(false);
+    setCurrentFolder(null);
     setFolderName('');
   };
 

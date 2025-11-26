@@ -21,21 +21,25 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { DialogDescription } from '@radix-ui/react-dialog';
 import { Input } from '@/components/ui/input';
-import { Edit2, Plus, Upload } from 'lucide-react';
+import { ChevronDown, ChevronRight, Edit2, Plus, Upload } from 'lucide-react';
 import { useFolderStore } from './useFolderStore';
+import { useUploadFileStore } from '@/components/file-upload/useUploadFileStore';
 
 interface FolderItemProps extends React.HTMLAttributes<HTMLDivElement> {
   folder: FolderResponse;
+  isExpanded: boolean;
+  hasChildren: boolean;
 }
 
 const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
-  ({ folder, className, ...props }, ref) => {
+  ({ folder, isExpanded, hasChildren, className, ...props }, ref) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const [confirmText, setConfirmText] = useState('');
 
     const { setIsCreatingFolder, setCurrentFolder } = useFolderStore();
+    const { toggleUploadModal } = useUploadFileStore();
 
     const { mutate: updateFolderName } = useUpdateFolder();
     const { mutate: deleteFolder, isPending: isPendingDeletingFolder } =
@@ -43,6 +47,11 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
 
     const handleCancelDelete = () => {
       setIsDeleting(false);
+    };
+
+    const handleUpload = () => {
+      toggleUploadModal();
+      setCurrentFolder(folder.id);
     };
 
     const handleDelete = (e: React.MouseEvent | React.KeyboardEvent) => {
@@ -64,6 +73,14 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
               {...props}
             >
               <div className="flex items-center justify-between min-w-0">
+                <span className="w-4 h-4 flex items-center justify-center">
+                  {hasChildren &&
+                    (isExpanded ? (
+                      <ChevronDown className="w-4 h-4" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4" />
+                    ))}
+                </span>
                 <p className="truncate text-sm m-1 flex-1 min-w-0">
                   📁 {folder.name}
                 </p>
@@ -80,6 +97,7 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
                     size="sm"
                     variant="ghost"
                     className="group-hover:block shrink-0 text-xs m-0.5 rounded! h-6! px-2!"
+                    onClick={handleUpload}
                   >
                     <Upload />
                   </Button>
