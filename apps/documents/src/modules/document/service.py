@@ -13,6 +13,7 @@ from src.modules.document.dtos.request_dtos import DocumentCreate, DocumentUpdat
 from src.modules.document.dtos.response_dtos import (
     DocumentResponse,
 )
+from src.modules.folder.repository import FolderRepository
 from src.modules.object_storage.service import MinioService
 from src.core.config import settings
 
@@ -24,9 +25,10 @@ class DocumentService(
         Document, DocumentCreate, DocumentUpdate, DocumentResponse, DocumentRepository
     ]
 ):
-    def __init__(self, repository: DocumentRepository, minio_service: MinioService):
+    def __init__(self, repository: DocumentRepository, folder_repository: FolderRepository, minio_service: MinioService):
         super().__init__(Document, repository)
         self.minio_service = minio_service
+        self.folder_repository = folder_repository
 
     # async def upload_document(
     #     self, file: UploadFile, user_id: UUID, allow_overwrite: bool = False
@@ -184,7 +186,7 @@ class DocumentService(
         return document
 
     async def __validate_folder_ownership(self, folder_id: UUID, user_id: UUID):
-        folder = await self.repository.get_by_id(folder_id)
+        folder = await self.folder_repository.get_by_id(folder_id)
         if not folder:
             raise DocumentError("Folder not found")
         if folder.user_id != user_id:
