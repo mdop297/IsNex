@@ -49,3 +49,53 @@ export const useCreateChat = (title: string = '') => {
     },
   });
 };
+
+export const useUpdateChat = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ['update-chat'],
+    mutationFn: async ({ id, title }: { id: string; title: string }) => {
+      await coreApi.updateConversation(id, { id, title });
+    },
+    onMutate: async ({ id, title }: { id: string; title: string }) => {
+      await queryClient.cancelQueries({ queryKey: ['chats'] });
+      await queryClient.cancelQueries({ queryKey: ['chat', id] });
+      const previousChats =
+        queryClient.getQueryData<PaginatedConversationResponse>(['chats']);
+
+      const previousChat = queryClient.getQueryData<ConversationResponse>([
+        'chat',
+        id,
+      ]);
+
+      queryClient.setQueryData(
+        ['chats'],
+        (old: PaginatedConversationResponse) => ({
+          ...old,
+          items: old.items.map((item) =>
+            item.id === id ? { ...item, title } : item,
+          ),
+        }),
+      );
+
+      queryClient.setQueryData(['chat', id], (old?: ConversationResponse) => ({
+        ...old,
+        title,
+      }));
+      return { previousChat, previousChats };
+    },
+    onError: (_, __, ctx) => {
+      if (ctx?.previousChat)
+        queryClient.setQueryData(
+          ['chat', ctx.previousChat.id],
+          ctx.previousChat,
+        );
+      if (ctx?.previousChats)
+        queryClient.setQueryData(['chats'], ctx.previousChats);
+    },
+    onSettled: (_, __, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ['chats'] });
+      queryClient.invalidateQueries({ queryKey: ['chat', id] });
+    },
+  });
+};

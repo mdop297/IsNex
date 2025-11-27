@@ -66,7 +66,12 @@ class ConversationService(
         self, user_id: UUID, skip: int = 0, limit: int = 100
     ) -> PaginatedConversationResponse:
         convs = await self.repository.get_by(
-            field="user_id", value=user_id, skip=skip, limit=limit
+            field="user_id",
+            value=user_id,
+            skip=skip,
+            limit=limit,
+            order_by="updated_at",
+            order_desc=True,
         )
 
         if not convs:
