@@ -5,12 +5,28 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Edit, EllipsisVertical, Trash } from 'lucide-react';
+import { Edit, EllipsisVertical, Star, Trash } from 'lucide-react';
 import { SidebarMenuSubAction, useSidebar } from './ui/sidebar';
+import { useSidebarStore } from './useSidebarStore';
 
-export default function DropdownMenuSubItem() {
+type DropdownMenuSubItemProps = {
+  itemId: string;
+  itemLabel: string;
+  section: string;
+};
+
+export default function DropdownMenuSubItem({
+  itemId,
+  itemLabel,
+  section,
+}: DropdownMenuSubItemProps) {
   const { isMobile } = useSidebar();
-
+  const { setRenameItem, setRenameValue, setRenameObject } = useSidebarStore();
+  const onRenameClicked = () => {
+    setRenameItem(itemId);
+    setRenameValue(itemLabel);
+    setRenameObject(section);
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -24,6 +40,10 @@ export default function DropdownMenuSubItem() {
         align={isMobile ? 'end' : 'start'}
       >
         <DropdownMenuItem>
+          <Star />
+          Favorite
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={onRenameClicked}>
           <Edit />
           Rename
         </DropdownMenuItem>
