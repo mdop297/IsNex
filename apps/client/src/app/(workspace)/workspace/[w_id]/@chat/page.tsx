@@ -1,4 +1,4 @@
-import { sampleMessages } from '@/app/(home)/chats/[chat_id]/message_data';
+import { sampleMessages } from '@/app/(home)/conversations/[chat_id]/message_data';
 import { ChatInput } from '@/components/chat/ChatInput';
 import { AIMessage, UserMessage } from '@/components/chat/Messages';
 import React from 'react';

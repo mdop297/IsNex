@@ -33,16 +33,21 @@ import {
   SelectValue,
 } from '../ui/select';
 import { SelectGroup } from '@radix-ui/react-select';
+import { useCreateChat } from './useChats';
 
 interface ChatInputProps {
   className?: string;
 }
 
 export const ChatInput = ({ className }: ChatInputProps) => {
+  const { mutate: createChat } = useCreateChat();
+  const handleCreateChat = () => {
+    createChat();
+  };
   return (
     <div
       className={cn(
-        'bg-accent text-foreground border-border flex flex-col container max-w-2xl min-w-72 rounded-2xl shadow-2xl p-2 gap-2 border-1',
+        'bg-accent text-foreground border-border flex flex-col container max-w-2xl min-w-72 rounded-2xl shadow-2xl p-2 gap-2 border',
         className,
       )}
     >
@@ -54,6 +59,12 @@ export const ChatInput = ({ className }: ChatInputProps) => {
         maxHeight={300}
         minHeight={18}
         placeholder="Let's talk about your thoughts!"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleCreateChat();
+          }
+        }}
       />
 
       <div className="flex justify-between items-center px-2">
@@ -130,8 +141,16 @@ export const ChatInput = ({ className }: ChatInputProps) => {
               </SelectGroup>
             </SelectContent>
           </Select>
-          {/* SUMMIT CHAT */}
-          <Button className="bg-blue-500">
+          {/* CREATE CHAT */}
+          <Button
+            className="bg-blue-500"
+            onClick={handleCreateChat}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleCreateChat();
+              }
+            }}
+          >
             <Send className="text-secondary-foreground" />
           </Button>
         </div>

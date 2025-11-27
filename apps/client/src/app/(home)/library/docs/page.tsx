@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import DocumentItem from './DocItem';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,21 +14,46 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
-import { useCreateFolder, useFolders } from './useFolders';
+import { useFolders } from './useFolders';
 import FolderItem from './FolderItem';
 import { useFolderStore } from './useFolderStore';
+import CreateFolder from './CreateFolder';
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
+  DocumentResponse,
+  FolderResponse,
+} from '@/lib/generated/core/data-contracts';
+
+const buildFolderTreeMap = (folders: FolderResponse[]) => {
+  const tree = new Map<string | null, FolderResponse[]>();
+  for (const folder of folders) {
+    const key = folder.parent_id ?? null;
+    if (!tree.has(key)) {
+      tree.set(key, []);
+    }
+    tree.get(key)!.push(folder);
+  }
+  return tree;
+};
+
+const buildDocumentTreeMap = (documents: DocumentResponse[]) => {
+  const tree = new Map<string | null, DocumentResponse[]>();
+  for (const document of documents) {
+    const key = document.folder_id ?? null;
+    if (!tree.has(key)) {
+      tree.set(key, []);
+    }
+    tree.get(key)!.push(document);
+  }
+  return tree;
+};
 
 const DocumentPage = () => {
-  const [isCreatingFolder, setIsCreatingFolder] = useState(false);
-  const [folderName, setFolderName] = useState('');
+  const {
+    expandedFolders,
+    toggleFolder,
+    setIsCreatingFolder,
+    setCurrentFolder,
+  } = useFolderStore();
 
   const selectedFiles = useDocumentStore((state) => state.selectedFiles);
   const isPreviewOpen = useDocumentStore((state) => state.isPreviewOpen);
@@ -36,25 +61,56 @@ const DocumentPage = () => {
   const previewFile = useDocumentStore((state) => state.previewFile);
 
   const { data: documents, isLoading, isError, error } = useDocuments();
-
-  const currentFolder = useFolderStore((state) => state.currentFolder);
-
-  const { mutate: createFolder } = useCreateFolder();
-
-  const handleCreateFolder = () => {
-    const name = folderName.trim();
-    if (!name) return;
-    createFolder({ parent_id: currentFolder, name: name });
-    setIsCreatingFolder(false);
-    setFolderName('');
-  };
-
   const { data: folders } = useFolders();
+
+  const documentTreeMap = buildDocumentTreeMap(documents || []);
+  const folderTreeMap = buildFolderTreeMap(folders || []);
 
   const showRightPanel = selectedFiles.size > 0 || isPreviewOpen;
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {error.message}</div>;
+
+  const renderItems = (
+    foldersTree: Map<string | null, FolderResponse[]>,
+    documents: Map<string | null, DocumentResponse[]>,
+    parent_id: string | null = null,
+    level = 0,
+  ): React.ReactNode => {
+    return foldersTree.get(parent_id)?.map((folder) => {
+      const hasChildren =
+        foldersTree.has(folder.id) ||
+        (documents.get(folder.id)?.length ?? 0) > 0;
+      const isExpanded = expandedFolders.has(folder.id);
+
+      return (
+        <React.Fragment key={folder.id}>
+          <FolderItem
+            folder={folder}
+            style={{ paddingLeft: `${level * 16}px` }}
+            isExpanded={isExpanded}
+            hasChildren={hasChildren}
+            onClick={() => toggleFolder(folder.id)}
+          />
+
+          {isExpanded && (
+            <>
+              {documents.get(folder.id)?.map((document) => {
+                return (
+                  <DocumentItem
+                    document={document}
+                    key={document.id}
+                    style={{ paddingLeft: `${(level + 1) * 16 + 20}px` }}
+                  />
+                );
+              })}
+              {renderItems(foldersTree, documents, folder.id, level + 1)}
+            </>
+          )}
+        </React.Fragment>
+      );
+    });
+  };
 
   return (
     <>
@@ -82,20 +138,19 @@ const DocumentPage = () => {
               {/* Folders */}
 
               <div className="overflow-auto h-full">
-                {folders &&
-                  folders.map((folder) => (
-                    <FolderItem folder={folder} key={folder.id} />
-                  ))}
-
-                {/* Documents List */}
-                {documents &&
-                  documents.map((doc) => (
-                    <DocumentItem document={doc} key={doc.id} />
-                  ))}
+                {renderItems(folderTreeMap, documentTreeMap)}
+                {documentTreeMap
+                  .get(null)
+                  ?.map((doc) => <DocumentItem key={doc.id} document={doc} />)}
               </div>
             </ContextMenuTrigger>
             <ContextMenuContent>
-              <ContextMenuItem onClick={() => setIsCreatingFolder(true)}>
+              <ContextMenuItem
+                onClick={() => {
+                  setCurrentFolder(null);
+                  setIsCreatingFolder(true);
+                }}
+              >
                 New Folder
               </ContextMenuItem>
               <ContextMenuItem>Add to workspace</ContextMenuItem>
@@ -121,43 +176,7 @@ const DocumentPage = () => {
           </div>
         </div>
       </div>
-
-      <Dialog open={isCreatingFolder} onOpenChange={setIsCreatingFolder}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create Folder</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-3">
-            <Label htmlFor="name-1">Name</Label>
-            <Input
-              id="name-1"
-              value={folderName}
-              onChange={(e) => setFolderName(e.target.value)}
-              placeholder="Enter folder name"
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleCreateFolder();
-                }
-              }}
-            />
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setIsCreatingFolder(false);
-                setFolderName('');
-              }}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleCreateFolder} disabled={!folderName.trim()}>
-              Create Folder
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <CreateFolder />
     </>
   );
 };

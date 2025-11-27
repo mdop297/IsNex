@@ -1,3 +1,4 @@
+import { useFolderStore } from '@/app/(home)/library/docs/useFolderStore';
 import {
   BodyUploadFile,
   DocumentResponse,
@@ -148,14 +149,17 @@ export class BackgroundUploadManager {
 
   private async startUpload(fileItem: FileItem) {
     this.updateFileStatus(fileItem.id, { status: 'uploading', progress: 0 });
-    console.log('===============================');
-    console.log('Uploading file: ==>', fileItem.file.name);
-    console.log('===============================');
+    // console.log('===============================');
+    // console.log('Uploading file: ==>', fileItem.file.name);
+    // console.log('===============================');
 
     this.updateFileStatus(fileItem.id, { status: 'uploading', progress: 0 });
+    const currentFolder = useFolderStore.getState().currentFolder;
+    const setCurrentFolder = useFolderStore.getState().setCurrentFolder;
 
     try {
       const documentCreateData = {
+        folder_id: currentFolder,
         name: fileItem.file.name,
         num_pages: 0,
         file_size: fileItem.file.size.toString(),
@@ -174,6 +178,8 @@ export class BackgroundUploadManager {
         status: 'completed',
         progress: 100,
       });
+      // reset current folder to null
+      setCurrentFolder(null);
     } catch (error) {
       this.updateFileStatus(fileItem.id, { status: 'error' });
       console.error('Upload error:', error);

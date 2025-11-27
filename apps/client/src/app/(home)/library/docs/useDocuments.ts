@@ -5,7 +5,7 @@ export const useDocuments = () =>
   useQuery({
     queryKey: ['docs'],
     queryFn: async () => {
-      const res = await coreApi.getDocumentsByFolderId();
+      const res = await coreApi.getAllDocumentsByUser();
       if (!res.ok) {
         throw new Error(res.statusText);
       }

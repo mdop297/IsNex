@@ -36,6 +36,7 @@ class Factory:
     ) -> DocumentService:
         return DocumentService(
             DocumentRepository(db_session),
+            FolderRepository(db_session),
             MinioService(minio_session),
         )
 

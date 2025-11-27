@@ -70,8 +70,6 @@ export interface BodyUploadFile {
 
 /** ConversationCreate */
 export interface ConversationCreate {
-  /** User Id */
-  user_id?: string | null;
   /**
    * Workspace Id
    * Associated workspace ID
@@ -80,6 +78,7 @@ export interface ConversationCreate {
   /**
    * Title
    * Title of the conversation
+   * @default "New Conversation"
    */
   title?: string | null;
 }

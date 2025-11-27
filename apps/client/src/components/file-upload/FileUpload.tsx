@@ -18,12 +18,6 @@ import {
   Play,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -31,7 +25,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
-import { SidebarMenuButton, useSidebar } from '../ui/sidebar';
 import {
   BackgroundUploadManager,
   FileItem,
@@ -316,7 +309,7 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
     <>
       <div className="space-y-4 px-4">
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-r from-blue-500 to-purple-600">
             <Upload className="h-8 w-8 text-foreground" />
           </div>
           <h2 className="text-2xl font-semibold">Upload Your Files</h2>
@@ -401,7 +394,7 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
                 <p className="text-muted-foreground">or</p>
                 <Button
                   onClick={() => fileInputRef.current?.click()}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                  className="bg-linear-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
                 >
                   Browse Files
                 </Button>
@@ -524,7 +517,7 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
                           <>
                             <Progress
                               value={fileItem.progress}
-                              className="h-2 [&_[data-slot=progress-indicator]]:bg-green-500"
+                              className="h-2 **:data-[slot=progress-indicator]:bg-green-500"
                             />
                             <p className="text-xs text-muted-foreground">
                               {fileItem.status === 'completed'
@@ -577,62 +570,3 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
     </>
   );
 };
-
-// Main Component with Trigger Button
-export const FileUploadButton: React.FC<
-  Omit<FileUploadFormProps, 'onClose'>
-> = (props) => {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { state } = useSidebar();
-
-  const openModal = (): void => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = (): void => {
-    setIsModalOpen(false);
-  };
-
-  return (
-    <>
-      {/* Trigger Button */}
-      <SidebarMenuButton
-        onClick={openModal}
-        asChild
-        className={cn(
-          'flex justify-center items-center cursor-pointer ',
-          'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-foreground',
-          `${state == 'collapsed' ? 'gap-0' : 'gap-2'}`,
-        )}
-        tooltip="Upload Files"
-      >
-        <div>
-          <Upload />
-          <span>Upload Files</span>
-        </div>
-      </SidebarMenuButton>
-
-      {/* Modal */}
-      <Dialog
-        open={isModalOpen}
-        onOpenChange={(open) => {
-          if (!open) {
-            // Handle close through FileUploadForm
-          }
-          setIsModalOpen(open);
-        }}
-      >
-        <DialogContent className="min-w-1/2 max-h-[90vh] overflow-y-auto hide-scrollbar">
-          <DialogHeader>
-            <DialogTitle className="sr-only text-foreground">
-              Upload Files
-            </DialogTitle>
-          </DialogHeader>
-          <FileUploadForm {...props} onClose={closeModal} />
-        </DialogContent>
-      </Dialog>
-    </>
-  );
-};
-
-export default FileUploadButton;

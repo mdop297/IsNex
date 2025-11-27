@@ -18,6 +18,7 @@ class ConversationRepository(
     BaseRepository[Conversation, ConversationCreate, ConversationUpdate]
 ):
     def __init__(self, session: AsyncSession):
+        super().__init__(Conversation, session)
         self.session = session
 
     async def count_by_workspace_id(self, workspace_id: UUID) -> int:

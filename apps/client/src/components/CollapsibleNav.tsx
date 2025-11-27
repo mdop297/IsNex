@@ -24,9 +24,59 @@ import {
 import Link from 'next/link';
 
 import DropdownMenuSubItem from './DropdownSubItem';
+import { useGetChats } from './chat/useChats';
 
-const items = [
-  {
+// const items = [
+//   {
+//     title: 'Library',
+//     url: '#',
+//     icon: LibraryBig,
+//     subitems: [
+//       { label: 'Notes', url: '/library/notes' },
+//       { label: 'Documents', url: '/library/docs' },
+//       { label: 'Annotations', url: '/library/annos' },
+//     ],
+//     subaction: false,
+//   },
+//   {
+//     title: 'Workspace',
+//     url: '/workspace',
+//     icon: FolderOpenDot,
+//     subitems: [
+//       { label: 'Workspace 1', url: '/workspace/1/overview' },
+//       { label: 'Workspace 2', url: '/workspace/2/overview' },
+//       { label: 'Workspace 3', url: '/workspace/3/overview' },
+//       { label: 'Workspace 4', url: '/workspace/4/overview' },
+//     ],
+//     subaction: true,
+//   },
+//   {
+//     title: 'History',
+//     url: '#',
+//     icon: HistoryIcon,
+//     subitems: [
+//       {
+//         label: 'This is a very long name of chat session 1',
+//         url: '/conversations/1',
+//       },
+//       { label: 'Chat session 2', url: '/conversations/2' },
+//       { label: 'Chat session 3', url: '/conversations/3' },
+//       { label: 'Chat session 4', url: '/conversations/4', isActive: false },
+//       {
+//         label: 'This is a very long name of chat session 5',
+//         url: '/conversations/5',
+//       },
+//       { label: 'Chat session 6', url: '/conversations/6' },
+//       { label: 'Chat session 7', url: '/conversations/7' },
+//       { label: 'Chat session 8', url: '/conversations/8', isActive: false },
+//     ],
+//     subaction: true,
+//   },
+// ];
+
+const CollapsibleNav = () => {
+  const { data: HistoryData } = useGetChats();
+  const LibraryData = {
     title: 'Library',
     url: '#',
     icon: LibraryBig,
@@ -36,8 +86,9 @@ const items = [
       { label: 'Annotations', url: '/library/annos' },
     ],
     subaction: false,
-  },
-  {
+  };
+
+  const WorkspaceData = {
     title: 'Workspace',
     url: '/workspace',
     icon: FolderOpenDot,
@@ -48,32 +99,25 @@ const items = [
       { label: 'Workspace 4', url: '/workspace/4/overview' },
     ],
     subaction: true,
-  },
-  {
-    title: 'History',
-    url: '#',
-    icon: HistoryIcon,
-    subitems: [
-      {
-        label: 'This is a very long name of chat session 1',
-        url: '/chats/1',
-      },
-      { label: 'Chat session 2', url: '/chats/2' },
-      { label: 'Chat session 3', url: '/chats/3' },
-      { label: 'Chat session 4', url: '/chats/4', isActive: false },
-      {
-        label: 'This is a very long name of chat session 5',
-        url: '/chats/5',
-      },
-      { label: 'Chat session 6', url: '/chats/6' },
-      { label: 'Chat session 7', url: '/chats/7' },
-      { label: 'Chat session 8', url: '/chats/8', isActive: false },
-    ],
-    subaction: true,
-  },
-];
+  };
 
-const CollapsibleNav = () => {
+  const items = [
+    LibraryData,
+    WorkspaceData,
+    {
+      title: 'History',
+      url: '#',
+      icon: HistoryIcon,
+      subitems: HistoryData
+        ? HistoryData.items.map((item) => ({
+            label: item.title,
+            url: `/conversations/${item.id}`,
+          }))
+        : [],
+      subaction: true,
+    },
+  ];
+
   return (
     <>
       {items.map((item, index) => {
