@@ -23,16 +23,34 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-import { useGetChats, useUpdateChat } from './chat/useChats';
+import { useDeleteChat, useGetChats, useUpdateChat } from './chat/useChats';
 import { useSidebarStore } from './useSidebarStore';
 import { Input } from './ui/input';
 import DropdownMenuSubItem from './DropdownSubItem';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from './ui/dialog';
+import { Button } from './ui/button';
+import { toast } from 'sonner';
 
 const CollapsibleNav = () => {
-  const { renameItem, setRenameItem, renameValue, setRenameValue } =
-    useSidebarStore();
+  const {
+    isRename,
+    isDeleting,
+    currentItem,
+    currentValue,
+    setIsDeleting,
+    setCurrentItem,
+    setIsRename,
+    setCurrentValue,
+  } = useSidebarStore();
 
   const { mutate: updateChat } = useUpdateChat();
+  const { mutate: deleteChat, isPending: isDeletingPending } = useDeleteChat();
   const { data: HistoryData } = useGetChats();
   const LibraryData = {
     section: 'Library',
@@ -78,8 +96,19 @@ const CollapsibleNav = () => {
   ];
   const handleRename = (id: string, title: string) => {
     updateChat({ id, title });
-    setRenameItem(null);
-    setRenameValue('');
+    setCurrentItem(null);
+    setCurrentValue('');
+    setIsRename(false);
+  };
+  const handleCancelDelete = () => {
+    setIsDeleting(false);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (currentItem) deleteChat(currentItem);
+    setIsDeleting(false);
+    toast.success('Chat deleted successfully');
   };
 
   return (
@@ -116,39 +145,64 @@ const CollapsibleNav = () => {
                 <SidebarMenuSub className="p-0 mr-0">
                   {item.subitems.map((subitem) => {
                     return (
-                      <SidebarMenuSubItem key={subitem.id}>
-                        <SidebarMenuSubButton asChild>
-                          {renameItem === subitem.id ? (
-                            <Input
-                              autoFocus
-                              value={renameValue!}
-                              onChange={(e) => setRenameValue(e.target.value)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  handleRename(subitem.id, renameValue!);
+                      <>
+                        <SidebarMenuSubItem key={subitem.id}>
+                          <SidebarMenuSubButton asChild>
+                            {currentItem === subitem.id && isRename ? (
+                              <Input
+                                autoFocus
+                                value={currentValue!}
+                                onChange={(e) =>
+                                  setCurrentValue(e.target.value)
                                 }
-                                if (e.key === 'Escape') {
-                                  setRenameItem(null);
-                                }
-                              }}
-                              onBlur={() => {
-                                handleRename(subitem.id, renameValue!);
-                              }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    handleRename(subitem.id, currentValue!);
+                                  }
+                                  if (e.key === 'Escape') {
+                                    setCurrentItem(null);
+                                  }
+                                }}
+                                onBlur={() => {
+                                  handleRename(subitem.id, currentValue!);
+                                }}
+                              />
+                            ) : (
+                              <Link href={subitem.url}>
+                                <span>{subitem.label}</span>
+                              </Link>
+                            )}
+                          </SidebarMenuSubButton>
+                          {item.subaction && (
+                            <DropdownMenuSubItem
+                              itemId={subitem.id}
+                              itemLabel={subitem.label}
+                              section={item.section}
                             />
-                          ) : (
-                            <Link href={subitem.url}>
-                              <span>{subitem.label}</span>
-                            </Link>
                           )}
-                        </SidebarMenuSubButton>
-                        {item.subaction && (
-                          <DropdownMenuSubItem
-                            itemId={subitem.id}
-                            itemLabel={subitem.label}
-                            section={item.section}
-                          />
-                        )}
-                      </SidebarMenuSubItem>
+                        </SidebarMenuSubItem>
+                        <Dialog open={isDeleting} onOpenChange={setIsDeleting}>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Are you sure?</DialogTitle>
+                            </DialogHeader>
+                            <DialogFooter>
+                              <Button
+                                variant="outline"
+                                onClick={handleCancelDelete}
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                disabled={isDeletingPending}
+                                onClick={handleDelete}
+                              >
+                                {isDeletingPending ? 'Deleting...' : 'Delete'}
+                              </Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+                      </>
                     );
                   })}
                 </SidebarMenuSub>

@@ -99,3 +99,17 @@ export const useUpdateChat = () => {
     },
   });
 };
+
+export const useDeleteChat = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ['delete-chat'],
+    mutationFn: async (id: string) => {
+      await coreApi.deleteConversation(id);
+    },
+    onSuccess: (_, __, id) => {
+      queryClient.invalidateQueries({ queryKey: ['chats'] });
+      queryClient.invalidateQueries({ queryKey: ['chat', id] });
+    },
+  });
+};

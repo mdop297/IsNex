@@ -1,19 +1,27 @@
 import { create } from 'zustand';
 
 type SidebarStore = {
-  renameItem: string | null;
-  renameValue: string | null;
-  renameObject: string | null;
-  setRenameItem: (item: string | null) => void;
-  setRenameValue: (item: string | null) => void;
-  setRenameObject: (item: string | null) => void;
+  isRename: boolean;
+  isDeleting: boolean;
+  currentItem: string | null;
+  currentValue: string | null;
+  currentObject: string | null;
+  setIsRename: (isRename: boolean) => void;
+  setIsDeleting: (isDeleting: boolean) => void;
+  setCurrentItem: (item: string | null) => void;
+  setCurrentValue: (item: string | null) => void;
+  setCurrentObject: (item: string | null) => void;
 };
 
 export const useSidebarStore = create<SidebarStore>((set) => ({
-  renameItem: null,
-  renameValue: null,
-  renameObject: null,
-  setRenameItem: (item: string | null) => set({ renameItem: item }),
-  setRenameValue: (item: string | null) => set({ renameValue: item }),
-  setRenameObject: (item: string | null) => set({ renameObject: item }),
+  isRename: false,
+  isDeleting: false,
+  currentItem: null,
+  currentValue: null,
+  currentObject: null,
+  setIsRename: (isRename: boolean) => set({ isRename }),
+  setIsDeleting: (isDeleting: boolean) => set({ isDeleting }),
+  setCurrentItem: (item: string | null) => set({ currentItem: item }),
+  setCurrentValue: (item: string | null) => set({ currentValue: item }),
+  setCurrentObject: (item: string | null) => set({ currentObject: item }),
 }));
