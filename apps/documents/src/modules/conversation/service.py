@@ -40,6 +40,7 @@ class ConversationService(
     ) -> ConversationResponse:
         if entity.workspace_id:
             await self.__validate_workspace_ownership(entity.workspace_id, user_id)
+        entity.user_id = user_id
         result = await self.repository.create(entity)
         return ConversationResponse.model_validate(result)
 
