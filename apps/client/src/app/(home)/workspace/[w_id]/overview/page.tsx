@@ -169,7 +169,7 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
             {data.conversations.map((item) => (
               <Button
                 key={item.id}
-                className={`group flex items-center w-full justify-between mb-1 rounded-md p-1.5
+                className={`group flex items-center w-full justify-between mb-1 rounded-md p-2
                    ${selectedItemId === item.id ? 'bg-item-selected' : 'bg-secondary '}`}
                 variant={'ghost'}
               >
@@ -253,7 +253,7 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
                 ))}
               </div>
               <div className="flex justify-center items-center h-1/14 ">
-                <Button className="w-80">
+                <Button className="w-80" variant={'outline'}>
                   <Link
                     href={`/workspace/${w_id}`}
                     className="flex items-center justify-center"
