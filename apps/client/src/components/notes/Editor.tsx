@@ -64,7 +64,10 @@ export default function App() {
         editor.pasteMarkdown(event.clipboardData.getData('text/plain'));
         return true;
       }
-      return defaultPasteHandler();
+      return defaultPasteHandler({
+        prioritizeMarkdownOverHTML: true,
+        plainTextAsMarkdown: true,
+      });
     },
     tables: {
       splitCells: true,
