@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import SetupInstructionsModal from '@/components/workspace/InstructionsModal';
 import type { Conversation, Document } from '@/types';
 import {
   ExternalLink,
@@ -29,6 +30,8 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
   const [isPreviewDoc, setIsPreviewDoc] = useState(true);
   const [selectedItem, setSelectedItem] = useState<Document | Conversation>();
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [isInstructionsModalOpen, setIsInstructionsModalOpen] = useState(false);
+
   const [data, setData] = useState<{
     documents: Document[];
     conversations: Conversation[];
@@ -70,7 +73,7 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
   return (
     <div className="flex h-screen gap-2 p-2 bg-background overflow-hidden text-foreground">
       <div
-        className={`flex flex-col bg-card rounded-md border shadow-sm overflow-hidden transition-all duration-300 ${
+        className={`flex flex-col bg-background rounded-md border shadow-sm overflow-hidden transition-all duration-300 ${
           openPreview ? 'w-1/2' : 'w-full'
         }`}
       >
@@ -100,6 +103,7 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
                 size="sm"
                 variant="outline"
                 className="shrink-0 bg-transparent"
+                onClick={() => setIsInstructionsModalOpen(true)}
               >
                 <SlidersVertical className="size-4 mr-2" />
                 Configure
@@ -191,7 +195,7 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
       </div>
 
       {openPreview && (
-        <div className="flex-1 flex flex-col rounded-md border bg-card shadow-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
+        <div className="flex-1 flex flex-col rounded-md border bg-background shadow-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
           {isPreviewDoc ? (
             <>
               {/* PDF Preview Header */}
@@ -267,6 +271,12 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
           )}
         </div>
       )}
+
+      <SetupInstructionsModal
+        open={isInstructionsModalOpen}
+        onOpenChange={setIsInstructionsModalOpen}
+        workspaceId={w_id}
+      />
     </div>
   );
 }
