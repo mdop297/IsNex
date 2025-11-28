@@ -1,5 +1,5 @@
 'use client';
-import { ChatInput } from '@/components/chat/ChatInput';
+
 import React, { useEffect } from 'react';
 import { sampleMessages } from './message_data';
 import { AIMessage, UserMessage } from '@/components/chat/Messages';
@@ -7,6 +7,7 @@ import { useGetChat } from '@/components/chat/useChats';
 import { useParams, useRouter } from 'next/navigation';
 import { routes } from '@/lib/constants';
 import { toast } from 'sonner';
+import ChatInput from '@/components/chat/PromptInput';
 
 const ChatSession = () => {
   const router = useRouter();
@@ -45,7 +46,7 @@ const ChatSession = () => {
     <>
       <div className="relative flex flex-col items-center px-4 w-full">
         {/* MESSAGE BOX */}
-        <div className="flex-1 overflow-y-auto p-4 max-w-3xl">
+        <div className="flex-1 overflow-y-auto p-4 max-w-3xl w-full">
           {sampleMessages.map((message) => (
             <div key={message.id}>
               {message.type === 'bot' ? (
@@ -68,8 +69,8 @@ const ChatSession = () => {
         </div>
 
         {/* CHAT INPUT */}
-        <div className="sticky bottom-0 z-50 flex justify-center items-center w-full pb-3 bg-secondary">
-          <ChatInput className="" />
+        <div className="sticky bottom-0 flex justify-center items-center pb-3 max-w-3xl w-full bg-background">
+          <ChatInput />
         </div>
       </div>
     </>

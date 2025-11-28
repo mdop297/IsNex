@@ -81,7 +81,7 @@ export default function App() {
         editor={editor}
         formattingToolbar={false}
         theme={theme === 'dark' ? 'dark' : 'light'}
-        className="bg-secondary"
+        data-theming-css-variables
       >
         <FormattingToolbarController
           formattingToolbar={() => (

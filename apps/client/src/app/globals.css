@@ -163,6 +163,7 @@
     @apply border-border outline-ring/50;
   }
 }
+
 @layer utilities {
   .no-focus-styles:focus,
   .no-focus-styles:focus-visible {
@@ -337,4 +338,13 @@
     padding: 1px;
     margin: 1px;
   }
+}
+
+.bn-container[data-theming-css-variables][data-color-scheme] {
+  --bn-colors-editor-background: bg-background;
+  --bn-font-family: Helvetica Neue, sans-serif;
+}
+/* Changes for dark mode */
+.bn-container[data-theming-css-variables][data-color-scheme='dark'] {
+  --bn-colors-editor-background: bg-background;
 }
