@@ -117,7 +117,7 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
           <Tabs defaultValue="documents" className="flex flex-col h-full">
             {/* Tab Header with Actions */}
             <div className="flex items-center justify-between gap-4 mt-4 mb-2">
-              <TabsList className="h-9">
+              <TabsList className="h-9 bg-background border">
                 <TabsTrigger value="documents" className="gap-2">
                   <FileText className="size-4" />
                   Documents
