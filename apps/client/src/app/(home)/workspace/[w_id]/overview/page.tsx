@@ -62,9 +62,9 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
   if (!data) return <p>Loading...</p>;
 
   return (
-    <div className="flex-1 flex flex-row h-screen gap-1 p-1 !overflow-y-hidden ">
+    <div className="flex-1 flex flex-row h-screen gap-1 p-1 overflow-y-hidden! ">
       <div
-        className={`flex flex-col bg-500 h-full border-1 rounded-md p-2 gap-4 min-w-[500px] ${openPreview ? 'w-1/2' : 'w-full'} transition-all `}
+        className={`flex flex-col bg-500 h-full border rounded-md p-2 gap-4 min-w-[500px] ${openPreview ? 'w-1/2' : 'w-full'} transition-all `}
       >
         <div className="mb-3">
           <h1 className="text-2xl font-bold mb-2">Workspace {w_id} Content</h1>
@@ -73,14 +73,14 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
           </p>
         </div>
         {/* System instructions */}
-        <div className="flex justify-between items-center w-full h-fit rounded-lg p-4 bg-input border-1 border-ring">
+        <div className="flex justify-between items-center w-full h-fit rounded-lg p-4 bg-secondary border border-ring">
           <div className="flex flex-col gap-2">
             <h3 className="text-lg font-bold"> System Instructions</h3>
             <p className="text-sm italic">
               Set up your instructions in this projects
             </p>
           </div>
-          <Button className="h-fit w-fit">
+          <Button className="h-fit w-fit" variant={'outline'}>
             Configure
             <span>
               <SlidersVertical />
@@ -91,14 +91,14 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
         {/* tab */}
         <Tabs defaultValue="documents" className="w-full h-full">
           <div className="flex flex-row justify-between items-center ">
-            <TabsList className="bg-input">
+            <TabsList className="bg-secondary">
               <TabsTrigger value="documents">Documents</TabsTrigger>
               <TabsTrigger value="chats">Conversations</TabsTrigger>
             </TabsList>
             <div className="flex gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button>
+                  <Button variant={'outline'}>
                     Add Files
                     <Plus />
                   </Button>
@@ -108,7 +108,7 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
                   <DropdownMenuItem>Upload New Files</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Button asChild>
+              <Button asChild variant={'outline'}>
                 <Link
                   href={`/workspace/${w_id}`}
                   className="flex items-center justify-center"
@@ -122,10 +122,11 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
           {/* Document items */}
           <TabsContent value="documents" className="flex-1 overflow-auto">
             {data.documents.map((item) => (
-              <div
+              <Button
                 key={item.id}
-                className={`group flex items-center justify-between mb-1 rounded-md p-1.5
-                   ${selectedItemId === item.id ? 'bg-item-selected' : 'bg-input hover:bg-item-hover'}`}
+                className={`group flex items-center w-full justify-between mb-1 rounded-md p-1.5
+                   ${selectedItemId === item.id ? 'bg-item-selected' : 'bg-secondary '}`}
+                variant={'ghost'}
               >
                 {/* File name */}
                 <div className="flex items-center flex-1 min-w-0 gap-2">
@@ -152,22 +153,25 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
                 {/* Preview button */}
                 <div className="hidden group-hover:block h-full shrink-0">
                   <Button
-                    className="!px-1.5 !py-[1px] h-fit !text-sm"
+                    className="px-1.5! !py-[1px]! h-fit text-sm!"
+                    variant={'outline'}
                     onClick={() => handleDocPreview(item)}
+                    size={'sm'}
                   >
                     Preview <ExternalLink />
                   </Button>
                 </div>
-              </div>
+              </Button>
             ))}
           </TabsContent>
           {/* Conversation items */}
           <TabsContent value="chats" className="flex-1 overflow-auto">
             {data.conversations.map((item) => (
-              <div
+              <Button
                 key={item.id}
-                className={`group flex items-center justify-between mb-1 rounded-md p-1.5
-                  ${selectedItemId === item.id ? 'bg-item-selected' : 'bg-input hover:bg-item-hover'}`}
+                className={`group flex items-center w-full justify-between mb-1 rounded-md p-1.5
+                   ${selectedItemId === item.id ? 'bg-item-selected' : 'bg-secondary '}`}
+                variant={'ghost'}
               >
                 <div className="flex items-center flex-1 min-w-0 gap-2">
                   <MessageSquare className="size-5 shrink-0" />
@@ -191,20 +195,22 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
 
                 <div className="hidden group-hover:block h-full items-center justify-center">
                   <Button
-                    className="!px-1.5 !py-[1px] h-fit !text-sm"
+                    className="size-full h-fit text-sm"
                     onClick={() => handleChatPreview(item)}
+                    variant={'outline'}
+                    size={'sm'}
                   >
                     Preview <ExternalLink />
                   </Button>
                 </div>
-              </div>
+              </Button>
             ))}
           </TabsContent>
         </Tabs>
       </div>
       {/* preview panel */}
       {openPreview && (
-        <div className="flex-1 flex flex-col justify-between w-1/2 p-2 border-1 rounded-md gap-1">
+        <div className="flex-1 flex flex-col justify-between w-1/2 p-2 border rounded-md gap-1">
           {isPreviewDoc ? (
             <>
               {/* header */}
@@ -212,7 +218,9 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
                 <h1 className="text-lg truncate font-semibold">
                   {selectedItem!.name}
                 </h1>
-                <Button onClick={handleClosePreview}>Close preview</Button>
+                <Button variant={'outline'} onClick={handleClosePreview}>
+                  Close preview
+                </Button>
               </div>
               {/* content */}
               <PDFPreview fileUrl={(selectedItem as Document).url} />
@@ -223,7 +231,9 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
                 <h1 className="text-lg truncate font-semibold">
                   {selectedItem!.name}
                 </h1>
-                <Button onClick={handleClosePreview}>Close preview</Button>
+                <Button variant={'outline'} onClick={handleClosePreview}>
+                  Close preview
+                </Button>
               </div>
               <div className="flex-1 flex flex-col overflow-y-auto hide-scrollbar">
                 {(selectedItem as Conversation).messages.map((item) => (
