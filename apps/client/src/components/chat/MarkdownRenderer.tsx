@@ -75,7 +75,7 @@ export function MarkdownRenderer({
           blockquote: ({ children, ...props }) => (
             <blockquote
               {...props}
-              className="text-accent-foreground !border-l-item-selected-indicator border-l-2 pl-2.5"
+              className="text-accent-foreground border-l-item-selected-indicator! border-l-2 pl-2.5"
             >
               {children}
             </blockquote>

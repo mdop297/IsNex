@@ -28,6 +28,8 @@ export const useGetChat = (id: string) => {
       }
       return res.json();
     },
+    enabled: !!id,
+    retry: false,
   });
 };
 
@@ -94,6 +96,20 @@ export const useUpdateChat = () => {
         queryClient.setQueryData(['chats'], ctx.previousChats);
     },
     onSettled: (_, __, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ['chats'] });
+      queryClient.invalidateQueries({ queryKey: ['chat', id] });
+    },
+  });
+};
+
+export const useDeleteChat = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ['delete-chat'],
+    mutationFn: async (id: string) => {
+      await coreApi.deleteConversation(id);
+    },
+    onSuccess: (_, __, id) => {
       queryClient.invalidateQueries({ queryKey: ['chats'] });
       queryClient.invalidateQueries({ queryKey: ['chat', id] });
     },

@@ -21,11 +21,25 @@ export default function DropdownMenuSubItem({
   section,
 }: DropdownMenuSubItemProps) {
   const { isMobile } = useSidebar();
-  const { setRenameItem, setRenameValue, setRenameObject } = useSidebarStore();
+  const {
+    setIsDeleting,
+    setIsRename,
+    setCurrentItem,
+    setCurrentValue,
+    setCurrentObject,
+  } = useSidebarStore();
   const onRenameClicked = () => {
-    setRenameItem(itemId);
-    setRenameValue(itemLabel);
-    setRenameObject(section);
+    setIsRename(true);
+    setCurrentItem(itemId);
+    setCurrentValue(itemLabel);
+    setCurrentObject(section);
+  };
+
+  const onDeleteClicked = () => {
+    setIsDeleting(true);
+    setCurrentItem(itemId);
+    setCurrentValue(itemLabel);
+    setCurrentObject(section);
   };
   return (
     <DropdownMenu>
@@ -47,7 +61,7 @@ export default function DropdownMenuSubItem({
           <Edit />
           Rename
         </DropdownMenuItem>
-        <DropdownMenuItem variant="destructive">
+        <DropdownMenuItem variant="destructive" onClick={onDeleteClicked}>
           <Trash />
           Delete
         </DropdownMenuItem>
