@@ -1,15 +1,17 @@
 from typing import Optional
 from uuid import UUID
 from pydantic import BaseModel, Field
+from pydantic.json_schema import SkipJsonSchema
 
 
 class ConversationCreate(BaseModel):
-    user_id: Optional[UUID] = Field(None, exclude=True)
+    user_id: SkipJsonSchema[Optional[UUID]] = Field(default=None)
+
 
     workspace_id: Optional[UUID] = Field(
         default=None, description="Associated workspace ID"
     )
-    title: Optional[str] = Field(default=None, description="Title of the conversation")
+    title: Optional[str] = Field(default='New Conversation', description="Title of the conversation")
 
 
 class ConversationUpdate(BaseModel):

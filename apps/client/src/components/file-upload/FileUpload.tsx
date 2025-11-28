@@ -1,4 +1,10 @@
-import React, { useState, useRef, ChangeEvent, DragEvent } from 'react';
+import React, {
+  useState,
+  useRef,
+  ChangeEvent,
+  DragEvent,
+  useEffect,
+} from 'react';
 import {
   Upload,
   X,
@@ -8,39 +14,24 @@ import {
   FileText,
   CheckCircle2,
   Loader2,
+  Clock,
+  Play,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
-import { SidebarMenuButton, useSidebar } from '../ui/sidebar';
-
-// Type definitions
-interface FileItem {
-  id: number;
-  file: File;
-  progress: number;
-  status: FileStatus;
-}
-
-type FileStatus = 'pending' | 'uploading' | 'completed' | 'error';
-
-interface FileUploadFormProps {
-  maxFileSize?: number; // in bytes
-  acceptedFileTypes?: string[];
-  maxFiles?: number;
-  onUploadComplete?: (files: FileItem[]) => void;
-  onUploadError?: (error: string, fileId: number) => void;
-  onClose?: () => void;
-}
+import {
+  BackgroundUploadManager,
+  FileItem,
+  FileStatus,
+  FileUploadFormProps,
+} from './UploadManager';
+import { useUploadFile } from './useUploadFile';
 
 // File type checking utilities
 const IMAGE_TYPES = [
@@ -72,17 +63,47 @@ const isDocumentFile = (fileType: string): boolean =>
 
 // File Upload Form Component
 export const FileUploadForm: React.FC<FileUploadFormProps> = ({
-  maxFileSize = 10 * 1024 * 1024, // 10MB default
+  maxFileSize = 30 * 1024 * 1024, // 30MB default
   acceptedFileTypes = ['image/*', 'video/*', '.pdf', '.doc', '.docx', '.txt'],
   maxFiles = 10,
-  onUploadComplete,
-  onUploadError,
   onClose,
 }) => {
   const [files, setFiles] = useState<FileItem[]>([]);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [, setShowWarning] = useState<boolean>(false);
+  const [uploadStats, setUploadStats] = useState({
+    total: 0,
+    selected: 0,
+    completed: 0,
+    uploading: 0,
+    queued: 0,
+    error: 0,
+    pendingSelected: 0,
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { mutateAsync: uploadFile } = useUploadFile();
+  const uploadManager = BackgroundUploadManager.getInstance(async (data) => {
+    const res = await uploadFile(data);
+    return res.data;
+  });
+
+  // Listen to background upload updates
+  useEffect(() => {
+    const handleUploadUpdate = (updatedFiles: FileItem[]) => {
+      setFiles(updatedFiles);
+      setUploadStats(uploadManager.getUploadStats());
+    };
+
+    uploadManager.addListener(handleUploadUpdate);
+
+    // Initialize with current files
+    setFiles(uploadManager.getFiles());
+    setUploadStats(uploadManager.getUploadStats());
+
+    return () => {
+      uploadManager.removeListener(handleUploadUpdate);
+    };
+  }, [uploadManager]);
 
   const getFileIcon = (fileType: string): React.ReactElement => {
     if (isImageFile(fileType)) {
@@ -108,6 +129,8 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
         return 'destructive';
       case 'uploading':
         return 'secondary';
+      case 'queued':
+        return 'outline';
       default:
         return 'outline';
     }
@@ -121,8 +144,25 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
         return 'Failed';
       case 'uploading':
         return 'Uploading';
+      case 'queued':
+        return 'Queued';
       default:
-        return 'Pending';
+        return 'Ready';
+    }
+  };
+
+  const getStatusIcon = (status: FileStatus) => {
+    switch (status) {
+      case 'completed':
+        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      case 'uploading':
+        return <Loader2 className="h-4 w-4 animate-spin text-blue-500" />;
+      case 'queued':
+        return <Clock className="h-4 w-4 text-amber-500" />;
+      case 'error':
+        return <X className="h-4 w-4 text-red-500" />;
+      default:
+        return <Upload className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
@@ -157,14 +197,18 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
       }
     });
 
-    const newFiles: FileItem[] = validFiles.map((file, index) => ({
-      id: Date.now() + index,
-      file,
-      progress: 0,
-      status: 'pending' as FileStatus,
-    }));
+    // Add files to manager (they will be in pending state)
+    validFiles.forEach((file, index) => {
+      const fileItem: FileItem = {
+        id: Date.now() + index,
+        file,
+        progress: 0,
+        status: 'pending' as FileStatus,
+        selected: true, // Auto-select new files
+      };
 
-    setFiles((prev) => [...prev, ...newFiles]);
+      uploadManager.addFile(fileItem);
+    });
   };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>): void => {
@@ -195,62 +239,38 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
   };
 
   const removeFile = (fileId: number): void => {
-    setFiles((prev) => prev.filter((f) => f.id !== fileId));
+    uploadManager.removeFile(fileId);
   };
 
-  const updateFileStatus = (
-    fileId: number,
-    updates: Partial<FileItem>,
-  ): void => {
-    setFiles((prev) =>
-      prev.map((f) => (f.id === fileId ? { ...f, ...updates } : f)),
-    );
+  const handleSelectAll = (checked: boolean): void => {
+    uploadManager.selectAllFiles(checked);
   };
 
-  const simulateUpload = async (fileId: number): Promise<void> => {
-    updateFileStatus(fileId, { status: 'uploading', progress: 0 });
-
-    try {
-      for (let progress = 0; progress <= 100; progress += 10) {
-        await new Promise<void>((resolve) => setTimeout(resolve, 100));
-        updateFileStatus(fileId, { progress });
-      }
-
-      updateFileStatus(fileId, { status: 'completed' });
-
-      if (onUploadComplete) {
-        const completedFiles = files.filter((f) => f.status === 'completed');
-        onUploadComplete(completedFiles);
-      }
-    } catch (error) {
-      updateFileStatus(fileId, { status: 'error' });
-      if (onUploadError) {
-        onUploadError(
-          error instanceof Error ? error.message : 'Upload failed',
-          fileId,
-        );
-      }
-    }
+  const handleFileToggle = (fileId: number): void => {
+    uploadManager.toggleFileSelection(fileId);
   };
 
-  const uploadAll = async (): Promise<void> => {
-    setIsUploading(true);
-    const pendingFiles = files.filter((f) => f.status === 'pending');
-
-    try {
-      await Promise.all(pendingFiles.map((file) => simulateUpload(file.id)));
-    } catch (error) {
-      console.error('Upload error:', error);
-    } finally {
-      setIsUploading(false);
-    }
+  const startUploads = (): void => {
+    uploadManager.startSelectedUploads();
   };
+
+  // Check if there are files that are not completed
+  const hasActiveUploads = (): boolean => {
+    return uploadManager.hasActiveUploads();
+  };
+
+  // // Handle close with warning check
+  // const handleCloseAttempt = (): void => {
+  //   if (hasActiveUploads()) {
+  //     setShowWarning(true);
+  //   } else {
+  //     handleFinish();
+  //   }
+  // };
 
   const handleFinish = (): void => {
-    // Reset form
-    setFiles([]);
-    setIsUploading(false);
     setIsDragging(false);
+    setShowWarning(false);
 
     // Close modal
     if (onClose) {
@@ -258,250 +278,295 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
     }
   };
 
+  // // Force close and cancel all uploads
+  // const handleForceClose = (): void => {
+  //   // Cancel all active uploads
+  //   files.forEach((file) => {
+  //     if (file.status === 'uploading' || file.status === 'queued') {
+  //       uploadManager.removeFile(file.id);
+  //     }
+  //   });
+
+  //   setShowWarning(false);
+  //   handleFinish();
+  // };
+
+  // // Cancel close action
+  // const handleCancelClose = (): void => {
+  //   setShowWarning(false);
+  // };
+
   const allFilesCompleted =
-    files.length > 0 && files.every((f) => f.status === 'completed');
-
-  return (
-    <div className="space-y-4 px-4">
-      <div className="text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600">
-          <Upload className="h-8 w-8 text-foreground" />
-        </div>
-        <h2 className="text-2xl font-semibold">Upload Your Files</h2>
-        <p className="text-muted-foreground">
-          Drag and drop your files or click to browse
-        </p>
-      </div>
-
-      {/* Drag and Drop Area */}
-      <Card className="py-0 border-2 border-dashed hover:rounded-xl">
-        <CardContent
-          className={cn(
-            ' p-4 text-center transition-all',
-            isDragging
-              ? 'border-primary bg-primary/5 scale-105'
-              : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50',
-          )}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            className="hidden"
-            onChange={handleInputChange}
-            accept={acceptedFileTypes.join(',')}
-          />
-
-          <div className="space-y-4">
-            <div
-              className={cn(
-                'mx-auto flex h-16 w-16 items-center justify-center rounded-full transition-all',
-                isDragging ? 'bg-primary/10' : 'bg-muted',
-              )}
-            >
-              <Upload
-                className={cn(
-                  'h-8 w-8 transition-colors',
-                  isDragging ? 'text-primary' : 'text-muted-foreground',
-                )}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <p className="text-lg font-medium">
-                {isDragging ? 'Drop files here' : 'Drag & drop files here'}
-              </p>
-              <p className="text-muted-foreground">or</p>
-              <Button
-                onClick={() => fileInputRef.current?.click()}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-              >
-                Browse Files
-              </Button>
-            </div>
-
-            <div className="space-y-1 text-xs text-muted-foreground">
-              <p>
-                Supports: Images, Videos, PDF, Documents (Max{' '}
-                {formatFileSize(maxFileSize)} each)
-              </p>
-              <p>Maximum {maxFiles} files allowed</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* File List */}
-      {files.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium">
-              Selected Files ({files.length}/{maxFiles})
-            </h3>
-            {files.some((f) => f.status === 'pending') && (
-              <Button
-                onClick={uploadAll}
-                disabled={isUploading}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                {isUploading && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                {isUploading ? 'Uploading...' : 'Upload All'}
-              </Button>
-            )}
-          </div>
-
-          <div className="max-h-60 space-y-3 overflow-y-auto minimal-scrollbar">
-            {files.map((fileItem) => (
-              <Card key={fileItem.id} className="py-0">
-                <CardContent className="flex items-center p-4">
-                  <div className="mr-4 flex-shrink-0">
-                    {getFileIcon(fileItem.file.type)}
-                  </div>
-
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <p className="truncate text-sm font-medium">
-                        {fileItem.file.name}
-                      </p>
-                      <Badge
-                        variant={getStatusVariant(fileItem.status)}
-                        className="text-xs"
-                      >
-                        {getStatusText(fileItem.status)}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      {formatFileSize(fileItem.file.size)}
-                    </p>
-
-                    {(fileItem.status === 'uploading' ||
-                      fileItem.status === 'completed') && (
-                      <div className="space-y-1">
-                        <Progress
-                          value={fileItem.progress}
-                          className="h-2 [&_[data-slot=progress-indicator]]:bg-green-500"
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          {fileItem.status === 'completed'
-                            ? 'Upload completed'
-                            : `${fileItem.progress}% uploaded`}
-                        </p>
-                      </div>
-                    )}
-
-                    {fileItem.status === 'error' && (
-                      <p className="text-xs text-destructive">Upload failed</p>
-                    )}
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    {fileItem.status === 'completed' && (
-                      <CheckCircle2 className="h-5 w-5 text-green-500" />
-                    )}
-
-                    {fileItem.status === 'pending' && (
-                      <Button
-                        onClick={() => simulateUpload(fileItem.id)}
-                        variant="ghost"
-                        size="sm"
-                      >
-                        Upload
-                      </Button>
-                    )}
-
-                    <Button
-                      onClick={() => removeFile(fileItem.id)}
-                      variant="ghost"
-                      size="sm"
-                      className="text-muted-foreground hover:text-destructive"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Success Message & Actions */}
-      {allFilesCompleted && (
-        <Alert className="border-blue-200 bg-blue-50">
-          <CheckCircle2 className="h-4 w-4 text-green-600" />
-          <AlertDescription className="flex items-center justify-between">
-            <div>
-              <p className="font-medium text-blue-800">
-                All files uploaded successfully!
-              </p>
-              <p className="text-blue-700">
-                {files.length} file{files.length > 1 ? 's' : ''} processed
-              </p>
-            </div>
-            <Button
-              onClick={handleFinish}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              Done
-            </Button>
-          </AlertDescription>
-        </Alert>
-      )}
-    </div>
-  );
-};
-
-// Main Component with Trigger Button
-export const FileUploadModal: React.FC<Omit<FileUploadFormProps, 'onClose'>> = (
-  props,
-) => {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { state } = useSidebar();
-  const openModal = (): void => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = (): void => {
-    setIsModalOpen(false);
-  };
+    files.length > 0 && uploadStats.completed === files.length;
+  const hasFiles = files.length > 0;
+  const hasPendingFiles = files.some((f) => f.status === 'pending');
+  const hasSelectedPendingFiles = uploadStats.pendingSelected > 0;
+  const allPendingSelected =
+    files.filter((f) => f.status === 'pending').length ===
+    files.filter((f) => f.status === 'pending' && f.selected).length;
 
   return (
     <>
-      {/* Trigger Button */}
-      <SidebarMenuButton
-        onClick={openModal}
-        asChild
-        className={cn(
-          'flex justify-center items-center cursor-pointer ',
-          'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-foreground',
-          `${state == 'collapsed' ? 'gap-0' : 'gap-2'}`,
-        )}
-        tooltip="Upload Files"
-      >
-        <div>
-          <Upload />
-          <span>Upload Files</span>
+      <div className="space-y-4 px-4">
+        <div className="text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-r from-blue-500 to-purple-600">
+            <Upload className="h-8 w-8 text-foreground" />
+          </div>
+          <h2 className="text-2xl font-semibold">Upload Your Files</h2>
+          <p className="text-muted-foreground">
+            Select files, review them, then click Upload All to start
+          </p>
         </div>
-      </SidebarMenuButton>
 
-      {/* Modal */}
-      <Dialog open={isModalOpen} onOpenChange={closeModal}>
-        <DialogContent className="min-w-1/2 max-h-[90vh] overflow-y-auto hide-scrollbar">
-          <DialogHeader>
-            <DialogTitle className="sr-only text-foreground">
-              Upload Files
-            </DialogTitle>
-          </DialogHeader>
-          <FileUploadForm {...props} onClose={closeModal} />
-        </DialogContent>
-      </Dialog>
+        {/* Upload Stats Summary */}
+        {hasFiles && (
+          <Alert className="border-ring bg-secondary">
+            <Upload className="h-4 w-4 text-foreground" />
+            <AlertDescription>
+              <div className="flex items-center justify-between w-full">
+                <div className="flex justify-between w-full">
+                  <p className="font-medium text-foreground">
+                    Progress: {uploadStats.completed}/{uploadStats.total} files
+                    completed
+                  </p>
+                  <div className="flex gap-4 text-sm text-foreground">
+                    <span>✅ {uploadStats.selected} selected</span>
+                    {uploadStats.uploading > 0 && (
+                      <span>🔄 {uploadStats.uploading} uploading</span>
+                    )}
+                    {uploadStats.queued > 0 && (
+                      <span>⏳ {uploadStats.queued} queued</span>
+                    )}
+                    {uploadStats.error > 0 && (
+                      <span>❌ {uploadStats.error} failed</span>
+                    )}
+                  </div>
+                </div>
+                {uploadStats.uploading > 0 && (
+                  <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
+                )}
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Drag and Drop Area */}
+        <Card className="py-0 border-2 border-dashed hover:rounded-xl">
+          <CardContent
+            className={cn(
+              ' p-4 text-center transition-all',
+              isDragging
+                ? 'border-primary bg-primary/5 scale-105'
+                : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50',
+            )}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              className="hidden"
+              onChange={handleInputChange}
+              accept={acceptedFileTypes.join(',')}
+            />
+
+            <div className="space-y-3">
+              <div
+                className={cn(
+                  'mx-auto flex h-12 w-12 items-center justify-center rounded-full transition-all',
+                  isDragging ? 'bg-primary/10' : 'bg-muted',
+                )}
+              >
+                <Upload
+                  className={cn(
+                    'h-5 w-5 transition-colors',
+                    isDragging ? 'text-primary' : 'text-muted-foreground',
+                  )}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-lg font-medium">
+                  {isDragging ? 'Drop files here' : 'Drag & drop files here'}
+                </p>
+                <p className="text-muted-foreground">or</p>
+                <Button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-linear-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                >
+                  Browse Files
+                </Button>
+              </div>
+
+              <div className="space-y-1 text-xs text-muted-foreground">
+                <p>
+                  Supports: Images, Videos, PDF, Documents (Max{' '}
+                  {formatFileSize(maxFileSize)} each)
+                </p>
+                <p>Maximum {maxFiles} files • Review before upload</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* File List */}
+        {hasFiles && (
+          <div className="space-y-4 ">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center  gap-3 whitespace-nowrap w-full">
+                <h3 className="text-lg font-medium">
+                  Files ({files.length}/{maxFiles})
+                </h3>
+
+                {hasPendingFiles && (
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="select-all"
+                      checked={allPendingSelected}
+                      onCheckedChange={handleSelectAll}
+                    />
+                    <label
+                      htmlFor="select-all"
+                      className="text-sm text-muted-foreground cursor-pointer"
+                    >
+                      Select All ({uploadStats.pendingSelected} selected)
+                    </label>
+                  </div>
+                )}
+                {/* Success Message & Actions */}
+                {allFilesCompleted && (
+                  <div className="flex items-center justify-between w-full">
+                    <div>
+                      <p className="font-medium text-green-800">
+                        All files uploaded successfully!
+                      </p>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                      <Button
+                        onClick={() => uploadManager.clearCompleted()}
+                        variant="outline"
+                        size="sm"
+                      >
+                        Clear Completed
+                      </Button>
+                      <Button
+                        onClick={handleFinish}
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        Done
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {hasSelectedPendingFiles && (
+                <Button
+                  onClick={startUploads}
+                  className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
+                >
+                  <Play className="h-4 w-4" />
+                  Upload Selected ({uploadStats.pendingSelected})
+                </Button>
+              )}
+            </div>
+            {/* File List */}
+            <div className="max-h-60 space-y-2 overflow-y-auto minimal-scrollbar">
+              {files.map((fileItem) => (
+                <Card key={fileItem.id} className="p-2!">
+                  <CardContent className="flex items-center gap-2 p-1">
+                    <div className="flex shrink-0 justify-center">
+                      {fileItem.status === 'pending' && (
+                        <Checkbox
+                          checked={fileItem.selected}
+                          onCheckedChange={() => handleFileToggle(fileItem.id)}
+                        />
+                      )}
+                      {fileItem.status !== 'pending' && (
+                        <div className="w-4 h-4 flex items-center justify-center">
+                          {getStatusIcon(fileItem.status)}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="shrink-0">
+                      {getFileIcon(fileItem.file.type)}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="truncate text-sm font-medium text-center">
+                          {fileItem.file.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatFileSize(fileItem.file.size)}
+                        </p>
+                        <Badge
+                          variant={getStatusVariant(fileItem.status)}
+                          className="text-xs flex items-center gap-1"
+                        >
+                          {getStatusText(fileItem.status)}
+                        </Badge>
+                      </div>
+
+                      <div className="flex items-center justify-between space-x-2 whitespace-nowrap">
+                        {(fileItem.status === 'uploading' ||
+                          fileItem.status === 'completed') && (
+                          <>
+                            <Progress
+                              value={fileItem.progress}
+                              className="h-2 **:data-[slot=progress-indicator]:bg-green-500"
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              {fileItem.status === 'completed'
+                                ? 'Completed'
+                                : `${fileItem.progress}% uploaded`}
+                            </p>
+                          </>
+                        )}
+                      </div>
+
+                      {fileItem.status === 'queued' && (
+                        <p className="text-xs text-amber-600">
+                          Waiting in queue...
+                        </p>
+                      )}
+
+                      {fileItem.status === 'error' && (
+                        <p className="text-xs text-destructive">
+                          Upload failed
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        onClick={() => removeFile(fileItem.id)}
+                        variant="ghost"
+                        size="sm"
+                        className="text-muted-foreground hover:text-destructive"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex justify-end pt-4">
+          {hasFiles && hasActiveUploads() && (
+            <div className="text-xs text-muted-foreground">
+              * Uploads will continue in background if you close this window
+            </div>
+          )}
+        </div>
+      </div>
     </>
   );
 };
-
-export default FileUploadModal;

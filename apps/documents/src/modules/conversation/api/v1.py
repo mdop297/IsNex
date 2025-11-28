@@ -21,8 +21,7 @@ conv_router = APIRouter(prefix="/convs", tags=["conversations"])
 async def create_conversation(
     request: Request, data: ConversationCreate, conv_service: ConversationServiceDep
 ):
-    data.user_id = request.user.id
-    result = conv_service.create(request.user.id, data)
+    result = await conv_service.create(request.user.id, data)
     return result
 
 
@@ -36,27 +35,27 @@ async def update_conversation(
     result = await conv_service.update(request.user.id, id, data)
     return result
 
-
-@conv_router.get("/{id}", response_model=ConversationResponse)
-def get_conversation(request: Request, id: UUID, conv_service: ConversationServiceDep):
-    result = conv_service.get_by_id(user_id=request.user.id, id=id)
-    return result
-
-
 # we will get user_id from token, not from request param
 @conv_router.get("/user", response_model=PaginatedConversationResponse)
-def get_all_conversations(request: Request, conv_service: ConversationServiceDep):
-    result = conv_service.get_by_user_id(user_id=request.user.id, skip=0, limit=20)
+async def get_all_conversations(request: Request, conv_service: ConversationServiceDep):
+    result = await conv_service.get_by_user_id(user_id=request.user.id, skip=0, limit=20)
     return result
+
+@conv_router.get("/{id}", response_model=ConversationResponse)
+async def get_conversation(request: Request, id: UUID, conv_service: ConversationServiceDep):
+    result = await conv_service.get_by_id(user_id=request.user.id, id=id)
+    return result
+
+
 
 
 @conv_router.get(
     "/workspace/{workspace_id}", response_model=PaginatedConversationResponse
 )
-def get_conversations_by_workspace(
+async def get_conversations_by_workspace(
     req: Request, workspace_id: UUID, conv_service: ConversationServiceDep
 ):
-    result = conv_service.get_by_workspace_id(
+    result = await conv_service.get_by_workspace_id(
         user_id=req.user.id, workspace_id=workspace_id, skip=0, limit=20
     )
     return result

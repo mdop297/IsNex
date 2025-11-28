@@ -14,7 +14,7 @@ class DocumentResponse(BaseModel):
     name: str
     type: FileType
     num_pages: int
-    embedding_status: Status
+    embedding_status: Status = Status.UPLOADED
     file_size: str
     created_at: datetime
     updated_at: datetime

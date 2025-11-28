@@ -46,6 +46,7 @@ services:
             - GET
             - POST
             - PUT
+            - PATCH
             - DELETE
             - OPTIONS
           headers:
@@ -56,12 +57,13 @@ services:
           max_age: 3600
 
   - name: documents-svc
-    url: http://documents:8000
+    url: http://documents-svc:8000
     routes:
       - name: documents-route
         paths:
-          - /api/v1/docs
-        strip_path: true
+          - /api/v1/documents/
+          - /api/v1/
+        strip_path: false
     plugins:
       - name: cors
         config:
@@ -71,6 +73,7 @@ services:
             - GET
             - POST
             - PUT
+            - PATCH
             - DELETE
             - OPTIONS
           headers:
@@ -79,3 +82,28 @@ services:
             - Content-Type
           credentials: true
           max_age: 3600
+
+  - name: data-lake
+    url: http://data-lake:9000
+    routes:
+      - name: data-lake-route
+        paths:
+          - /isnex-dev
+        strip_path: false
+    # plugins:
+    #   - name: cors
+    #     config:
+    #       origins:
+    #         - http://localhost:5000
+    #       methods:
+    #         - GET
+    #         - POST
+    #         - PUT
+    #         - DELETE
+    #         - OPTIONS
+    #       headers:
+    #         - Accept
+    #         - Authorization
+    #         - Content-Type
+    #       credentials: true
+    #       max_age: 3600

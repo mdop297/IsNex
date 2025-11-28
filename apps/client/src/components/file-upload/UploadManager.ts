@@ -1,4 +1,9 @@
-import { documentsApi } from '@/lib/api/documents';
+import { useFolderStore } from '@/app/(home)/library/docs/useFolderStore';
+import {
+  BodyUploadFile,
+  DocumentResponse,
+  FileType,
+} from '@/lib/generated/core/data-contracts';
 
 // Type definitions
 export interface FileItem {
@@ -34,10 +39,17 @@ export class BackgroundUploadManager {
   private maxConcurrentUploads: number = 3;
   private listeners: Set<(files: FileItem[]) => void> = new Set();
   private isUploadingEnabled: boolean = false;
+  constructor(
+    private uploadFile: (data: BodyUploadFile) => Promise<DocumentResponse>,
+  ) {}
 
-  static getInstance(): BackgroundUploadManager {
+  static getInstance(
+    uploadFile: (data: BodyUploadFile) => Promise<DocumentResponse>,
+  ): BackgroundUploadManager {
     if (!BackgroundUploadManager.instance) {
-      BackgroundUploadManager.instance = new BackgroundUploadManager();
+      BackgroundUploadManager.instance = new BackgroundUploadManager(
+        uploadFile,
+      );
     }
     return BackgroundUploadManager.instance;
   }
@@ -137,26 +149,37 @@ export class BackgroundUploadManager {
 
   private async startUpload(fileItem: FileItem) {
     this.updateFileStatus(fileItem.id, { status: 'uploading', progress: 0 });
-    console.log('===============================');
-    console.log('Uploading file: ==>', fileItem.file.name);
-    console.log('===============================');
+    // console.log('===============================');
+    // console.log('Uploading file: ==>', fileItem.file.name);
+    // console.log('===============================');
 
     this.updateFileStatus(fileItem.id, { status: 'uploading', progress: 0 });
+    const currentFolder = useFolderStore.getState().currentFolder;
+    const setCurrentFolder = useFolderStore.getState().setCurrentFolder;
 
     try {
-      const response = await documentsApi.uploadFile(
-        fileItem.file,
-        (progress) => {
-          this.updateFileStatus(fileItem.id, { progress });
-        },
-      );
+      const documentCreateData = {
+        folder_id: currentFolder,
+        name: fileItem.file.name,
+        num_pages: 0,
+        file_size: fileItem.file.size.toString(),
+        type: FileType.Pdf,
+      };
 
+      const body: BodyUploadFile = {
+        file: fileItem.file,
+        metadata: JSON.stringify(documentCreateData),
+      };
+
+      const response = await this.uploadFile(body);
       console.log('Upload response:', response);
 
       this.updateFileStatus(fileItem.id, {
         status: 'completed',
         progress: 100,
       });
+      // reset current folder to null
+      setCurrentFolder(null);
     } catch (error) {
       this.updateFileStatus(fileItem.id, { status: 'error' });
       console.error('Upload error:', error);

@@ -15,6 +15,7 @@ _base_config: SettingsConfigDict = SettingsConfigDict(
 class Settings(BaseSettings):
     APP_NAME: str = "FastShip"
     APP_DOMAIN: str = "localhost:8000"
+    DATA_LAKE_DOMAIN: str = "data-lake:9000"
 
     POSTGRES_PASSWORD: str
     POSTGRES_USER: str

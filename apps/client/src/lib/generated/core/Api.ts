@@ -70,6 +70,58 @@ export class Api<
    * No description
    *
    * @tags documents
+   * @name GetAllDocumentsByUser
+   * @summary Get All Documents By User
+   * @request GET:/api/v1/documents/all
+   */
+  getAllDocumentsByUser = (params: RequestParams = {}) =>
+    this.request<DocumentResponse[], any>({
+      path: `/api/v1/documents/all`,
+      method: 'GET',
+      format: 'json',
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags documents
+   * @name GetDocumentsByFolderId
+   * @summary Get Documents By Folder Id
+   * @request GET:/api/v1/documents/fs
+   */
+  getDocumentsByFolderId = (
+    query?: {
+      /** Folder Id */
+      folder_id?: string | null;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<DocumentResponse[], HTTPValidationError>({
+      path: `/api/v1/documents/fs`,
+      method: 'GET',
+      query: query,
+      format: 'json',
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags documents
+   * @name LoadDocument
+   * @summary Load Document
+   * @request GET:/api/v1/documents/load/{id}
+   */
+  loadDocument = (id: string, params: RequestParams = {}) =>
+    this.request<string, HTTPValidationError>({
+      path: `/api/v1/documents/load/${id}`,
+      method: 'GET',
+      format: 'json',
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags documents
    * @name GetDocumentMeta
    * @summary Get Document Meta
    * @request GET:/api/v1/documents/{id}
@@ -114,21 +166,6 @@ export class Api<
     this.request<boolean, HTTPValidationError>({
       path: `/api/v1/documents/${id}`,
       method: 'DELETE',
-      format: 'json',
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags documents
-   * @name LoadDocument
-   * @summary Load Document
-   * @request GET:/api/v1/documents/load/{id}
-   */
-  loadDocument = (id: string, params: RequestParams = {}) =>
-    this.request<PresignedUrlResponse, HTTPValidationError>({
-      path: `/api/v1/documents/load/${id}`,
-      method: 'GET',
       format: 'json',
       ...params,
     });

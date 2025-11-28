@@ -29,9 +29,7 @@ class FolderService(
         self, user_id: UUID, id: UUID, obj: FolderUpdate
     ) -> FolderResponse:
         # Get folder with minimal fields
-        folder = await self.repository.get_by_id(
-            id, fields=["id", "user_id", "parent_id"]
-        )
+        folder = await self.__validate_folder(id, user_id)
         if not folder:
             raise Exception("Folder not found")
         if folder.user_id != user_id:

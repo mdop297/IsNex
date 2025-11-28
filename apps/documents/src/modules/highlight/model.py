@@ -8,8 +8,9 @@ from uuid import UUID
 
 from src.core.database.base import BaseTable
 
+from src.modules.source.model import Source
+
 if TYPE_CHECKING:
-    from src.modules.source.model import Source
     from src.modules.document.model import Document
 
 """ 

@@ -59,7 +59,8 @@ export enum FileType {
 
 /** Body_upload_file */
 export interface BodyUploadFile {
-  data: DocumentCreate;
+  /** Metadata */
+  metadata: string;
   /**
    * File
    * @format binary
@@ -69,8 +70,6 @@ export interface BodyUploadFile {
 
 /** ConversationCreate */
 export interface ConversationCreate {
-  /** User Id */
-  user_id?: string | null;
   /**
    * Workspace Id
    * Associated workspace ID
@@ -79,6 +78,7 @@ export interface ConversationCreate {
   /**
    * Title
    * Title of the conversation
+   * @default "New Conversation"
    */
   title?: string | null;
 }
@@ -126,36 +126,6 @@ export interface ConversationUpdate {
   title?: string | null;
 }
 
-/** DocumentCreate */
-export interface DocumentCreate {
-  /** User Id */
-  user_id?: string | null;
-  /** Folder Id */
-  folder_id?: string | null;
-  /**
-   * Name
-   * @default "Untitled"
-   */
-  name?: string;
-  /** File Url */
-  file_url: string;
-  /**
-   * type of the file, only pdf for now
-   * @default "pdf"
-   */
-  type?: FileType;
-  /**
-   * Num Pages
-   * number of pages in the file
-   */
-  num_pages: number | null;
-  /**
-   * File Size
-   * size of the file in bytes
-   */
-  file_size: string;
-}
-
 /** DocumentResponse */
 export interface DocumentResponse {
   /**
@@ -170,7 +140,8 @@ export interface DocumentResponse {
   type: FileType;
   /** Num Pages */
   num_pages: number;
-  embedding_status: Status;
+  /** @default "UPLOADED" */
+  embedding_status?: Status;
   /** File Size */
   file_size: string;
   /**
@@ -195,8 +166,6 @@ export interface DocumentUpdate {
 
 /** FolderCreate */
 export interface FolderCreate {
-  /** User Id */
-  user_id?: string | null;
   /**
    * Parent Id
    * parent folder id
@@ -223,15 +192,17 @@ export interface FolderResponse {
    * @format uuid
    */
   id: string;
-  /**
-   * Parent Id
-   * @format uuid
-   */
-  parent_id: string;
+  /** Parent Id */
+  parent_id?: string | null;
   /** Name */
   name: string;
   /** Path */
   path: string;
+  /**
+   * Updated At
+   * @format date-time
+   */
+  updated_at: string;
 }
 
 /** FolderUpdate */

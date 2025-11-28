@@ -1,358 +1,183 @@
 'use client';
-
-import PDFPreview from '@/components/pdf/PDFViewer/PDFPreview';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
+import React from 'react';
+import DocumentItem from './DocItem';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
-import { fake_data } from '../fake_docs';
+import { UploadIcon } from 'lucide-react';
+import SelectedFilesPanel from './SelectedFilesPanel';
+import { useDocumentStore } from './useDocumentStore';
+import PreviewPanel from './PreviewPanel';
+import { useDocuments } from './useDocuments';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
+import { useFolders } from './useFolders';
+import FolderItem from './FolderItem';
+import { useFolderStore } from './useFolderStore';
+import CreateFolder from './CreateFolder';
+import {
+  DocumentResponse,
+  FolderResponse,
+} from '@/lib/generated/core/data-contracts';
 
-type Folder = {
-  name: string;
-  folders: Folder[];
-  files: FileInfo[];
+const buildFolderTreeMap = (folders: FolderResponse[]) => {
+  const tree = new Map<string | null, FolderResponse[]>();
+  for (const folder of folders) {
+    const key = folder.parent_id ?? null;
+    if (!tree.has(key)) {
+      tree.set(key, []);
+    }
+    tree.get(key)!.push(folder);
+  }
+  return tree;
 };
 
-type FileInfo = {
-  name: string;
-  uploadedDate: string;
+const buildDocumentTreeMap = (documents: DocumentResponse[]) => {
+  const tree = new Map<string | null, DocumentResponse[]>();
+  for (const document of documents) {
+    const key = document.folder_id ?? null;
+    if (!tree.has(key)) {
+      tree.set(key, []);
+    }
+    tree.get(key)!.push(document);
+  }
+  return tree;
 };
-
-const fileUrl1 = '/temp/48.pdf';
 
 const DocumentPage = () => {
-  const [openPreview, setOpenPreview] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [previewFile, setPreviewFile] = useState<string | null>(null);
-  const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
-  const [data] = useState<Folder>(fake_data);
+  const {
+    expandedFolders,
+    toggleFolder,
+    setIsCreatingFolder,
+    setCurrentFolder,
+  } = useFolderStore();
 
-  // Track current folder path as array of folder names, empty = root
-  const [currentPath, setCurrentPath] = useState<string[]>([]);
+  const selectedFiles = useDocumentStore((state) => state.selectedFiles);
+  const isPreviewOpen = useDocumentStore((state) => state.isPreviewOpen);
+  const previewFileId = useDocumentStore((state) => state.previewFileId);
+  const previewFile = useDocumentStore((state) => state.previewFile);
 
-  // Find folder node by path recursively
-  const findFolderByPath = (folder: Folder, path: string[]): Folder => {
-    if (path.length === 0) return folder;
-    const [next, ...rest] = path;
-    const nextFolder = folder.folders.find((f) => f.name === next);
-    if (!nextFolder) return folder;
-    return findFolderByPath(nextFolder, rest);
-  };
+  const { data: documents, isLoading, isError, error } = useDocuments();
+  const { data: folders } = useFolders();
 
-  // Current folder node
-  const currentFolder = findFolderByPath(data, currentPath);
+  const documentTreeMap = buildDocumentTreeMap(documents || []);
+  const folderTreeMap = buildFolderTreeMap(folders || []);
 
-  // Handlers
-  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
+  const showRightPanel = selectedFiles.size > 0 || isPreviewOpen;
 
-  const onPreviewClick = (file: string) => {
-    setPreviewFile(file);
-    setOpenPreview(true);
-  };
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error: {error.message}</div>;
 
-  const onFileSelect = (fileName: string) => {
-    setSelectedFiles((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(fileName)) {
-        newSet.delete(fileName);
-      } else {
-        newSet.add(fileName);
-      }
-      return newSet;
-    });
-  };
+  const renderItems = (
+    foldersTree: Map<string | null, FolderResponse[]>,
+    documents: Map<string | null, DocumentResponse[]>,
+    parent_id: string | null = null,
+    level = 0,
+  ): React.ReactNode => {
+    return foldersTree.get(parent_id)?.map((folder) => {
+      const hasChildren =
+        foldersTree.has(folder.id) ||
+        (documents.get(folder.id)?.length ?? 0) > 0;
+      const isExpanded = expandedFolders.has(folder.id);
 
-  const onFolderClick = (folderName: string) => {
-    setCurrentPath((prev) => [...prev, folderName]);
-    setPreviewFile(null);
-    setOpenPreview(false);
-  };
+      return (
+        <React.Fragment key={folder.id}>
+          <FolderItem
+            folder={folder}
+            style={{ paddingLeft: `${level * 16}px` }}
+            isExpanded={isExpanded}
+            hasChildren={hasChildren}
+            onClick={() => toggleFolder(folder.id)}
+          />
 
-  const onBreadcrumbClick = (index: number) => {
-    setCurrentPath(currentPath.slice(0, index));
-    setPreviewFile(null);
-    setOpenPreview(false);
-  };
-
-  const closePreview = () => {
-    setOpenPreview(false);
-    setPreviewFile(null);
-  };
-
-  const openWorkspace = () => {
-    // Tạo object workspace data để trả về
-    const workspaceData = {
-      selectedFiles: Array.from(selectedFiles),
-      currentPath: currentPath,
-      timestamp: new Date().toISOString(),
-      folderContext: currentFolder.name,
-    };
-
-    console.log('Opening workspace with:', workspaceData);
-    alert(`Workspace data: ${JSON.stringify(workspaceData, null, 2)}`);
-
-    // Trong tương lai, sẽ navigate hoặc open workspace với workspaceData
-    // router.push(`/workspace?data=${encodeURIComponent(JSON.stringify(workspaceData))}`);
-  };
-
-  // Filter files and folders by search query if any
-  const filteredFolders = currentFolder.folders.filter((f) =>
-    f.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-  const filteredFiles = currentFolder.files.filter((f) =>
-    f.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-
-  // Helper function to format date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
+          {isExpanded && (
+            <>
+              {documents.get(folder.id)?.map((document) => {
+                return (
+                  <DocumentItem
+                    document={document}
+                    key={document.id}
+                    style={{ paddingLeft: `${(level + 1) * 16 + 20}px` }}
+                  />
+                );
+              })}
+              {renderItems(foldersTree, documents, folder.id, level + 1)}
+            </>
+          )}
+        </React.Fragment>
+      );
     });
   };
 
   return (
-    <div className="flex-1 flex flex-row gap-4 h-full min-w-0 w-full">
-      {/* Left Panel */}
-      <div
-        className={`flex flex-col gap-4 border rounded p-3 shadow-sm transition-all  ${
-          openPreview || selectedFiles.size > 0
-            ? 'w-[500px] shrink-0'
-            : 'flex-1 '
-        }`}
-      >
-        {/* Search & Upload */}
-        <div className="flex gap-2">
-          <Input
-            placeholder="Search documents..."
-            value={searchQuery}
-            onChange={onSearchChange}
-            className="flex-grow text-sm"
-          />
-          <Button
-            size="sm"
-            onClick={() => alert('Upload coming soon!')}
-            className="shrink-0"
-          >
-            Upload
-          </Button>
+    <>
+      <div className="flex flex-1 h-full w-full p-2 gap-2 min-w-0 overflow-hidden">
+        {/* Left Panel */}
+        <div
+          className={`flex flex-1 flex-col min-w-0 duration-300 transition-all`}
+        >
+          <div className="flex gap-2 items-center">
+            {/* Search */}
+            <Input
+              placeholder="Search documents..."
+              className="flex-1 text-sm"
+            />
+            {/* Upload file button */}
+            <Button size="sm" className="shrink-0">
+              <UploadIcon />
+              <span>Upload files</span>
+            </Button>
+          </div>
+          {/* Breadcrumb */}
+          <div>Breadcrumb</div>
+          <ContextMenu>
+            <ContextMenuTrigger asChild>
+              {/* Folders */}
+
+              <div className="overflow-auto h-full">
+                {renderItems(folderTreeMap, documentTreeMap)}
+                {documentTreeMap
+                  .get(null)
+                  ?.map((doc) => <DocumentItem key={doc.id} document={doc} />)}
+              </div>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+              <ContextMenuItem
+                onClick={() => {
+                  setCurrentFolder(null);
+                  setIsCreatingFolder(true);
+                }}
+              >
+                New Folder
+              </ContextMenuItem>
+              <ContextMenuItem>Add to workspace</ContextMenuItem>
+              <ContextMenuItem>Upload files</ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
         </div>
 
-        {/* Breadcrumb */}
-        <Breadcrumb className="mb-2">
-          <BreadcrumbList>
-            <BreadcrumbItem
-              onClick={() => onBreadcrumbClick(0)}
-              className="cursor-pointer hover:underline text-sm"
-            >
-              Root
-            </BreadcrumbItem>
-            {currentPath.map((folder, idx) => (
-              <div key={idx} className="flex items-center">
-                <BreadcrumbSeparator />
-                <BreadcrumbItem
-                  onClick={() => onBreadcrumbClick(idx + 1)}
-                  className="cursor-pointer hover:underline text-sm"
-                >
-                  {folder}
-                </BreadcrumbItem>
-              </div>
-            ))}
-          </BreadcrumbList>
-        </Breadcrumb>
-
-        {/* Folders */}
-        {filteredFolders.length !== 0 && (
-          <div className="max-h-[30vh] lg:max-h-[35vh] overflow-auto">
-            <h3 className="font-semibold mb-2 text-sm lg:text-base">Folders</h3>
-            {filteredFolders.map((folder) => (
-              <div
-                key={folder.name}
-                className="p-2 cursor-pointer hover:bg-sidebar-border rounded text-sm"
-                onClick={() => onFolderClick(folder.name)}
-              >
-                📁 {folder.name}
-              </div>
-            ))}
+        {/* Right Panel */}
+        <div
+          className={`transition-all duration-300 ease-in-out overflow-hidden ${
+            showRightPanel
+              ? 'flex-1 max-w-[50%] opacity-100'
+              : 'w-0 max-w-0 opacity-0'
+          }`}
+        >
+          <div className="h-full w-full">
+            {isPreviewOpen ? (
+              <PreviewPanel fileId={previewFileId!} fileName={previewFile!} />
+            ) : (
+              selectedFiles.size > 0 && <SelectedFilesPanel />
+            )}
           </div>
-        )}
-
-        {/* Files */}
-        {filteredFiles.length !== 0 && (
-          <div className="max-h-[35vh] lg:max-h-[40vh] overflow-auto">
-            <h3 className="font-semibold mb-2 text-sm lg:text-base">Files</h3>
-            {filteredFiles.map((fileInfo) => (
-              <div
-                key={fileInfo.name}
-                className={`group relative p-2 cursor-pointer rounded border transition-all ${
-                  selectedFiles.has(fileInfo.name)
-                    ? 'bg-item-selected '
-                    : 'border-transparent hover:bg-item-hover'
-                }`}
-                onClick={() => onFileSelect(fileInfo.name)}
-              >
-                <div className="flex items-center justify-between">
-                  {/* File name - truncated when date is visible */}
-                  <p className="truncate min-w-0 mr-2 text-sm max-w-[600px]">
-                    📄 {fileInfo.name}
-                  </p>
-
-                  {/* Date */}
-                  <p className="text-xs text-muted-foreground whitespace-nowrap group-hover:hidden shrink-0">
-                    {formatDate(fileInfo.uploadedDate)}
-                  </p>
-
-                  {/* Preview button */}
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="group-hover:block shrink-0 text-xs h-fit py-0.5 hidden m-0"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onPreviewClick(fileInfo.name);
-                    }}
-                  >
-                    Preview
-                  </Button>
-                </div>
-
-                {/* Selected indicator */}
-                {selectedFiles.has(fileInfo.name) && (
-                  <div className="absolute top-1 right-1">
-                    <div className="w-2 h-2 file-item-selected-indicator rounded-full"></div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+        </div>
       </div>
-
-      {/* Right Panel */}
-      {(selectedFiles.size > 0 || openPreview) && (
-        <div className="flex-1 flex flex-col gap-4 min-w-0 w-full ">
-          {/* PDF Preview Panel */}
-          {openPreview && previewFile && (
-            <div className="border rounded p-3 flex flex-col flex-1 overflow-hidden">
-              <div className="mb-2 flex justify-between items-center gap-2 min-w-0">
-                <h3 className="font-semibold text-base truncate mr-2 ">
-                  {previewFile}
-                </h3>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={closePreview}
-                  className="shrink-0 items-center"
-                >
-                  Close Preview <span>✕</span>
-                </Button>
-              </div>
-              <div className="flex-1">
-                <PDFPreview fileUrl={fileUrl1} />
-              </div>
-            </div>
-          )}
-
-          {/* Selected Files Panel */}
-          {!openPreview && selectedFiles.size > 0 && (
-            <div className="flex-1 border rounded shadow-sm p-3 lg:p-4 flex flex-col max-h-screen">
-              <h3 className="font-semibold text-base lg:text-lg mb-4">
-                Selected Files ({selectedFiles.size})
-              </h3>
-
-              <div className="overflow-auto mb-4 ">
-                {Array.from(selectedFiles).map((fileName) => {
-                  const findFileInfo = (
-                    folder: Folder,
-                    name: string,
-                  ): FileInfo | null => {
-                    const fileInfo = folder.files.find((f) => f.name === name);
-                    if (fileInfo) return fileInfo;
-
-                    for (const subfolder of folder.folders) {
-                      const found = findFileInfo(subfolder, name);
-                      if (found) return found;
-                    }
-                    return null;
-                  };
-
-                  const fileInfo = findFileInfo(data, fileName);
-
-                  return (
-                    <div
-                      key={fileName}
-                      className="group p-2 cursor-pointer rounded hover:file-item-hover transition-all border border-transparent hover:border overflow-hidden"
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div className="w-2 h-2 file-item-selected-indicator rounded-full flex-shrink-0"></div>
-
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className="flex-shrink-0">📄</span>
-                            <span className="truncate text-sm">{fileName}</span>
-                          </div>
-                          {fileInfo && (
-                            <div className="text-xs text-muted-foreground mt-1">
-                              {formatDate(fileInfo.uploadedDate)}
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="hidden group-hover:flex gap-1 flex-shrink-0">
-                          {/* Preview button */}
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="text-xs px-2 py-1 h-auto hover:bg-gray-100"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onPreviewClick(fileName);
-                            }}
-                          >
-                            Preview
-                          </Button>
-
-                          {/* Remove button */}
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs px-2 py-1 h-auto"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onFileSelect(fileName);
-                            }}
-                          >
-                            Remove
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Open Workspace Button */}
-              <Button
-                onClick={openWorkspace}
-                className="bg-blue-600 hover:bg-blue-700 w-full"
-                size="sm"
-              >
-                Open Workspace ({selectedFiles.size})
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+      <CreateFolder />
+    </>
   );
 };
 
