@@ -44,9 +44,7 @@ const WorkspaceMode = ({
             <ResizablePanelGroup direction="horizontal">
               <ResizablePanel>
                 {/* pdf reader */}
-                <div className="flex-1 h-full bg-green-800 flex justify-between">
-                  {pdf}
-                </div>
+                <div className="flex-1 h-full flex justify-between">{pdf}</div>
               </ResizablePanel>
               <ResizableHandle withHandle className="bg-ring" />
               <ResizablePanel>
@@ -55,23 +53,25 @@ const WorkspaceMode = ({
                   onValueChange={(value) => {
                     setOpenTab(value as 'note' | 'chat');
                   }}
-                  className="flex flex-col h-screen !gap-0.5 bg-secondary"
+                  className="flex flex-col h-screen gap-0.5! bg-background"
                 >
                   {/* Header có h-fit - tự động điều chỉnh theo nội dung */}
-                  <div className="flex flex-row h-fit w-full bg-neutral-700 flex-shrink-0 p-0.5">
+                  <div className="flex flex-row items-center justify-center h-fit w-full bg-secondary shrink-0 gap-1 p-1">
                     <Button
                       variant={'ghost'}
                       className="hover:bg-item-hover hover:cursor-pointer rounded-md"
+                      size={'icon-sm'}
                     >
                       <ArrowLeft className="text-white" />
                     </Button>
-                    <TabsList className="w-full">
+                    <TabsList className="w-full ">
                       <TabsTrigger value="chat">Conversation</TabsTrigger>
                       <TabsTrigger value="note">Note Editor</TabsTrigger>
                     </TabsList>
                     <Button
                       variant={'ghost'}
                       className="text-white hover:bg-item-hover hover:cursor-pointer"
+                      size={'icon-sm'}
                     >
                       <Maximize2 />
                     </Button>
@@ -82,36 +82,24 @@ const WorkspaceMode = ({
                     value="chat"
                     className="flex-1 w-full overflow-hidden"
                   >
-                    <div className="h-full bg-secondary overflow-auto w-full flex justify-center items-center">
-                      {chat}
-                    </div>
+                    {chat}
                   </TabsContent>
 
                   <TabsContent
                     value="note"
                     className="flex-1 w-full overflow-hidden"
                   >
-                    <div className="h-full bg-secondary w-full flex justify-center items-center">
-                      {note}
-                    </div>
+                    {note}
                   </TabsContent>
                 </Tabs>
               </ResizablePanel>
             </ResizablePanelGroup>
           </>
         ) : (
-          <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel>
-              <div className="flex-1 h-full bg-secondary w-full flex justify-center items-center overflow-auto">
-                {chat}
-              </div>
-            </ResizablePanel>
+          <ResizablePanelGroup direction="horizontal" className="flex-1">
+            <ResizablePanel>{chat}</ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel>
-              <div className="flex-1 h-full bg-secondary w-full flex justify-center items-center">
-                {note}
-              </div>
-            </ResizablePanel>
+            <ResizablePanel>{note}</ResizablePanel>
           </ResizablePanelGroup>
         )}
       </div>

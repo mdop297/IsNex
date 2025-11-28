@@ -111,17 +111,18 @@ const Toolbar = ({
   };
 
   return (
-    <div className="px-1 py-1.5 border-b bg-neutral-700 rounded-xs flex flex-row text-neutral-200">
+    <div className="px-1 py-1.5 border-b bg-secondary rounded-xs flex flex-row text-neutral-200">
       <div className="w-full flex items-center justify-between">
         {/* Left section */}
         <div className="flex items-center space-x-3 text-sm">
-          <div
-            className="toolbar-button"
+          <Button
+            className="bg-secondary hover:bg-gray-800 text-foreground"
             aria-label="Toggle sidebar"
             onClick={toggleSidebar}
+            size={'icon-sm'}
           >
-            <Menu className="size-4" />
-          </div>
+            <Menu />
+          </Button>
           <div className="flex gap-1 items-center justify-center">
             <Input
               type="number"
@@ -151,26 +152,27 @@ const Toolbar = ({
             />
             <span>/ {totalPages}</span>
           </div>
-          <div
-            className="toolbar-button"
+          <Button
+            className="bg-secondary hover:bg-gray-800 text-foreground"
             onClick={() => {
               toggleSearchBar();
               if (!isSidebarOpen) {
                 toggleSidebar();
               }
             }}
+            size={'icon-sm'}
           >
             <Search
               className={`size-4 ${searchTabOpen ? 'text-purple-500' : ''} `}
             />
-          </div>
+          </Button>
         </div>
         {/* Center section */}
 
-        <div className="flex items-center space-x-1 text-sm h-5">
+        <div className="flex items-center space-x-1 text-sm h-5 gap-1">
           <Button
-            className="toolbar-button"
-            variant={'ghost'}
+            className="bg-secondary hover:bg-gray-800 text-foreground"
+            size={'icon-sm'}
             title="Zoom in"
             onClick={zoomIn}
           >
@@ -193,8 +195,8 @@ const Toolbar = ({
             </SelectContent>
           </Select>
           <Button
-            className="toolbar-button"
-            variant={'ghost'}
+            className="bg-secondary hover:bg-gray-800 text-foreground"
+            size={'icon-sm'}
             title="Zoom out"
             onClick={zoomOut}
           >
@@ -228,13 +230,20 @@ const Toolbar = ({
         {/* Right section */}
 
         <div className="flex items-center space-x-1 text-sm h-5">
-          <div className="toolbar-button" onClick={downloadPDF}>
+          <Button
+            className="bg-secondary hover:bg-gray-800 text-foreground"
+            size={'icon-sm'}
+            onClick={downloadPDF}
+          >
             <ArrowDownToLine className="size-4" />
-          </div>
+          </Button>
 
-          <div className="toolbar-button">
+          <Button
+            className="bg-secondary hover:bg-gray-800 text-foreground"
+            size={'icon-sm'}
+          >
             <EllipsisVertical className="size-4" />
-          </div>
+          </Button>
         </div>
       </div>
     </div>

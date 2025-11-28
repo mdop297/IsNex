@@ -79,7 +79,7 @@ export default function App() {
 
   // Renders the editor instance.
   return (
-    <div className="h-full overflow-auto minimal-scrollbar">
+    <div className="w-full h-full overflow-auto minimal-scrollbar">
       <BlockNoteView
         editor={editor}
         formattingToolbar={false}
