@@ -52,6 +52,7 @@ const CollapsibleNav = () => {
   const { mutate: updateChat } = useUpdateChat();
   const { mutate: deleteChat, isPending: isDeletingPending } = useDeleteChat();
   const { data: HistoryData } = useGetChats();
+
   const LibraryData = {
     section: 'Library',
     url: '#',
@@ -61,7 +62,7 @@ const CollapsibleNav = () => {
       { id: '2', label: 'Documents', url: '/library/docs' },
       { id: '3', label: 'Annotations', url: '/library/annos' },
     ],
-    subaction: false,
+    subAction: false,
   };
 
   const WorkspaceData = {
@@ -74,7 +75,7 @@ const CollapsibleNav = () => {
       { id: '3', label: 'Workspace 3', url: '/workspace/3/overview' },
       { id: '4', label: 'Workspace 4', url: '/workspace/4/overview' },
     ],
-    subaction: true,
+    subAction: true,
   };
 
   const items = [
@@ -91,9 +92,10 @@ const CollapsibleNav = () => {
             url: `/conversations/${item.id}`,
           }))
         : [],
-      subaction: true,
+      subAction: true,
     },
   ];
+
   const handleRename = (id: string, title: string) => {
     updateChat({ id, title });
     setCurrentItem(null);
@@ -136,7 +138,7 @@ const CollapsibleNav = () => {
                 </SidebarMenuButton>
               </CollapsibleTrigger>
 
-              {item.subaction && (
+              {item.subAction && (
                 <SidebarMenuAction showOnHover>
                   <Plus />
                 </SidebarMenuAction>
@@ -173,7 +175,7 @@ const CollapsibleNav = () => {
                               </Link>
                             )}
                           </SidebarMenuSubButton>
-                          {item.subaction && (
+                          {item.subAction && (
                             <DropdownMenuSubItem
                               itemId={subitem.id}
                               itemLabel={subitem.label}

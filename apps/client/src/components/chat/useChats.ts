@@ -28,6 +28,8 @@ export const useGetChat = (id: string) => {
       }
       return res.json();
     },
+    enabled: !!id,
+    retry: false,
   });
 };
 
