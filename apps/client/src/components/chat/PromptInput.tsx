@@ -30,10 +30,7 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
-  usePromptInputController,
 } from '@/components/ai-elements/prompt-input';
-import { Button } from '@/components/ui/button';
-import { ButtonGroup } from '@/components/ui/button-group';
 import { CheckIcon, GlobeIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 
@@ -78,53 +75,53 @@ const models = [
 const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
 
-const HeaderControls = () => {
-  const controller = usePromptInputController();
+// const HeaderControls = () => {
+//   const controller = usePromptInputController();
 
-  return (
-    <header className="mt-8 flex items-center justify-between">
-      <p className="text-sm">
-        Header Controls via{' '}
-        <code className="rounded-md bg-muted p-1 font-bold">
-          PromptInputProvider
-        </code>
-      </p>
-      <ButtonGroup>
-        <Button
-          onClick={() => {
-            controller.textInput.clear();
-          }}
-          size="sm"
-          type="button"
-          variant="outline"
-        >
-          Clear input
-        </Button>
-        <Button
-          onClick={() => {
-            controller.textInput.setInput('Inserted via PromptInputProvider');
-          }}
-          size="sm"
-          type="button"
-          variant="outline"
-        >
-          Set input
-        </Button>
+//   return (
+//     <header className="mt-8 flex items-center justify-between">
+//       <p className="text-sm">
+//         Header Controls via{' '}
+//         <code className="rounded-md bg-muted p-1 font-bold">
+//           PromptInputProvider
+//         </code>
+//       </p>
+//       <ButtonGroup>
+//         <Button
+//           onClick={() => {
+//             controller.textInput.clear();
+//           }}
+//           size="sm"
+//           type="button"
+//           variant="outline"
+//         >
+//           Clear input
+//         </Button>
+//         <Button
+//           onClick={() => {
+//             controller.textInput.setInput('Inserted via PromptInputProvider');
+//           }}
+//           size="sm"
+//           type="button"
+//           variant="outline"
+//         >
+//           Set input
+//         </Button>
 
-        <Button
-          onClick={() => {
-            controller.attachments.clear();
-          }}
-          size="sm"
-          type="button"
-          variant="outline"
-        >
-          Clear attachments
-        </Button>
-      </ButtonGroup>
-    </header>
-  );
-};
+//         <Button
+//           onClick={() => {
+//             controller.attachments.clear();
+//           }}
+//           size="sm"
+//           type="button"
+//           variant="outline"
+//         >
+//           Clear attachments
+//         </Button>
+//       </ButtonGroup>
+//     </header>
+//   );
+// };
 
 const ChatInput = () => {
   const [model, setModel] = useState<string>(models[0].id);
@@ -146,7 +143,6 @@ const ChatInput = () => {
 
     setStatus('submitted');
 
-     
     console.log('Submitting message:', message);
 
     setTimeout(() => {
@@ -243,7 +239,7 @@ const ChatInput = () => {
           </PromptInputFooter>
         </PromptInput>
 
-        <HeaderControls />
+        {/* <HeaderControls /> */}
       </PromptInputProvider>
     </div>
   );
