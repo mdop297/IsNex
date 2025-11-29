@@ -113,8 +113,13 @@ export default function Workflow() {
       <div className="mx-auto max-w-6xl">
         {/* Section Header */}
         <div className="mb-16 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border/50 bg-card/80 backdrop-blur-sm px-4 py-1.5">
-            <span className="text-sm font-medium text-muted-foreground">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-card/80 backdrop-blur-sm px-4 py-1.5 mb-6">
+            <span
+              className="text-xs font-semibold uppercase tracking-wider bg-clip-text text-transparent"
+              style={{
+                backgroundImage: `linear-gradient(135deg, rgb(var(--gradient-primary)), rgb(var(--gradient-accent)))`,
+              }}
+            >
               How It Works
             </span>
           </div>
