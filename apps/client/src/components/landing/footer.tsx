@@ -6,15 +6,28 @@ import { Mail, Github, Twitter, Linkedin, Sparkles } from 'lucide-react';
 export default function Footer() {
   return (
     <footer className="relative border-t border-border/50 overflow-hidden">
-      {/* Background gradient */}
       <div className="absolute inset-0 -z-10">
+        {/* Animated gradient orbs */}
         <div
-          className="absolute bottom-0 left-1/4 w-[600px] h-[400px] rounded-full blur-[150px] opacity-20"
-          style={{ background: `rgba(var(--gradient-primary), 0.5)` }}
+          className="absolute bottom-0 left-1/4 w-[700px] h-[500px] rounded-full blur-[180px] opacity-35 animate-[float_20s_ease-in-out_infinite]"
+          style={{ background: `rgba(var(--gradient-primary), 0.4)` }}
         />
         <div
-          className="absolute bottom-0 right-1/4 w-[500px] h-[300px] rounded-full blur-[120px] opacity-15"
-          style={{ background: `rgba(var(--gradient-accent), 0.5)` }}
+          className="absolute bottom-0 right-1/4 w-[600px] h-[400px] rounded-full blur-[150px] opacity-30 animate-[float-reverse_18s_ease-in-out_infinite]"
+          style={{ background: `rgba(var(--gradient-accent), 0.45)` }}
+        />
+        <div
+          className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[300px] rounded-full blur-[120px] opacity-25"
+          style={{ background: `rgba(var(--gradient-secondary), 0.4)` }}
+        />
+
+        {/* Subtle pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage: `radial-gradient(rgba(var(--gradient-primary), 0.5) 1px, transparent 1px)`,
+            backgroundSize: '50px 50px',
+          }}
         />
       </div>
 
@@ -48,7 +61,7 @@ export default function Footer() {
               AI-powered learning and knowledge management platform. Transform
               how you learn, organize, and retain information.
             </p>
-            {/* Social links */}
+            {/* Social links - enhanced with gradient hover */}
             <div className="flex items-center gap-3">
               {[
                 { icon: Twitter, href: '#' },
@@ -59,8 +72,12 @@ export default function Footer() {
                 <Link
                   key={idx}
                   href={social.href}
-                  className="p-2 rounded-lg border border-border/50 bg-card/50 text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
+                  className="group relative p-2 rounded-lg border border-border/50 bg-card/50 text-muted-foreground hover:text-foreground transition-all duration-300 hover:border-primary/50"
                 >
+                  <div
+                    className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"
+                    style={{ background: `rgba(var(--gradient-primary), 0.1)` }}
+                  />
                   <social.icon className="h-5 w-5" />
                 </Link>
               ))}
@@ -137,11 +154,11 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Divider with gradient */}
+        {/* Divider with gradient - enhanced gradient line */}
         <div
           className="h-px w-full mb-8"
           style={{
-            background: `linear-gradient(90deg, transparent, rgba(var(--gradient-primary), 0.3), rgba(var(--gradient-accent), 0.3), transparent)`,
+            background: `linear-gradient(90deg, transparent, rgba(var(--gradient-primary), 0.5), rgba(var(--gradient-accent), 0.5), rgba(var(--gradient-primary), 0.3), transparent)`,
           }}
         />
 

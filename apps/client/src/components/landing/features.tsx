@@ -91,15 +91,67 @@ export default function Features() {
       id="features"
       className="relative py-24 sm:py-32 px-4 overflow-hidden"
     >
-      {/* Background gradient */}
       <div className="absolute inset-0 -z-10">
+        {/* Top gradient flowing from hero - strongest at top, fading down */}
         <div
-          className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full blur-[150px] opacity-30"
-          style={{ background: `rgba(var(--gradient-primary), 0.5)` }}
+          className="absolute inset-0"
+          style={{
+            background: `
+              linear-gradient(180deg, 
+                rgba(var(--gradient-primary), 0.25) 0%, 
+                rgba(var(--gradient-accent), 0.15) 20%,
+                rgba(var(--gradient-secondary), 0.08) 50%,
+                transparent 80%
+              )
+            `,
+          }}
+        />
+
+        {/* Large animated orb at top for hero connection */}
+        <div
+          className="absolute -top-40 left-1/2 -translate-x-1/2 w-[1200px] h-[800px] rounded-full blur-[200px] opacity-60 animate-[float_25s_ease-in-out_infinite]"
+          style={{
+            background: `linear-gradient(180deg, rgba(var(--gradient-primary), 0.7), rgba(var(--gradient-accent), 0.4), transparent)`,
+          }}
+        />
+
+        {/* Animated gradient orbs */}
+        <div
+          className="absolute top-20 -left-40 w-[800px] h-[800px] rounded-full blur-[180px] opacity-50 animate-[float_20s_ease-in-out_infinite]"
+          style={{
+            background: `linear-gradient(135deg, rgba(var(--gradient-accent), 0.6), rgba(var(--gradient-primary), 0.3))`,
+          }}
         />
         <div
-          className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full blur-[120px] opacity-25"
+          className="absolute top-40 -right-40 w-[700px] h-[700px] rounded-full blur-[150px] opacity-45 animate-[float-reverse_18s_ease-in-out_infinite]"
+          style={{
+            background: `linear-gradient(225deg, rgba(var(--gradient-primary), 0.6), rgba(var(--gradient-secondary), 0.3))`,
+          }}
+        />
+        <div
+          className="absolute bottom-20 left-1/3 w-[500px] h-[500px] rounded-full blur-[120px] opacity-35 animate-[pulse-glow_12s_ease-in-out_infinite]"
           style={{ background: `rgba(var(--gradient-accent), 0.5)` }}
+        />
+
+        {/* Dot grid pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-50 dark:opacity-25"
+          style={{
+            backgroundImage: `radial-gradient(rgba(var(--gradient-primary), 0.4) 1px, transparent 1px)`,
+            backgroundSize: '32px 32px',
+          }}
+        />
+
+        {/* Mesh lines */}
+        <div
+          className="absolute inset-0 opacity-25 dark:opacity-15"
+          style={{
+            backgroundImage: `
+              linear-gradient(90deg, rgba(var(--gradient-primary), 0.15) 1px, transparent 1px),
+              linear-gradient(rgba(var(--gradient-accent), 0.15) 1px, transparent 1px)
+            `,
+            backgroundSize: '100px 100px',
+          }}
         />
       </div>
 

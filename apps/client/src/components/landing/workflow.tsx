@@ -41,26 +41,70 @@ export default function Workflow() {
       id="workflow"
       className="relative py-24 sm:py-32 px-4 overflow-hidden"
     >
-      {/* Background gradient */}
       <div className="absolute inset-0 -z-10">
+        {/* Base gradient - similar to hero style */}
         <div
           className="absolute inset-0"
           style={{
             background: `
-              radial-gradient(ellipse 80% 60% at 20% 20%, rgba(var(--gradient-primary), 0.15), transparent 50%),
-              radial-gradient(ellipse 60% 50% at 80% 80%, rgba(var(--gradient-accent), 0.12), transparent 50%)
+              linear-gradient(180deg, 
+                rgba(var(--gradient-secondary), 0.1) 0%,
+                rgba(var(--gradient-primary), 0.15) 30%,
+                rgba(var(--gradient-accent), 0.12) 70%,
+                rgba(var(--gradient-secondary), 0.08) 100%
+              )
             `,
           }}
         />
-        {/* Subtle grid */}
+
+        {/* Large animated gradient orbs - hero style but lighter opacity */}
         <div
-          className="absolute inset-0 opacity-30 dark:opacity-15"
+          className="absolute -top-60 -right-40 w-[900px] h-[900px] rounded-full blur-[200px] opacity-45 animate-[float_22s_ease-in-out_infinite]"
+          style={{
+            background: `linear-gradient(180deg, rgba(var(--gradient-primary), 0.6), rgba(var(--gradient-accent), 0.3))`,
+          }}
+        />
+        <div
+          className="absolute -bottom-60 -left-40 w-[800px] h-[800px] rounded-full blur-[180px] opacity-40 animate-[float-reverse_20s_ease-in-out_infinite]"
+          style={{
+            background: `linear-gradient(135deg, rgba(var(--gradient-secondary), 0.6), rgba(var(--gradient-primary), 0.4))`,
+          }}
+        />
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full blur-[150px] opacity-35 animate-[pulse-glow_15s_ease-in-out_infinite]"
+          style={{ background: `rgba(var(--gradient-accent), 0.5)` }}
+        />
+        <div
+          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full blur-[120px] opacity-30 animate-[float_18s_ease-in-out_infinite_reverse]"
+          style={{ background: `rgba(var(--gradient-primary), 0.4)` }}
+        />
+
+        {/* Grid pattern - similar to hero */}
+        <div
+          className="absolute inset-0 opacity-40 dark:opacity-20"
           style={{
             backgroundImage: `
               linear-gradient(rgba(var(--gradient-primary), 0.08) 1px, transparent 1px),
               linear-gradient(90deg, rgba(var(--gradient-primary), 0.08) 1px, transparent 1px)
             `,
-            backgroundSize: '80px 80px',
+            backgroundSize: '60px 60px',
+          }}
+        />
+
+        {/* Dot pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-35 dark:opacity-20"
+          style={{
+            backgroundImage: `radial-gradient(rgba(var(--gradient-accent), 0.35) 1px, transparent 1px)`,
+            backgroundSize: '24px 24px',
+          }}
+        />
+
+        {/* Radial spotlight in center */}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full"
+          style={{
+            background: `radial-gradient(ellipse 80% 60% at 50% 50%, rgba(var(--gradient-accent), 0.15), transparent 60%)`,
           }}
         />
       </div>

@@ -7,55 +7,53 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen overflow-hidden bg-background">
       <div className="absolute inset-0 -z-10">
-        {/* Main gradient layer with stronger colors */}
         <div
           className="absolute inset-0"
           style={{
             background: `
-              radial-gradient(ellipse 120% 100% at 50% -40%, rgba(var(--gradient-primary), 0.6), transparent 70%),
-              radial-gradient(ellipse 100% 80% at 110% 50%, rgba(var(--gradient-accent), 0.5), transparent 60%),
-              radial-gradient(ellipse 90% 90% at -10% 90%, rgba(var(--gradient-secondary), 0.5), transparent 60%)
+              radial-gradient(ellipse 150% 120% at 50% -20%, rgba(var(--gradient-primary), 0.8), transparent 60%),
+              radial-gradient(ellipse 120% 100% at 110% 40%, rgba(var(--gradient-accent), 0.7), transparent 50%),
+              radial-gradient(ellipse 100% 100% at -10% 80%, rgba(var(--gradient-secondary), 0.7), transparent 50%)
             `,
           }}
         />
 
-        {/* Animated orbs with increased opacity */}
         <div
-          className="absolute -top-40 right-1/4 w-[800px] h-[800px] rounded-full blur-[150px]"
+          className="absolute -top-20 right-1/4 w-[1000px] h-[1000px] rounded-full blur-[180px]"
           style={{
-            background: `rgba(var(--gradient-primary), 0.7)`,
+            background: `rgba(var(--gradient-primary), 0.85)`,
             animation: 'float 8s ease-in-out infinite',
           }}
         />
 
         <div
-          className="absolute -bottom-60 left-1/4 w-[900px] h-[900px] rounded-full blur-[180px]"
+          className="absolute -bottom-40 left-1/4 w-[1100px] h-[1100px] rounded-full blur-[200px]"
           style={{
-            background: `rgba(var(--gradient-accent), 0.6)`,
+            background: `rgba(var(--gradient-accent), 0.8)`,
             animation: 'float-reverse 10s ease-in-out infinite',
           }}
         />
 
         <div
-          className="absolute top-1/4 -left-60 w-[700px] h-[700px] rounded-full blur-[130px]"
+          className="absolute top-1/4 -left-40 w-[900px] h-[900px] rounded-full blur-[160px]"
           style={{
-            background: `rgba(var(--gradient-secondary), 0.65)`,
+            background: `rgba(var(--gradient-secondary), 0.8)`,
             animation: 'float 12s ease-in-out infinite 2s',
           }}
         />
 
         <div
-          className="absolute bottom-1/3 -right-20 w-[600px] h-[600px] rounded-full blur-[120px]"
+          className="absolute bottom-1/3 -right-10 w-[800px] h-[800px] rounded-full blur-[150px]"
           style={{
-            background: `rgba(var(--gradient-primary), 0.55)`,
+            background: `rgba(var(--gradient-primary), 0.75)`,
             animation: 'pulse-glow 6s ease-in-out infinite',
           }}
         />
 
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full blur-[100px]"
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full blur-[120px]"
           style={{
-            background: `linear-gradient(135deg, rgba(var(--gradient-primary), 0.4), rgba(var(--gradient-accent), 0.4))`,
+            background: `linear-gradient(135deg, rgba(var(--gradient-primary), 0.6), rgba(var(--gradient-accent), 0.6))`,
             animation: 'pulse-glow 8s ease-in-out infinite 1s',
           }}
         />
@@ -82,11 +80,11 @@ export default function Hero() {
         />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 pb-16 sm:pt-32 sm:pb-24 lg:pt-40 lg:pb-32">
+      {/* Content - Reduced padding by ~30% */}
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-10 sm:pt-20 sm:pb-16 lg:pt-28 lg:pb-20">
         <div className="text-center max-w-4xl mx-auto">
           {/* Badge */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-border/50 bg-card/80 backdrop-blur-md px-4 py-2 shadow-lg">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/50 bg-card/80 backdrop-blur-md px-4 py-2 shadow-lg">
             <Sparkles className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium text-foreground">
               AI-Powered Knowledge Platform
@@ -94,7 +92,7 @@ export default function Hero() {
           </div>
 
           {/* Heading */}
-          <h1 className="mb-6 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-balance text-foreground">
+          <h1 className="mb-5 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-balance text-foreground">
             Learn Smarter,{' '}
             <span
               className="bg-clip-text text-transparent"
@@ -107,13 +105,13 @@ export default function Hero() {
           </h1>
 
           {/* Description */}
-          <p className="mb-10 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto text-balance leading-relaxed">
+          <p className="mb-8 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto text-balance leading-relaxed">
             Highlight documents, create intelligent notes, and get AI-powered
             summaries. IsNex transforms how you learn and retain information.
           </p>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 sm:mb-20">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 sm:mb-14">
             <Button
               size="lg"
               className="gap-2 text-base px-8 py-6 shadow-lg shadow-primary/25"
@@ -131,11 +129,16 @@ export default function Hero() {
         </div>
 
         <div className="relative mx-auto w-full max-w-6xl">
-          {/* Glow effect behind image */}
           <div
-            className="absolute -inset-4 sm:-inset-6 lg:-inset-8 rounded-3xl blur-3xl opacity-60"
+            className="absolute -inset-8 sm:-inset-12 lg:-inset-16 rounded-[2rem] blur-[60px] opacity-90"
             style={{
-              background: `linear-gradient(135deg, rgba(var(--gradient-primary), 0.4), rgba(var(--gradient-accent), 0.3), rgba(var(--gradient-secondary), 0.3))`,
+              background: `linear-gradient(135deg, rgba(var(--gradient-primary), 0.7), rgba(var(--gradient-accent), 0.6), rgba(var(--gradient-secondary), 0.6))`,
+            }}
+          />
+          <div
+            className="absolute -inset-6 sm:-inset-10 lg:-inset-14 rounded-[2rem] blur-[40px] opacity-80"
+            style={{
+              background: `linear-gradient(45deg, rgba(var(--gradient-accent), 0.6), rgba(var(--gradient-primary), 0.5))`,
             }}
           />
 
