@@ -1,7 +1,9 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { routes } from '@/lib/constants';
 import { ArrowRight, Sparkles, Play } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Hero() {
   return (
@@ -45,8 +47,11 @@ export default function Hero() {
             <Button
               size="lg"
               className="gap-2 text-base px-8 py-6 shadow-lg shadow-primary/25"
+              asChild
             >
-              Start Free Workspace <ArrowRight className="h-4 w-4" />
+              <Link href={routes.HOME}>
+                Start Free Workspace <ArrowRight className="h-4 w-4" />
+              </Link>
             </Button>
             <Button
               variant="outline"
@@ -60,14 +65,23 @@ export default function Hero() {
 
         <div className="relative mx-auto w-full max-w-6xl">
           <div
-            className="absolute -inset-8 sm:-inset-12 lg:-inset-16 rounded-4xl blur-[60px] opacity-90"
+            className="absolute rounded-4xl blur-[60px] opacity-90"
             style={{
+              top: '-9rem',
+              left: '-9rem',
+              right: '-9rem',
+              bottom: '-3rem',
               background: `linear-gradient(135deg, rgba(var(--gradient-primary), 0.7), rgba(var(--gradient-accent), 0.6), rgba(var(--gradient-secondary), 0.6))`,
             }}
           />
+
           <div
-            className="absolute -inset-6 sm:-inset-10 lg:-inset-14 rounded-4xl blur-2xl opacity-80"
+            className="absolute rounded-4xl blur-2xl opacity-80"
             style={{
+              top: '-3rem',
+              left: '-6rem',
+              right: '-6rem',
+              bottom: '-3rem',
               background: `linear-gradient(45deg, rgba(var(--gradient-accent), 0.6), rgba(var(--gradient-primary), 0.5))`,
             }}
           />

@@ -39,7 +39,7 @@ const steps = [
 export default function Workflow() {
   return (
     <section
-      id="workflow"
+      id="workflows"
       className="relative py-16 sm:py-24 px-4 overflow-hidden"
     >
       <div className="absolute inset-0 -z-10">

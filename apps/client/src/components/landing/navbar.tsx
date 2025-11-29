@@ -5,6 +5,7 @@ import { Menu, X, Sparkles } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import ModeToggleButton from './mode-toggle-button';
+import { routes } from '@/lib/constants';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,7 +58,7 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-1">
-          {['Features', 'How it Works', 'Pricing'].map((item) => (
+          {['Features', 'Workflows', 'Pricing'].map((item) => (
             <Link
               key={item}
               href={`#${item.toLowerCase().replace(/\s+/g, '')}`}
@@ -78,7 +79,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <ModeToggleButton />
           <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
-            Sign In
+            <Link href={routes.SIGNIN}>Sign In</Link>
           </Button>
           <Button
             size="sm"
@@ -87,7 +88,7 @@ export default function Navbar() {
               background: `linear-gradient(135deg, rgb(var(--gradient-primary)), rgb(var(--gradient-accent)))`,
             }}
           >
-            Start for free
+            <Link href={routes.SIGNUP}>Start for free</Link>
           </Button>
           <button
             onClick={() => setIsOpen(!isOpen)}

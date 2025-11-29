@@ -12,16 +12,16 @@ export interface MessageSource {
 }
 
 export interface Message {
-  id: string;
-  sender: 'user' | 'assistant' | string;
-  content: string;
+  key: string;
+  from: 'user' | 'assistant';
+  value: string;
   timestamp: string;
   references?: MessageReference[];
   sources?: MessageSource[];
 }
 
 export interface Conversation {
-  id: string;
+  key: string;
   name: string;
   type: 'chat' | 'thread' | string;
   documentIds: number[];
