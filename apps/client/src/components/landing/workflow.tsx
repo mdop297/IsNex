@@ -1,6 +1,7 @@
 'use client';
 
 import { FileText, Sparkles, BookOpen, ArrowRight } from 'lucide-react';
+import Image from 'next/image';
 
 const steps = [
   {
@@ -39,7 +40,7 @@ export default function Workflow() {
   return (
     <section
       id="workflow"
-      className="relative py-24 sm:py-32 px-4 overflow-hidden"
+      className="relative py-16 sm:py-24 px-4 overflow-hidden"
     >
       <div className="absolute inset-0 -z-10">
         {/* Base gradient - similar to hero style */}
@@ -177,11 +178,14 @@ export default function Workflow() {
                   </p>
 
                   {/* Preview placeholder */}
-                  <div className="mt-6 h-32 rounded-xl bg-muted/50 border border-border/30 flex items-center justify-center overflow-hidden">
-                    <div className="flex flex-col items-center gap-2 text-muted-foreground/60">
-                      <step.icon className="w-8 h-8" />
-                      <span className="text-xs">Preview</span>
-                    </div>
+                  <div className="mt-6 h-32 w-full rounded-xl border border-border/30 overflow-hidden">
+                    <Image
+                      src="/placeholder.svg"
+                      width={100}
+                      height={50}
+                      alt="Step preview"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 </div>
 

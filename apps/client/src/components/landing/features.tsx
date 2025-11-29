@@ -89,7 +89,7 @@ export default function Features() {
   return (
     <section
       id="features"
-      className="relative py-24 sm:py-32 px-4 overflow-hidden"
+      className="relative py-16 sm:py-24 px-4 overflow-hidden"
     >
       <div className="absolute inset-0 -z-10">
         {/* Top gradient flowing from hero - strongest at top, fading down */}
