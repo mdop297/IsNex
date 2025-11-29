@@ -164,7 +164,7 @@ const ChatInput = () => {
           <PromptInputBody>
             <PromptInputTextarea
               ref={textareaRef}
-              className="min-h-0! h-auto py-2!"
+              className="min-h-0! h-auto pb-2!"
             />
           </PromptInputBody>
           {/* Footer */}

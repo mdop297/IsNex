@@ -1,8 +1,8 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Item from './Item';
 import { PageService } from './utils';
-import { Page } from './types';
+import type { Page } from './types';
 
 interface pageListProps {
   parentId?: string;
