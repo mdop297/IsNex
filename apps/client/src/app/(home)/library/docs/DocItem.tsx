@@ -21,7 +21,7 @@ import { useDeleteDocument } from './useDeleteDocument';
 import { toast } from 'sonner';
 import RenameModal from './UpdateNameModal';
 import { useUpdateDocuments } from './useUpdateDocuments';
-import { Edit2, View } from 'lucide-react';
+import { Edit2, FileText, View } from 'lucide-react';
 
 interface DocumentItemProps extends React.HTMLAttributes<HTMLDivElement> {
   document: DocumentResponse;
@@ -78,7 +78,7 @@ const DocumentItem = forwardRef<HTMLDivElement, DocumentItemProps>(
           <ContextMenuTrigger asChild>
             <div
               key={document.id}
-              className={`group relative my-1 cursor-pointer rounded border ${
+              className={`group relative my-1 p-1 cursor-pointer rounded border ${
                 selectedFiles.has(document.name)
                   ? 'bg-item-selected '
                   : 'border-transparent hover:bg-item-hover'
@@ -89,10 +89,11 @@ const DocumentItem = forwardRef<HTMLDivElement, DocumentItemProps>(
             >
               <div className="flex items-center justify-between min-w-0">
                 <p
-                  className="truncate text-sm m-1 flex-1 min-w-0"
+                  className="truncate text-sm m-1 flex-1 min-w-0 flex gap-1"
                   // onDoubleClick={editName}
                 >
-                  📄 {document.name}
+                  <FileText size={18} className="text-gray-500" />
+                  {document.name}
                 </p>
 
                 {/* Date */}

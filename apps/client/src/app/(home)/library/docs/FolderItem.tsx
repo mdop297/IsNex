@@ -21,7 +21,14 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { DialogDescription } from '@radix-ui/react-dialog';
 import { Input } from '@/components/ui/input';
-import { ChevronDown, ChevronRight, Edit2, Plus, Upload } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  Edit2,
+  FolderClosed,
+  Plus,
+  Upload,
+} from 'lucide-react';
 import { useFolderStore } from './useFolderStore';
 import { useUploadFileStore } from '@/components/file-upload/useUploadFileStore';
 
@@ -61,6 +68,10 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
       // TODO: toggle all files in this folder
       toast.success(`${folder.name} is deleted successfully`);
     };
+    const handleCreateFolder = (folder: FolderResponse) => {
+      setIsCreatingFolder(true);
+      setCurrentFolder(folder.id);
+    };
 
     return (
       <>
@@ -69,7 +80,7 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
             <div
               key={folder.id}
               ref={ref}
-              className={`group relative my-1 cursor-pointer rounded border transition-all border-transparent hover:bg-item-hover ${className || ''}`}
+              className={`group relative my-1 p-1 cursor-pointer rounded border transition-all border-transparent hover:bg-item-hover ${className || ''}`}
               {...props}
             >
               <div className="flex items-center justify-between min-w-0">
@@ -81,8 +92,9 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
                       <ChevronRight className="w-4 h-4" />
                     ))}
                 </span>
-                <p className="truncate text-sm m-1 flex-1 min-w-0">
-                  📁 {folder.name}
+                <p className="truncate text-sm m-1 flex-1 min-w-0 flex gap-1">
+                  <FolderClosed size={18} className="text-yellow-300" />{' '}
+                  {folder.name}
                 </p>
 
                 {/* Date */}
@@ -115,10 +127,7 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
                     size="sm"
                     variant="ghost"
                     className="group-hover:block shrink-0 text-xs m-0.5 rounded! h-6! px-2!"
-                    onClick={() => {
-                      setCurrentFolder(folder.id);
-                      setIsCreatingFolder(true);
-                    }}
+                    onClick={() => handleCreateFolder(folder)}
                   >
                     <Plus />
                   </Button>
@@ -136,6 +145,10 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
             </div>
           </ContextMenuTrigger>
           <ContextMenuContent>
+            <ContextMenuItem onClick={() => handleCreateFolder(folder)}>
+              New folder
+            </ContextMenuItem>
+            <ContextMenuItem onClick={handleUpload}>New file</ContextMenuItem>
             <ContextMenuItem>Add to workspace</ContextMenuItem>
             <ContextMenuItem onClick={() => setIsEditing(true)}>
               Rename

@@ -137,7 +137,9 @@ const WorkspaceMode = ({
             <ResizablePanel defaultSize={50} minSize={20}>
               <div className="flex flex-col h-full bg-background">
                 <div className="flex items-center justify-between h-12 px-3 bg-secondary border-b border-border">
-                  <span className="text-sm font-medium">Conversation</span>
+                  <span className="text-sm text-foreground font-medium">
+                    Conversation
+                  </span>
                   <Button
                     variant="ghost"
                     size="icon-sm"
@@ -154,7 +156,9 @@ const WorkspaceMode = ({
             <ResizablePanel defaultSize={50} minSize={20}>
               <div className="flex flex-col h-full bg-background">
                 <div className="flex items-center justify-between h-12 px-3 bg-secondary border-b border-border">
-                  <span className="text-sm font-medium">Notes</span>
+                  <span className="text-sm text-foreground font-medium">
+                    Notes
+                  </span>
                 </div>
                 <div className="flex-1 overflow-hidden">{note}</div>
               </div>

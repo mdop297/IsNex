@@ -38,9 +38,9 @@ const PageList = ({
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-1">
       {pages.map((page) => (
-        <div key={page.id}>
+        <div key={page.id} className="flex flex-col gap-1">
           <Item
             id={page.id}
             level={level}

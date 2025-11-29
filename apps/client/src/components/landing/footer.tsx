@@ -166,7 +166,7 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
             © 2025 IsNex. All rights reserved. Made with{' '}
-            <span className="text-red-500">♥</span> for learners.
+            <span className="text-red-500">♥</span> by Nhat Minh (mdop297).
           </p>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <Link href="#" className="hover:text-foreground transition-colors">

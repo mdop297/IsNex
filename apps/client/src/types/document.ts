@@ -6,7 +6,7 @@ export interface DocumentMetadata {
 }
 
 export interface Document {
-  id: string;
+  key: string;
   name: string;
   type: 'pdf' | 'docx' | 'txt' | string;
   size: string;

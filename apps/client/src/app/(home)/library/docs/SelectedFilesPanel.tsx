@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDocumentStore } from './useDocumentStore';
 import { Button } from '@/components/ui/button';
+import { FileText } from 'lucide-react';
 
 const SelectedFilesPanel = () => {
   const selectedFiles = useDocumentStore((state) => state.selectedFiles);
@@ -34,7 +35,9 @@ const SelectedFilesPanel = () => {
             className="group flex justify-between rounded hover:bg-item-hover pr-1"
           >
             <div className="flex gap-2 items-center p-2 min-w-0 w-full">
-              <span className="shrink-0">📄</span>
+              <span className="shrink-0">
+                <FileText size={18} className="text-gray-500" />
+              </span>
               <span className="truncate text-sm">{fileName}</span>
             </div>
             <div className="hidden group-hover:flex items-center">
@@ -53,7 +56,10 @@ const SelectedFilesPanel = () => {
 
       {/* Footer button - fixed height */}
       <div className="mt-3 shrink-0">
-        <Button className="bg-blue-600 hover:bg-blue-700 w-full" size="sm">
+        <Button
+          className="bg-blue-600 hover:bg-blue-700 w-full text-foreground"
+          size="sm"
+        >
           Open Workspace ({selectedFiles.size})
         </Button>
       </div>

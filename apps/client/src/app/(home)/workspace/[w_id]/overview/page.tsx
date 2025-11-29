@@ -1,6 +1,17 @@
 'use client';
 
-import { AIMessage, UserMessage } from '@/components/chat/Messages';
+import {
+  Conversation,
+  ConversationContent,
+  ConversationEmptyState,
+  ConversationScrollButton,
+} from '@/components/ai-elements/conversation';
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from '@/components/ai-elements/message';
+
 import PDFPreview from '@/components/pdf/PDFViewer/PDFPreview';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -12,11 +23,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SetupInstructionsModal from '@/components/workspace/InstructionsModal';
-import type { Conversation, Document } from '@/types';
+import type { Conversation as ConversationType, Document } from '@/types';
 import {
   ExternalLink,
   FileText,
   MessageSquare,
+  MessageSquareIcon,
   Plus,
   SlidersVertical,
   X,
@@ -28,27 +40,29 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
   const { w_id } = use(params);
   const [openPreview, setOpenPreview] = useState(false);
   const [isPreviewDoc, setIsPreviewDoc] = useState(true);
-  const [selectedItem, setSelectedItem] = useState<Document | Conversation>();
+  const [selectedItem, setSelectedItem] = useState<
+    Document | ConversationType
+  >();
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isInstructionsModalOpen, setIsInstructionsModalOpen] = useState(false);
 
   const [data, setData] = useState<{
     documents: Document[];
-    conversations: Conversation[];
+    conversations: ConversationType[];
   } | null>(null);
 
   const handleDocPreview = (item: Document) => {
     setOpenPreview(true);
     setIsPreviewDoc(true);
     setSelectedItem(item);
-    setSelectedItemId(item.id);
+    setSelectedItemId(item.key);
   };
 
-  const handleChatPreview = (item: Conversation) => {
+  const handleChatPreview = (item: ConversationType) => {
     setOpenPreview(true);
     setIsPreviewDoc(false);
     setSelectedItem(item);
-    setSelectedItemId(item.id);
+    setSelectedItemId(item.key);
   };
 
   const handleClosePreview = () => {
@@ -71,7 +85,7 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
   }
 
   return (
-    <div className="flex h-screen gap-2 p-2 bg-background overflow-hidden text-foreground">
+    <div className="flex flex-1 h-screen gap-2 p-2 bg-background text-foreground">
       <div
         className={`flex flex-col bg-background rounded-md border shadow-sm overflow-hidden transition-all duration-300 ${
           openPreview ? 'w-1/2' : 'w-full'
@@ -157,9 +171,9 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
                 {data.documents.length > 0 ? (
                   data.documents.map((item) => (
                     <DocumentItem
-                      key={item.id}
+                      key={item.key}
                       item={item}
-                      isSelected={selectedItemId === item.id}
+                      isSelected={selectedItemId === item.key}
                       onPreview={() => handleDocPreview(item)}
                     />
                   ))
@@ -177,9 +191,9 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
                 {data.conversations.length > 0 ? (
                   data.conversations.map((item) => (
                     <ConversationItem
-                      key={item.id}
+                      key={item.key}
                       item={item}
-                      isSelected={selectedItemId === item.id}
+                      isSelected={selectedItemId === item.key}
                       onPreview={() => handleChatPreview(item)}
                     />
                   ))
@@ -232,7 +246,7 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
                     {selectedItem!.name}
                   </h2>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {(selectedItem as Conversation).messageCount} messages
+                    {(selectedItem as ConversationType).messageCount} messages
                   </p>
                 </div>
                 <Button
@@ -246,17 +260,30 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
               </div>
 
               {/* Chat Messages */}
-              <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-                {(selectedItem as Conversation).messages.map((item) => (
-                  <div key={item.id}>
-                    {item.sender === 'bot' ? (
-                      <AIMessage id={item.id} content={item.content} />
-                    ) : (
-                      <UserMessage id={item.id} content={item.content} />
-                    )}
-                  </div>
-                ))}
-              </div>
+              <Conversation className="relative size-full">
+                <ConversationContent>
+                  {(selectedItem as ConversationType).messageCount === 0 ? (
+                    <ConversationEmptyState
+                      description="Messages will appear here as the conversation progresses."
+                      icon={<MessageSquareIcon className="size-6" />}
+                      title="Start a conversation"
+                    />
+                  ) : (
+                    (selectedItem as ConversationType).messages.map(
+                      (message) => (
+                        <Message from={message.from} key={`${message.key}`}>
+                          <div>
+                            <MessageContent>
+                              <MessageResponse>{message.value}</MessageResponse>
+                            </MessageContent>
+                          </div>
+                        </Message>
+                      ),
+                    )
+                  )}
+                </ConversationContent>
+                <ConversationScrollButton />
+              </Conversation>
 
               {/* Chat Footer */}
               <div className="border-t px-6 py-4">
@@ -322,7 +349,7 @@ function ConversationItem({
   isSelected,
   onPreview,
 }: {
-  item: Conversation;
+  item: ConversationType;
   isSelected: boolean;
   onPreview: () => void;
 }) {

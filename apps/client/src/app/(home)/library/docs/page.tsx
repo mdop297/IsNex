@@ -117,7 +117,7 @@ const DocumentPage = () => {
       <div className="flex flex-1 h-full w-full p-2 gap-2 min-w-0 overflow-hidden">
         {/* Left Panel */}
         <div
-          className={`flex flex-1 flex-col min-w-0 duration-300 transition-all`}
+          className={`flex flex-1 flex-col p-2 min-w-0 duration-300 transition-all`}
         >
           <div className="flex gap-2 items-center">
             {/* Search */}
