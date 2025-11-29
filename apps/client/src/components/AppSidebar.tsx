@@ -9,6 +9,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   ChevronsUpDown,
+  LayoutDashboard,
 } from 'lucide-react';
 
 import {
@@ -50,6 +51,7 @@ const items = [
     cn: '',
   },
 
+  { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard, cn: '' },
   { title: 'Summarizer', url: '/summarizer', icon: Text, cn: '' },
 ];
 
