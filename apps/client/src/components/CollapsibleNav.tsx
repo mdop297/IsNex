@@ -147,8 +147,8 @@ const CollapsibleNav = () => {
                 <SidebarMenuSub className="p-0 mr-0">
                   {item.subitems.map((subitem) => {
                     return (
-                      <>
-                        <SidebarMenuSubItem key={subitem.id}>
+                      <React.Fragment key={subitem.id}>
+                        <SidebarMenuSubItem>
                           <SidebarMenuSubButton asChild>
                             {currentItem === subitem.id && isRename ? (
                               <Input
@@ -204,7 +204,7 @@ const CollapsibleNav = () => {
                             </DialogFooter>
                           </DialogContent>
                         </Dialog>
-                      </>
+                      </React.Fragment>
                     );
                   })}
                 </SidebarMenuSub>

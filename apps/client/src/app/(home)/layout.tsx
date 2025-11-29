@@ -34,7 +34,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <div className="flex h-screen w-screen">
         <AppSidebar />
-        <main className="flex-1 bg-secondary overflow-auto">
+        <main className="flex-1 bg-background overflow-auto">
           <SidebarTrigger className="md:hidden" />
           {children}
         </main>

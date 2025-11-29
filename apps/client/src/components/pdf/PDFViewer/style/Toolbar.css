@@ -50,7 +50,6 @@
 
 .HighlightButton:hover {
   color: #b958ff;
-  transform: scale(1.05);
 }
 
 .HighlightButton.active {

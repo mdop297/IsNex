@@ -64,7 +64,10 @@ export default function App() {
         editor.pasteMarkdown(event.clipboardData.getData('text/plain'));
         return true;
       }
-      return defaultPasteHandler();
+      return defaultPasteHandler({
+        prioritizeMarkdownOverHTML: true,
+        plainTextAsMarkdown: true,
+      });
     },
     tables: {
       splitCells: true,
@@ -76,12 +79,12 @@ export default function App() {
 
   // Renders the editor instance.
   return (
-    <div className="h-full overflow-auto minimal-scrollbar">
+    <div className="w-full h-full overflow-auto minimal-scrollbar">
       <BlockNoteView
         editor={editor}
         formattingToolbar={false}
         theme={theme === 'dark' ? 'dark' : 'light'}
-        className="bg-secondary"
+        data-theming-css-variables
       >
         <FormattingToolbarController
           formattingToolbar={() => (

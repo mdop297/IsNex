@@ -58,7 +58,10 @@ export function Sidebar({
               </TabsTrigger>
             </TabsList>
             {/* Table of content */}
-            <TabsContent value="toc" className="h-full w-full bg-neutral-200">
+            <TabsContent
+              value="toc"
+              className="h-full w-full bg-secondary text-foreground"
+            >
               <TreeOutline
                 pdfDocument={pdfDocument}
                 onNavigation={onNavigation}
