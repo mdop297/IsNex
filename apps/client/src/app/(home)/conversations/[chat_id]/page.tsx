@@ -401,11 +401,11 @@ const Example = () => {
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
-      <div className="flex flex-col items-center gap-4 pt-4 w-full max-w-196">
-        <div className="w-full  mx-4 pr-[scrollbar-size]">
+      <div className="flex flex-col items-center gap-2 pt-2 pb-4 w-full max-w-196">
+        <div className="w-full mx-4 ">
           <ChatInput />
         </div>
-        <Suggestions className="px-4 mb-4">
+        <Suggestions>
           {suggestions.map((suggestion) => (
             <Suggestion
               key={suggestion}

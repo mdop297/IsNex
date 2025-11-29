@@ -162,8 +162,12 @@ const ChatInput = () => {
             {(attachment) => <PromptInputAttachment data={attachment} />}
           </PromptInputAttachments>
           <PromptInputBody>
-            <PromptInputTextarea ref={textareaRef} />
+            <PromptInputTextarea
+              ref={textareaRef}
+              className="min-h-0! h-auto py-2!"
+            />
           </PromptInputBody>
+          {/* Footer */}
           <PromptInputFooter>
             <PromptInputTools>
               <PromptInputActionMenu>

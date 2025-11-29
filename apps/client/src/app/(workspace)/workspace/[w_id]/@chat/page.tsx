@@ -298,7 +298,7 @@ const Example = () => {
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
-      <div className="flex flex-col items-center gap-4 p-4 w-full max-w-196">
+      <div className="flex flex-col items-center gap-4 pb-4 pt-2 w-full max-w-196">
         <div className="w-full px-4 text-foreground">
           <ChatInput />
         </div>
