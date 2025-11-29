@@ -115,7 +115,7 @@ export default function SummarizerPanel({ data }: { data: SummaryData }) {
               key={idx}
               className="flex gap-3 rounded-lg border border-border p-3 hover:bg-secondary/50 transition-colors"
             >
-              <div className="flex-shrink-0 rounded-full bg-primary/20 w-6 h-6 flex items-center justify-center">
+              <div className="shrink-0 rounded-full bg-primary/20 w-6 h-6 flex items-center justify-center">
                 <span className="text-xs font-semibold text-primary">
                   {idx + 1}
                 </span>
