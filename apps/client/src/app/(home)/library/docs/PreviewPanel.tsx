@@ -21,7 +21,7 @@ const PreviewPanel = ({
 
   return (
     <>
-      <div className="border rounded p-4 flex flex-col flex-1 overflow-hidden h-full">
+      <div className="border rounded-lg p-4 flex flex-col flex-1 overflow-hidden h-full">
         <div className="mb-2 flex justify-between items-center gap-2 min-w-0">
           <h3 className="font-semibold text-base truncate mr-2 ">{fileName}</h3>
           <Button

@@ -11,7 +11,7 @@ const SelectedFilesPanel = () => {
   const clearSelection = useDocumentStore((state) => state.clearSelection);
 
   return (
-    <div className="border rounded p-4 flex flex-col h-full">
+    <div className="border rounded-lg p-4 flex flex-col h-full">
       {/* Header - fixed height */}
       <div className="flex justify-between items-center gap-2 mb-2 shrink-0">
         <h3 className="font-semibold text-base lg:text-lg">
@@ -44,7 +44,7 @@ const SelectedFilesPanel = () => {
               <Button
                 size="sm"
                 variant="ghost"
-                className="shrink-0 text-xs rounded"
+                className="group-hover:block hover:bg-input! shrink-0 text-xs m-0.5 py-0.5 rounded! h-6! px-2!"
                 onClick={() => toggleFileSelection(fileName)}
               >
                 Remove

@@ -9,7 +9,7 @@ export default function AIUsageMetrics() {
   const usagePercent = (usedTokens / totalTokens) * 100;
 
   return (
-    <Card className="border border-border rounded-md">
+    <Card className="border border-border bg-background rounded-md">
       <CardHeader className="">
         <CardTitle className="text-lg font-semibold flex items-center gap-2">
           <Zap className="w-4 h-4" />
@@ -24,7 +24,7 @@ export default function AIUsageMetrics() {
               {usedTokens.toLocaleString()}
             </span>
           </div>
-          <div className="w-full bg-secondary rounded-full h-2">
+          <div className="w-full bg-card rounded-full h-2">
             <div
               className="bg-primary h-2 rounded-full transition-all"
               style={{ width: `${usagePercent}%` }}

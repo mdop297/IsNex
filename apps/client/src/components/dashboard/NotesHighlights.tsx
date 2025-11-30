@@ -6,7 +6,7 @@ import { BookOpen, Highlighter } from 'lucide-react';
 
 export default function NotesHighlights() {
   return (
-    <Card className="border border-border rounded-md">
+    <Card className="border border-border bg-background rounded-md">
       <CardHeader className="">
         <CardTitle className="text-lg font-semibold">
           Notes & Highlights
@@ -14,14 +14,14 @@ export default function NotesHighlights() {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-3">
-          <div className="flex justify-between items-center p-3 bg-secondary rounded-md">
+          <div className="flex justify-between items-center p-3 bg-card rounded-md">
             <div className="flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">Total notes</span>
             </div>
             <span className="text-2xl font-bold text-foreground">18</span>
           </div>
-          <div className="flex justify-between items-center p-3 bg-secondary rounded-md">
+          <div className="flex justify-between items-center p-3 bg-card rounded-md">
             <div className="flex items-center gap-2">
               <Highlighter className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">
@@ -35,7 +35,7 @@ export default function NotesHighlights() {
           <div className="text-xs text-muted-foreground mb-2">
             Pending conversion
           </div>
-          <div className="flex items-center justify-between p-2 bg-secondary rounded">
+          <div className="flex items-center justify-between p-2 bg-card rounded">
             <span className="text-sm font-medium text-foreground">
               Highlights to notes
             </span>

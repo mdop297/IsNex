@@ -1,6 +1,6 @@
 'use client';
 
-import ChatInput from '@/components/chat/PromptInput';
+import StartChatInput from '@/components/chat/StartChatInput';
 import { useState, useEffect } from 'react';
 
 const Chats = () => {
@@ -28,7 +28,8 @@ const Chats = () => {
         <div className="text-3xl font-sans">
           <p>Let&apos;s get started?</p>
         </div>
-        <ChatInput />
+
+        <StartChatInput />
       </div>
     </div>
   );

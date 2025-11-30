@@ -21,6 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SetupInstructionsModal from '@/components/workspace/InstructionsModal';
 import type { Conversation as ConversationType, Document } from '@/types';
@@ -30,6 +31,7 @@ import {
   MessageSquare,
   MessageSquareIcon,
   Plus,
+  Search,
   SlidersVertical,
   X,
 } from 'lucide-react';
@@ -130,7 +132,7 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
         <div className="flex-1 flex flex-col overflow-hidden px-4">
           <Tabs defaultValue="documents" className="flex flex-col h-full">
             {/* Tab Header with Actions */}
-            <div className="flex items-center justify-between gap-4 mt-4 mb-2">
+            <div className="flex items-center justify-between gap-4 my-4">
               <TabsList className="h-9 bg-background border">
                 <TabsTrigger value="documents" className="gap-2">
                   <FileText className="size-4" />
@@ -141,6 +143,15 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
                   Conversations
                 </TabsTrigger>
               </TabsList>
+              <div className="flex justify-center w-full ">
+                <div className="relative w-full">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                  <Input
+                    placeholder="Search "
+                    className="pl-9 border-border bg-background! rounded-lg text-foreground placeholder:text-muted-foreground"
+                  />
+                </div>
+              </div>
 
               <div className="flex items-center gap-2 ">
                 <DropdownMenu>

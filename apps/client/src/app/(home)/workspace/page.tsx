@@ -4,7 +4,14 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Plus, ArrowRight, FileText, MessageSquare } from 'lucide-react';
+import {
+  Plus,
+  ArrowRight,
+  FileText,
+  MessageSquare,
+  Search,
+} from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
 export interface Workspace {
   id: string;
@@ -44,7 +51,7 @@ export default function WorkspacesPage() {
 
   return (
     <div className="min-h-screen bg-background p-8 flex">
-      <div className="max-w-full mx-auto">
+      <div className="max-w-full w-full">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold tracking-tight mb-2">Workspaces</h1>
@@ -53,12 +60,22 @@ export default function WorkspacesPage() {
           </p>
         </div>
 
-        {/* Create New Button */}
-        <div className="mb-8">
-          <Button className="gap-2">
-            <Plus className="size-4" />
-            Create New Workspace
-          </Button>
+        <div className="flex gap-4 mb-8">
+          {/* Search Bar */}
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+            <Input
+              placeholder="Search "
+              className="pl-9 border-border bg-background! rounded-lg text-foreground placeholder:text-muted-foreground"
+            />
+          </div>
+          {/* Create New Button */}
+          <div className="">
+            <Button className="gap-2">
+              <Plus className="size-4" />
+              Create New Workspace
+            </Button>
+          </div>
         </div>
 
         {/* Workspaces Grid */}
@@ -78,7 +95,7 @@ export default function WorkspacesPage() {
                   href={`/workspace/${workspace.id}/overview`}
                   className="group"
                 >
-                  <Card className="h-full hover:border-primary/50 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden rounded-md">
+                  <Card className="h-full hover:border-primary/50 hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden rounded-md py-0!">
                     <div className="p-4">
                       {/* Workspace Header */}
                       <div className="mb-4">

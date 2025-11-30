@@ -108,7 +108,7 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="group-hover:block shrink-0 text-xs m-0.5 rounded! h-6! px-2!"
+                    className="group-hover:block hover:bg-input! shrink-0 text-xs m-0.5 rounded! h-6! px-2!"
                     onClick={handleUpload}
                   >
                     <Upload />
@@ -116,7 +116,7 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="group-hover:block shrink-0 text-xs m-0.5 py-0.5 rounded! h-6! px-2!"
+                    className="group-hover:block hover:bg-input! shrink-0 text-xs m-0.5 py-0.5 rounded! h-6! px-2!"
                     onClick={() => setIsEditing(true)}
                   >
                     <Edit2 />
@@ -126,7 +126,7 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="group-hover:block shrink-0 text-xs m-0.5 rounded! h-6! px-2!"
+                    className="group-hover:block hover:bg-input! shrink-0 text-xs m-0.5 rounded! h-6! px-2!"
                     onClick={() => handleCreateFolder(folder)}
                   >
                     <Plus />

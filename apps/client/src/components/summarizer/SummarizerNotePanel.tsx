@@ -83,7 +83,7 @@ export default function SummarizerNotePanel({
             placeholder="Your summary will appear here or you can edit it..."
             value={summary}
             onChange={(e) => setSummary(e.target.value)}
-            className="flex-1 resize-none"
+            className="flex-1 resize-none bg-background!"
           />
         </CardContent>
       </Card>

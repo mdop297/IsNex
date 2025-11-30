@@ -21,7 +21,7 @@ import { useDeleteDocument } from './useDeleteDocument';
 import { toast } from 'sonner';
 import RenameModal from './UpdateNameModal';
 import { useUpdateDocuments } from './useUpdateDocuments';
-import { Edit2, FileText, View } from 'lucide-react';
+import { Edit2, Eye, FileText } from 'lucide-react';
 
 interface DocumentItemProps extends React.HTMLAttributes<HTMLDivElement> {
   document: DocumentResponse;
@@ -110,7 +110,7 @@ const DocumentItem = forwardRef<HTMLDivElement, DocumentItemProps>(
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="group-hover:block shrink-0 text-xs m-0.5 py-0.5 rounded! h-6! px-2!"
+                    className="group-hover:block hover:bg-input! shrink-0 text-xs m-0.5 py-0.5 rounded! h-6! px-2!"
                     onClick={editName}
                   >
                     <Edit2 />
@@ -120,10 +120,10 @@ const DocumentItem = forwardRef<HTMLDivElement, DocumentItemProps>(
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="group-hover:block shrink-0 text-xs m-0.5 rounded! h-6! px-2!"
+                    className="group-hover:block hover:bg-input! shrink-0 text-xs m-0.5 rounded! h-6! px-2!"
                     onClick={handlePreview}
                   >
-                    <View />
+                    <Eye size={16} />
                   </Button>
                 </div>
               </div>

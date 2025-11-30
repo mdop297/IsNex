@@ -23,7 +23,6 @@ import { Input } from '@/components/ui/input';
 import { SidebarMenuButton } from './ui/sidebar';
 import {
   Search,
-  SearchIcon,
   MessageSquare,
   FileText,
   Highlighter,
@@ -188,14 +187,19 @@ function SearchModal() {
     <div className={cn('grid grid-rows-[auto_1fr_auto] h-full gap-0')}>
       {/* Header */}
       <div className="flex items-center justify-start p-4 gap-4 border-b">
-        <SearchIcon className="text-muted-foreground w-5 h-5" />
-        <Input
-          type="text"
-          className="flex-1 border-0 bg-transparent"
-          placeholder="Search chats, documents, notes..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        {/* <SearchIcon className="text-muted-foreground w-5 h-5" /> */}
+        <div className="flex justify-center w-full ">
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+            <Input
+              placeholder="Search documents..."
+              className="pl-9 border-border bg-card text-foreground placeholder:text-muted-foreground"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
         <Separator orientation="vertical" />
         <span className="text-sm text-muted-foreground">Source:</span>
         <Combobox options={sources} />

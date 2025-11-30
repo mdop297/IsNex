@@ -30,7 +30,7 @@ export default function SuggestedActions() {
   ];
 
   return (
-    <Card className="border border-border h-full rounded-md">
+    <Card className="border border-border bg-background h-full rounded-md">
       <CardHeader className="">
         <CardTitle className="text-lg font-semibold">
           Suggested Actions
@@ -43,7 +43,7 @@ export default function SuggestedActions() {
             <Button
               key={action.id}
               variant="outline"
-              className="w-full justify-start h-auto p-3 flex flex-col items-start gap-1 hover:bg-secondary transition-colors bg-transparent"
+              className="w-full justify-start h-auto p-3 flex flex-col items-start gap-1 hover:bg-card transition-colors bg-transparent"
             >
               <div className="flex items-center gap-2 w-full">
                 <Icon className={`w-4 h-4 ${action.color} shrink-0`} />

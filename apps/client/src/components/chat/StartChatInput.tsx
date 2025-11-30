@@ -1,0 +1,215 @@
+'use client';
+
+import {
+  PromptInput,
+  PromptInputActionAddAttachments,
+  PromptInputActionMenu,
+  PromptInputActionMenuContent,
+  PromptInputActionMenuTrigger,
+  PromptInputAttachment,
+  PromptInputAttachments,
+  PromptInputBody,
+  PromptInputButton,
+  PromptInputFooter,
+  PromptInputHeader,
+  type PromptInputMessage,
+  PromptInputSubmit,
+  PromptInputTextarea,
+  PromptInputTools,
+} from '@/components/ai-elements/prompt-input';
+import {
+  ModelSelector,
+  ModelSelectorContent,
+  ModelSelectorEmpty,
+  ModelSelectorGroup,
+  ModelSelectorInput,
+  ModelSelectorItem,
+  ModelSelectorList,
+  ModelSelectorLogo,
+  ModelSelectorLogoGroup,
+  ModelSelectorName,
+  ModelSelectorTrigger,
+} from '@/components/ai-elements/model-selector';
+
+import { CheckIcon, GlobeIcon, MicIcon } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+
+const models = [
+  {
+    id: 'gpt-4o',
+    name: 'GPT-4o',
+    chef: 'OpenAI',
+    chefSlug: 'openai',
+    providers: ['openai', 'azure'],
+  },
+  {
+    id: 'gpt-4o-mini',
+    name: 'GPT-4o Mini',
+    chef: 'OpenAI',
+    chefSlug: 'openai',
+    providers: ['openai', 'azure'],
+  },
+  {
+    id: 'claude-opus-4-20250514',
+    name: 'Claude 4 Opus',
+    chef: 'Anthropic',
+    chefSlug: 'anthropic',
+    providers: ['anthropic', 'azure', 'google', 'amazon-bedrock'],
+  },
+  {
+    id: 'claude-sonnet-4-20250514',
+    name: 'Claude 4 Sonnet',
+    chef: 'Anthropic',
+    chefSlug: 'anthropic',
+    providers: ['anthropic', 'azure', 'google', 'amazon-bedrock'],
+  },
+  {
+    id: 'gemini-2.0-flash-exp',
+    name: 'Gemini 2.0 Flash',
+    chef: 'Google',
+    chefSlug: 'google',
+    providers: ['google'],
+  },
+];
+
+const StartChatInput = () => {
+  const [model, setModel] = useState<string>(models[0].id);
+  const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
+  const [text, setText] = useState<string>('');
+  const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
+  const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
+  const [status, setStatus] = useState<
+    'submitted' | 'streaming' | 'ready' | 'error'
+  >('ready');
+
+  const selectedModelData = models.find((m) => m.id === model);
+
+  const handleSubmit = (message: PromptInputMessage) => {
+    const hasText = Boolean(message.text);
+    const hasAttachments = Boolean(message.files?.length);
+
+    if (!(hasText || hasAttachments)) {
+      return;
+    }
+
+    setStatus('submitted');
+
+    if (message.files?.length) {
+      toast.success('Files attached', {
+        description: `${message.files.length} file(s) attached to message`,
+      });
+    }
+
+    setText('');
+  };
+
+  return (
+    <div className="relative flex size-full flex-col divide-y overflow-hidden">
+      <div className="grid shrink-0 gap-4 pt-4">
+        <div className="w-full px-4 pb-4">
+          <PromptInput globalDrop multiple onSubmit={handleSubmit}>
+            <PromptInputHeader>
+              <PromptInputAttachments>
+                {(attachment) => <PromptInputAttachment data={attachment} />}
+              </PromptInputAttachments>
+            </PromptInputHeader>
+            <PromptInputBody>
+              <PromptInputTextarea
+                onChange={(event) => setText(event.target.value)}
+                value={text}
+              />
+            </PromptInputBody>
+            <PromptInputFooter>
+              <PromptInputTools>
+                <PromptInputActionMenu>
+                  <PromptInputActionMenuTrigger />
+                  <PromptInputActionMenuContent>
+                    <PromptInputActionAddAttachments />
+                  </PromptInputActionMenuContent>
+                </PromptInputActionMenu>
+                <PromptInputButton
+                  onClick={() => setUseMicrophone(!useMicrophone)}
+                  variant={useMicrophone ? 'default' : 'ghost'}
+                >
+                  <MicIcon size={16} />
+                  <span className="sr-only">Microphone</span>
+                </PromptInputButton>
+                <PromptInputButton
+                  onClick={() => setUseWebSearch(!useWebSearch)}
+                  variant={useWebSearch ? 'default' : 'ghost'}
+                >
+                  <GlobeIcon size={16} />
+                  <span>Search</span>
+                </PromptInputButton>
+                <ModelSelector
+                  onOpenChange={setModelSelectorOpen}
+                  open={modelSelectorOpen}
+                >
+                  <ModelSelectorTrigger asChild>
+                    <PromptInputButton>
+                      {selectedModelData?.chefSlug && (
+                        <ModelSelectorLogo
+                          provider={selectedModelData.chefSlug}
+                        />
+                      )}
+                      {selectedModelData?.name && (
+                        <ModelSelectorName>
+                          {selectedModelData.name}
+                        </ModelSelectorName>
+                      )}
+                    </PromptInputButton>
+                  </ModelSelectorTrigger>
+                  <ModelSelectorContent>
+                    <ModelSelectorInput placeholder="Search models..." />
+                    <ModelSelectorList>
+                      <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
+                      {['OpenAI', 'Anthropic', 'Google'].map((chef) => (
+                        <ModelSelectorGroup key={chef} heading={chef}>
+                          {models
+                            .filter((m) => m.chef === chef)
+                            .map((m) => (
+                              <ModelSelectorItem
+                                key={m.id}
+                                onSelect={() => {
+                                  setModel(m.id);
+                                  setModelSelectorOpen(false);
+                                }}
+                                value={m.id}
+                              >
+                                <ModelSelectorLogo provider={m.chefSlug} />
+                                <ModelSelectorName>{m.name}</ModelSelectorName>
+                                <ModelSelectorLogoGroup>
+                                  {m.providers.map((provider) => (
+                                    <ModelSelectorLogo
+                                      key={provider}
+                                      provider={provider}
+                                    />
+                                  ))}
+                                </ModelSelectorLogoGroup>
+                                {model === m.id ? (
+                                  <CheckIcon className="ml-auto size-4" />
+                                ) : (
+                                  <div className="ml-auto size-4" />
+                                )}
+                              </ModelSelectorItem>
+                            ))}
+                        </ModelSelectorGroup>
+                      ))}
+                    </ModelSelectorList>
+                  </ModelSelectorContent>
+                </ModelSelector>
+              </PromptInputTools>
+              <PromptInputSubmit
+                disabled={!(text.trim() || status) || status === 'streaming'}
+                status={status}
+              />
+            </PromptInputFooter>
+          </PromptInput>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default StartChatInput;
