@@ -7,7 +7,10 @@ import Link from 'next/link';
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen overflow-hidden bg-background">
+    <section
+      id="hero"
+      className="relative min-h-screen overflow-hidden bg-background"
+    >
       {/* <div className="absolute inset-0 -z-10">
         
       </div> */}
