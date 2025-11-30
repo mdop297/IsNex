@@ -74,11 +74,11 @@ export default function SummarizerNotePanel({
       </div>
 
       {/* Summary Editor */}
-      <Card className="flex-1 flex flex-col min-h-0 overflow-hidden gap-2! py-4! rounded-md ">
+      <Card className="flex-1 flex flex-col min-h-0 overflow-hidden gap-0! rounded-md pb-0! pt-4!">
         <CardHeader>
           <CardTitle className="text-sm">Summary</CardTitle>
         </CardHeader>
-        <CardContent className="flex-1 flex flex-col p-0 px-3  min-h-0">
+        <CardContent className="flex-1 flex flex-col p-2! min-h-0">
           <Textarea
             placeholder="Your summary will appear here or you can edit it..."
             value={summary}

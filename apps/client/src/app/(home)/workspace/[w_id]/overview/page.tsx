@@ -92,7 +92,7 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
         }`}
       >
         {/* Header Section */}
-        <div className="border-b px-4 py-3">
+        <div className="border-b px-4 py-4">
           <h1 className="text-2xl font-bold tracking-tight">
             Workspace {w_id}
           </h1>
@@ -102,7 +102,7 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
         </div>
 
         {/* System Instructions Card */}
-        <div className="px-3 py-3">
+        <div className="px-4 py-4">
           <Card className="bg-secondary/40 border-secondary/60">
             <div className="flex items-center justify-between p-4">
               <div className="flex flex-col gap-1">
@@ -127,7 +127,7 @@ function Workspace({ params }: { params: Promise<{ w_id: string }> }) {
         </div>
 
         {/* Tabs Section */}
-        <div className="flex-1 flex flex-col overflow-hidden px-3">
+        <div className="flex-1 flex flex-col overflow-hidden px-4">
           <Tabs defaultValue="documents" className="flex flex-col h-full">
             {/* Tab Header with Actions */}
             <div className="flex items-center justify-between gap-4 mt-4 mb-2">

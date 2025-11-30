@@ -9,8 +9,8 @@ export default function AIUsageMetrics() {
   const usagePercent = (usedTokens / totalTokens) * 100;
 
   return (
-    <Card className="border border-border">
-      <CardHeader className="pb-3">
+    <Card className="border border-border rounded-md">
+      <CardHeader className="">
         <CardTitle className="text-lg font-semibold flex items-center gap-2">
           <Zap className="w-4 h-4" />
           AI Usage

@@ -22,6 +22,7 @@ import {
   SidebarHeader,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Input } from '@/components/ui/input';
@@ -96,7 +97,7 @@ export default function WorkspaceSidebar({
   );
 
   return (
-    <Sidebar collapsible="icon" className="border-0">
+    <Sidebar collapsible="icon" className="border-none">
       <SidebarHeader className="gap-3">
         {/* Header Actions */}
         <div
@@ -112,7 +113,7 @@ export default function WorkspaceSidebar({
                 className="text-muted-foreground hover:text-foreground"
                 title="Exit workspace"
               >
-                <ArrowLeftFromLine className="h-4 w-4" />
+                <ArrowLeftFromLine size={20} className="text-foreground" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -139,9 +140,9 @@ export default function WorkspaceSidebar({
             title={state === 'expanded' ? 'Collapse' : 'Expand'}
           >
             {state === 'expanded' ? (
-              <PanelLeftClose className="h-4 w-4" />
+              <PanelLeftClose size={18} className="text-foreground" />
             ) : (
-              <PanelLeftOpen className="h-4 w-4" />
+              <PanelLeftOpen size={18} className="text-foreground" />
             )}
           </Button>
         </div>
@@ -313,6 +314,7 @@ export default function WorkspaceSidebar({
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

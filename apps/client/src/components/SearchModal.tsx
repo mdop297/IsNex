@@ -187,7 +187,7 @@ function SearchModal() {
   return (
     <div className={cn('grid grid-rows-[auto_1fr_auto] h-full gap-0')}>
       {/* Header */}
-      <div className="flex items-center justify-start p-4 gap-3 border-b">
+      <div className="flex items-center justify-start p-4 gap-4 border-b">
         <SearchIcon className="text-muted-foreground w-5 h-5" />
         <Input
           type="text"
@@ -211,7 +211,7 @@ function SearchModal() {
                 key={result.id}
                 onClick={() => setSelectedResult(result)}
                 className={cn(
-                  'w-full text-left p-3 hover:bg-secondary transition-colors',
+                  'w-full text-left p-4 hover:bg-secondary transition-colors',
                   selectedResult.id === result.id && 'bg-secondary',
                 )}
               >
@@ -272,7 +272,7 @@ function SearchModal() {
               <h3 className="text-sm font-medium text-muted-foreground">
                 Details
               </h3>
-              <div className="bg-secondary p-3 rounded-md space-y-2">
+              <div className="bg-secondary p-4 rounded-md space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
                     Document:

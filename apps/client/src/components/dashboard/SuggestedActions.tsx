@@ -30,8 +30,8 @@ export default function SuggestedActions() {
   ];
 
   return (
-    <Card className="border border-border h-full">
-      <CardHeader className="pb-3">
+    <Card className="border border-border h-full rounded-md">
+      <CardHeader className="">
         <CardTitle className="text-lg font-semibold">
           Suggested Actions
         </CardTitle>

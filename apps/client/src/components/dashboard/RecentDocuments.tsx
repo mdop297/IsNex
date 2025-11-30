@@ -37,8 +37,8 @@ export default function RecentDocuments() {
   ];
 
   return (
-    <Card className="border border-border">
-      <CardHeader className="pb-4">
+    <Card className="border border-border rounded-md">
+      <CardHeader className="">
         <CardTitle className="text-lg font-semibold">
           Recent Documents
         </CardTitle>
@@ -48,7 +48,7 @@ export default function RecentDocuments() {
           {documents.map((doc) => (
             <div
               key={doc.id}
-              className="flex items-center justify-between p-3 bg-secondary rounded-lg hover:bg-secondary/80 transition-colors group"
+              className="flex items-center justify-between p-3 bg-secondary rounded-md hover:bg-secondary/80 transition-colors group"
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <FileText className="w-5 h-5 text-muted-foreground shrink-0" />

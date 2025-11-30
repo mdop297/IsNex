@@ -11,7 +11,7 @@ const SelectedFilesPanel = () => {
   const clearSelection = useDocumentStore((state) => state.clearSelection);
 
   return (
-    <div className="border rounded p-3 flex flex-col h-full">
+    <div className="border rounded p-4 flex flex-col h-full">
       {/* Header - fixed height */}
       <div className="flex justify-between items-center gap-2 mb-2 shrink-0">
         <h3 className="font-semibold text-base lg:text-lg">

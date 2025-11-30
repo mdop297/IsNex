@@ -145,7 +145,7 @@ export default function SetupInstructionsModal({
           </div>
 
           {/* Info Alert */}
-          <div className="flex gap-2 p-3 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800">
+          <div className="flex gap-2 p-3 rounded-md bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800">
             <AlertCircle className="size-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
             <p className="text-sm text-blue-700 dark:text-blue-300">
               These instructions will be applied to all conversations in this

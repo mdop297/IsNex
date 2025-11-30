@@ -50,25 +50,15 @@ const WorkspaceMode = ({
             onSelectDoc={setSelectedDoc}
           />
         )}
-
         {openViewer ? (
           <ResizablePanelGroup direction="horizontal" className="flex-1">
             {/* PDF Reader Panel */}
             <ResizablePanel defaultSize={isMaximized ? 100 : 50} minSize={20}>
-              <div className="flex-1 h-full flex flex-col bg-secondary border-r border-border">
-                {/* Document Header */}
-                {/* {selectedDoc && (
-                  <div className=" h-10 px-4 flex items-center gap-2 border-b border-border bg-secondary">
-                    <span className="text-sm font-medium truncate text-foreground">
-                      {selectedDoc}
-                    </span>
-                  </div>
-                )} */}
+              <div className="flex-1 h-full flex flex-col bg-background ">
                 {/* PDF Content */}
                 <div className="flex-1 overflow-hidden">{pdf}</div>
               </div>
             </ResizablePanel>
-
             {!isMaximized && (
               <>
                 <ResizableHandle withHandle className="bg-border" />
@@ -91,7 +81,6 @@ const WorkspaceMode = ({
                       >
                         <ArrowLeft className="h-4 w-4" />
                       </Button>
-
                       <TabsList className="bg-background w-full max-w-xs border border-border items-center">
                         <TabsTrigger value="chat" className="text-xs">
                           Chat
@@ -100,7 +89,6 @@ const WorkspaceMode = ({
                           Notes
                         </TabsTrigger>
                       </TabsList>
-
                       <Button
                         variant="ghost"
                         size="icon-sm"
@@ -111,7 +99,6 @@ const WorkspaceMode = ({
                         <Maximize2 className="h-4 w-4" />
                       </Button>
                     </div>
-
                     {/* Content */}
                     <TabsContent
                       value="chat"
@@ -119,7 +106,6 @@ const WorkspaceMode = ({
                     >
                       {chat}
                     </TabsContent>
-
                     <TabsContent
                       value="note"
                       className="flex-1 w-full overflow-hidden"
