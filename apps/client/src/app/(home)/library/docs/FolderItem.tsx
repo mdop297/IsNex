@@ -93,7 +93,7 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
                     ))}
                 </span>
                 <p className="truncate text-sm m-1 flex-1 min-w-0 flex gap-1">
-                  <FolderClosed size={18} className="text-yellow-300" />{' '}
+                  <FolderClosed size={18} className="text-blue-500" />{' '}
                   {folder.name}
                 </p>
 
