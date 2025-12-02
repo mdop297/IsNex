@@ -23,7 +23,11 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-import { useDeleteChat, useGetChats, useUpdateChat } from './chat/useChats';
+import {
+  useDeleteConversation,
+  useGetConversations,
+  useUpdateConversation,
+} from '@/api/conversation';
 import { useSidebarStore } from './useSidebarStore';
 import { Input } from './ui/input';
 import DropdownMenuSubItem from './DropdownSubItem';
@@ -49,9 +53,10 @@ const CollapsibleNav = () => {
     setCurrentValue,
   } = useSidebarStore();
 
-  const { mutate: updateChat } = useUpdateChat();
-  const { mutate: deleteChat, isPending: isDeletingPending } = useDeleteChat();
-  const { data: HistoryData } = useGetChats();
+  const { mutate: updateChat } = useUpdateConversation();
+  const { mutate: deleteChat, isPending: isDeletingPending } =
+    useDeleteConversation();
+  const { data: HistoryData } = useGetConversations();
 
   const LibraryData = {
     section: 'Library',
