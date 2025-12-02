@@ -30,7 +30,7 @@ import {
   ModelSelectorName,
   ModelSelectorTrigger,
 } from '@/components/ai-elements/model-selector';
-
+import { Suggestion, Suggestions } from '@/components/ai-elements/suggestion';
 import { CheckIcon, GlobeIcon, MicIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -73,7 +73,18 @@ const models = [
   },
 ];
 
-const StartChatInput = () => {
+const suggestions = [
+  'What are the latest trends in AI?',
+  'How does machine learning work?',
+  'Explain quantum computing',
+  'Best practices for React development',
+  'Tell me about TypeScript benefits',
+  'How to optimize database queries?',
+  'What is the difference between SQL and NoSQL?',
+  'Explain cloud computing basics',
+];
+
+const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
   const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
   const [text, setText] = useState<string>('');
@@ -104,9 +115,22 @@ const StartChatInput = () => {
     setText('');
   };
 
+  const handleSuggestionClick = () => {
+    setStatus('submitted');
+  };
+
   return (
     <div className="relative flex size-full flex-col divide-y overflow-hidden">
       <div className="grid shrink-0 gap-4 pt-4">
+        <Suggestions className="px-4">
+          {suggestions.map((suggestion) => (
+            <Suggestion
+              key={suggestion}
+              onClick={() => handleSuggestionClick()}
+              suggestion={suggestion}
+            />
+          ))}
+        </Suggestions>
         <div className="w-full px-4 pb-4">
           <PromptInput globalDrop multiple onSubmit={handleSubmit}>
             <PromptInputHeader>
@@ -212,4 +236,4 @@ const StartChatInput = () => {
   );
 };
 
-export default StartChatInput;
+export default Example;

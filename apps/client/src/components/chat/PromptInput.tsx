@@ -157,7 +157,12 @@ const ChatInput = () => {
   return (
     <div className="size-full">
       <PromptInputProvider>
-        <PromptInput globalDrop multiple onSubmit={handleSubmit}>
+        <PromptInput
+          className="rounded-lg!"
+          globalDrop
+          multiple
+          onSubmit={handleSubmit}
+        >
           <PromptInputAttachments>
             {(attachment) => <PromptInputAttachment data={attachment} />}
           </PromptInputAttachments>

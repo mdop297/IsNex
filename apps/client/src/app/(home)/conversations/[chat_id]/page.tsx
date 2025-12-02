@@ -27,10 +27,9 @@ import {
   SourcesContent,
   SourcesTrigger,
 } from '@/components/ai-elements/sources';
-import { Suggestion, Suggestions } from '@/components/ai-elements/suggestion';
 import type { ToolUIPart } from 'ai';
 import { nanoid } from 'nanoid';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import ChatInput from '@/components/chat/PromptInput';
 
 type MessageType = {
@@ -240,110 +239,8 @@ Don't overuse these hooks! They come with their own overhead. Only use them when
   },
 ];
 
-const suggestions = [
-  'What are the latest trends in AI?',
-  'How does machine learning work?',
-  'Explain quantum computing',
-  'Best practices for React development',
-  'Tell me about TypeScript benefits',
-  'How to optimize database queries?',
-  'What is the difference between SQL and NoSQL?',
-  'Explain cloud computing basics',
-];
-
-const mockResponses = [
-  "That's a great question! Let me help you understand this concept better. The key thing to remember is that proper implementation requires careful consideration of the underlying principles and best practices in the field.",
-  "I'd be happy to explain this topic in detail. From my understanding, there are several important factors to consider when approaching this problem. Let me break it down step by step for you.",
-  "This is an interesting topic that comes up frequently. The solution typically involves understanding the core concepts and applying them in the right context. Here's what I recommend...",
-  "Great choice of topic! This is something that many developers encounter. The approach I'd suggest is to start with the fundamentals and then build up to more complex scenarios.",
-  "That's definitely worth exploring. From what I can see, the best way to handle this is to consider both the theoretical aspects and practical implementation details.",
-];
-
 const Example = () => {
-  const [, setStatus] = useState<'submitted' | 'streaming' | 'ready' | 'error'>(
-    'ready',
-  );
-  const [messages, setMessages] = useState<MessageType[]>(initialMessages);
-  const [, setStreamingMessageId] = useState<string | null>(null);
-
-  const streamResponse = useCallback(
-    async (messageId: string, content: string) => {
-      setStatus('streaming');
-      setStreamingMessageId(messageId);
-
-      const words = content.split(' ');
-      let currentContent = '';
-
-      for (let i = 0; i < words.length; i++) {
-        currentContent += (i > 0 ? ' ' : '') + words[i];
-
-        setMessages((prev) =>
-          prev.map((msg) => {
-            if (msg.versions.some((v) => v.id === messageId)) {
-              return {
-                ...msg,
-                versions: msg.versions.map((v) =>
-                  v.id === messageId ? { ...v, content: currentContent } : v,
-                ),
-              };
-            }
-            return msg;
-          }),
-        );
-
-        await new Promise((resolve) =>
-          setTimeout(resolve, Math.random() * 100 + 50),
-        );
-      }
-
-      setStatus('ready');
-      setStreamingMessageId(null);
-    },
-    [],
-  );
-
-  const addUserMessage = useCallback(
-    (content: string) => {
-      const userMessage: MessageType = {
-        key: `user-${Date.now()}`,
-        from: 'user',
-        versions: [
-          {
-            id: `user-${Date.now()}`,
-            content,
-          },
-        ],
-      };
-
-      setMessages((prev) => [...prev, userMessage]);
-
-      setTimeout(() => {
-        const assistantMessageId = `assistant-${Date.now()}`;
-        const randomResponse =
-          mockResponses[Math.floor(Math.random() * mockResponses.length)];
-
-        const assistantMessage: MessageType = {
-          key: `assistant-${Date.now()}`,
-          from: 'assistant',
-          versions: [
-            {
-              id: assistantMessageId,
-              content: '',
-            },
-          ],
-        };
-
-        setMessages((prev) => [...prev, assistantMessage]);
-        streamResponse(assistantMessageId, randomResponse);
-      }, 500);
-    },
-    [streamResponse],
-  );
-
-  const handleSuggestionClick = (suggestion: string) => {
-    setStatus('submitted');
-    addUserMessage(suggestion);
-  };
+  const [messages] = useState<MessageType[]>(initialMessages);
 
   return (
     <div className="relative flex size-full flex-col items-center divide-y overflow-hidden w-full minimal-scrollbar">
@@ -409,7 +306,7 @@ const Example = () => {
         <div className="w-full mx-4 ">
           <ChatInput />
         </div>
-        <Suggestions>
+        {/* <Suggestions>
           {suggestions.map((suggestion) => (
             <Suggestion
               key={suggestion}
@@ -417,7 +314,7 @@ const Example = () => {
               suggestion={suggestion}
             />
           ))}
-        </Suggestions>
+        </Suggestions> */}
       </div>
     </div>
   );
