@@ -116,7 +116,7 @@ const Toolbar = ({
         {/* Left section */}
         <div className="flex items-center space-x-3 text-sm">
           <Button
-            className="bg-secondary hover:bg-gray-800 text-foreground"
+            className="bg-secondary hover:bg-input text-foreground"
             aria-label="Toggle sidebar"
             onClick={toggleSidebar}
             size={'icon-sm'}
@@ -148,12 +148,12 @@ const Toolbar = ({
                   setPageInput(currentPage.toString());
                 }
               }}
-              className="w-12 h-fit py-0.5 rounded-xs px-2 text-sm border-0 bg-neutral-600 text-right hide-spinner"
+              className="w-12 h-fit py-0.5 rounded-xs px-2 text-sm border-0 bg-input text-foreground text-right hide-spinner"
             />
-            <span>/ {totalPages}</span>
+            <span className="text-foreground">/ {totalPages}</span>
           </div>
           <Button
-            className="bg-secondary hover:bg-gray-800 text-foreground"
+            className="bg-secondary hover:bg-input text-foreground"
             onClick={() => {
               toggleSearchBar();
               if (!isSidebarOpen) {
@@ -171,7 +171,7 @@ const Toolbar = ({
 
         <div className="flex items-center space-x-1 text-sm h-5 gap-1">
           <Button
-            className="bg-secondary hover:bg-gray-800 text-foreground"
+            className="bg-secondary hover:bg-input text-foreground"
             size={'icon-sm'}
             title="Zoom in"
             onClick={zoomIn}
@@ -179,8 +179,11 @@ const Toolbar = ({
             <Plus className="size-4 aspect-square" />
           </Button>
           <Select defaultValue="page-fit" onValueChange={zoomByOption}>
-            <SelectTrigger className="border-none" size={'sm'}>
-              <SelectValue placeholder="auto" className="text-sm" />
+            <SelectTrigger className="border-none text-foreground" size={'sm'}>
+              <SelectValue
+                placeholder="auto"
+                className="text-sm text-foreground"
+              />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="auto">Auto</SelectItem>
@@ -195,7 +198,7 @@ const Toolbar = ({
             </SelectContent>
           </Select>
           <Button
-            className="bg-secondary hover:bg-gray-800 text-foreground"
+            className="bg-secondary hover:bg-input text-foreground"
             size={'icon-sm'}
             title="Zoom out"
             onClick={zoomOut}
@@ -205,7 +208,7 @@ const Toolbar = ({
 
           <Separator orientation="vertical" className="bg-foreground " />
           <Button
-            className={`bg-secondary hover:bg-gray-800! font-normal ${isHighlightPen ? 'text-purple-500' : 'text-foreground'}`}
+            className={`bg-secondary hover:bg-input! font-normal ${isHighlightPen ? 'text-purple-500' : 'text-foreground'}`}
             aria-label="zoom"
             variant="ghost"
             title="Highlight"
@@ -232,7 +235,7 @@ const Toolbar = ({
 
         <div className="flex items-center space-x-1 text-sm h-5">
           <Button
-            className="bg-secondary hover:bg-gray-800 text-foreground"
+            className="bg-secondary hover:bg-input text-foreground"
             size={'icon-sm'}
             onClick={downloadPDF}
           >
@@ -240,7 +243,7 @@ const Toolbar = ({
           </Button>
 
           <Button
-            className="bg-secondary hover:bg-gray-800 text-foreground"
+            className="bg-secondary hover:bg-input text-foreground"
             size={'icon-sm'}
           >
             <EllipsisVertical className="size-4" />

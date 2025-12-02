@@ -37,11 +37,11 @@ export function Sidebar({
   return (
     // isSidebarOpen && (
     <>
-      <div className="flex flex-col gap-6 h-full w-[280px] border-r-2 border-neutral-700">
+      <div className="flex flex-col gap-6 h-full w-[280px] border-r-2 ">
         {!searchTabOpen ? (
           <Tabs
             defaultValue="toc"
-            className="w-full h-full flex flex-row justify-center-safe items-start gap-0 bg-neutral-700"
+            className="w-full h-full flex flex-row justify-center-safe items-start gap-0 "
           >
             <TabsList className="data flex flex-col gap-1 h-fit m-0.5 bg-transparent">
               <TabsTrigger value="toc" className="px-1 hover:cursor-pointer">
@@ -69,10 +69,7 @@ export function Sidebar({
               {/* tree outline */}
             </TabsContent>
             {/* Thumbnails */}
-            <TabsContent
-              value="thumbnails"
-              className="h-full w-full bg-neutral-200"
-            >
+            <TabsContent value="thumbnails" className="h-full w-full ">
               <Thumbnail
                 pdfDocument={pdfDocument}
                 viewerRef={viewerRef}
@@ -81,7 +78,7 @@ export function Sidebar({
             </TabsContent>
             <TabsContent
               value="annos"
-              className="h-full w-full bg-neutral-200 overflow-y-auto hide-scrollbar"
+              className="h-full w-full  overflow-y-auto hide-scrollbar"
             >
               {/* <TreeOutline /> */}
               <AnntationSidebar
@@ -91,7 +88,7 @@ export function Sidebar({
             </TabsContent>
           </Tabs>
         ) : (
-          <div className="bg-neutral-200 h-full">
+          <div className=" h-full">
             <SearchTab />
           </div>
         )}

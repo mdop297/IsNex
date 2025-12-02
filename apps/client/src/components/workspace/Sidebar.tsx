@@ -110,7 +110,7 @@ export default function WorkspaceSidebar({
               <Button
                 variant="ghost"
                 size="icon-sm"
-                className="text-muted-foreground hover:text-foreground"
+                className="text-foreground hover:text-foreground"
                 title="Exit workspace"
               >
                 <ArrowLeftFromLine size={20} className="text-foreground" />
@@ -118,13 +118,17 @@ export default function WorkspaceSidebar({
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Exit workspace?</AlertDialogTitle>
+                <AlertDialogTitle className="text-foreground">
+                  Exit workspace?
+                </AlertDialogTitle>
                 <AlertDialogDescription>
                   Unsaved changes will be lost.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel className="text-muted-foreground">
+                  Cancel
+                </AlertDialogCancel>
                 <AlertDialogAction onClick={handleConfirmExit}>
                   Continue
                 </AlertDialogAction>
@@ -165,7 +169,7 @@ export default function WorkspaceSidebar({
         <SidebarGroup>
           {/* Tabs for Documents/Chats */}
           {state === 'expanded' && (
-            <div className="flex gap-1 bg-secondary rounded-md p-1">
+            <div className="flex gap-1 rounded-md p-1">
               <Button
                 variant={activeTab === 'documents' ? 'default' : 'ghost'}
                 size="sm"
@@ -178,7 +182,7 @@ export default function WorkspaceSidebar({
               <Button
                 variant={activeTab === 'chats' ? 'default' : 'ghost'}
                 size="sm"
-                className="flex-1 h-8 text-xs"
+                className="flex-1 h-8 text-xs "
                 onClick={() => setActiveTab('chats')}
               >
                 <MessageSquare className="h-3 w-3" />
@@ -308,7 +312,7 @@ export default function WorkspaceSidebar({
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem className="list-none">
-          <SidebarMenuButton className="bg-primary text-primary-foreground hover:bg-primary/90">
+          <SidebarMenuButton className="bg-primary text-primary-foreground">
             <Plus className="h-4 w-4" />
             {state === 'expanded' && <span>Add Document</span>}
           </SidebarMenuButton>

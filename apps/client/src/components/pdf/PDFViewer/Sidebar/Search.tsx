@@ -57,10 +57,7 @@ const SearchTab = () => {
     const regex = new RegExp(`(${keyword})`, caseSensitive ? 'g' : 'gi');
     return text.split(regex).map((part, i) =>
       regex.test(part) ? (
-        <span
-          key={i}
-          className="bg-yellow-300 font-semibold text-black rounded px-1"
-        >
+        <span key={i} className="bg-yellow-300 font-semibold rounded px-1">
           {part}
         </span>
       ) : (
@@ -77,27 +74,20 @@ const SearchTab = () => {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           placeholder="Search..."
-          className="flex-1 !bg-foreground"
+          className="flex-1 "
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
         />
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleSearch}
-          className="bg-foreground"
-        >
+        <Button variant="ghost" size="icon" onClick={handleSearch}>
           <ListFilter className="size-4" />
         </Button>
       </div>
 
-      {/* 🔘 Options */}
       <div className="flex gap-4 items-center">
         <div className="flex items-center space-x-2">
           <Checkbox
             id="case"
             checked={caseSensitive}
             onCheckedChange={(checked) => setCaseSensitive(Boolean(checked))}
-            className="!bg-foreground"
           />
           <label htmlFor="case" className="text-xs">
             Case sensitive
@@ -108,7 +98,6 @@ const SearchTab = () => {
             id="whole"
             checked={wholeWord}
             onCheckedChange={(checked) => setWholeWord(Boolean(checked))}
-            className="!bg-foreground"
           />
           <label htmlFor="whole" className="text-xs">
             Whole word
@@ -116,7 +105,6 @@ const SearchTab = () => {
         </div>
       </div>
 
-      {/* 🧮 Result count + navigation */}
       {results.length > 0 && (
         <div className="flex justify-between items-center">
           <span className="text-xs text-muted-foreground">
@@ -145,7 +133,6 @@ const SearchTab = () => {
         </div>
       )}
 
-      {/* 🧾 Grouped search results */}
       <div className="overflow-y-auto flex flex-col gap-2 max-h-[60vh] pr-2">
         {Object.entries(groupByPage).map(([page, items]) => (
           <div key={page} className="space-y-1">
@@ -161,7 +148,6 @@ const SearchTab = () => {
                     : 'border-muted'
                 }`}
                 onClick={() => {
-                  // 🔄 handle go to page here
                   console.log('Go to page', item.page);
                   setCurrentIndex(results.indexOf(item));
                 }}
