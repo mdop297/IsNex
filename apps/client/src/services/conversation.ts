@@ -5,10 +5,11 @@ import {
 } from '@/lib/generated/core/data-contracts';
 
 export const ConversationService = {
-  list: () => coreApi.getAllConversations(),
-  get: (id: string) => coreApi.getConversation(id),
-  create: (data: ConversationCreate) => coreApi.createConversation(data),
-  update: (id: string, data: ConversationUpdate) =>
-    coreApi.updateConversation(id, data),
-  delete: (id: string) => coreApi.deleteConversation(id),
+  list: async () => await coreApi.getAllConversations(),
+  get: async (id: string) => await coreApi.getConversation(id),
+  create: async (data: ConversationCreate) =>
+    await coreApi.createConversation(data),
+  update: async (id: string, data: ConversationUpdate) =>
+    await coreApi.updateConversation(id, data),
+  delete: async (id: string) => await coreApi.deleteConversation(id),
 };

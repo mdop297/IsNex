@@ -33,17 +33,32 @@ export const useGetConversation = (id: string) => {
   });
 };
 
-export const useCreateConversation = (title: string = 'New Conversation') => {
+export const useCreateConversation = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationKey: ['create-conversation'],
-    mutationFn: async () => {
-      const res = await ConversationService.create({ title });
+    mutationFn: async ({
+      title,
+      workspaceId,
+    }: {
+      title: string | null;
+      workspaceId: string | null;
+    }) => {
+      const finalTitle = title?.trim() || 'New Conversation';
+
+      const res = await ConversationService.create({
+        title: finalTitle,
+        workspace_id: workspaceId,
+      });
+
       if (!res.ok) {
         throw new Error(res.statusText);
       }
+
       return res.json();
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },

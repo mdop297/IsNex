@@ -34,6 +34,8 @@ import { Suggestion, Suggestions } from '@/components/ai-elements/suggestion';
 import { CheckIcon, GlobeIcon, MicIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { useCreateConversation } from '@/api/conversation';
 
 const models = [
   {
@@ -85,6 +87,7 @@ const suggestions = [
 ];
 
 const Example = () => {
+  const router = useRouter();
   const [model, setModel] = useState<string>(models[0].id);
   const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
   const [text, setText] = useState<string>('');
@@ -93,16 +96,17 @@ const Example = () => {
   const [status, setStatus] = useState<
     'submitted' | 'streaming' | 'ready' | 'error'
   >('ready');
-
+  const { mutateAsync: createConversation } = useCreateConversation();
   const selectedModelData = models.find((m) => m.id === model);
 
-  const handleSubmit = (message: PromptInputMessage) => {
+  const handleSubmit = async (message: PromptInputMessage) => {
     const hasText = Boolean(message.text);
     const hasAttachments = Boolean(message.files?.length);
 
     if (!(hasText || hasAttachments)) {
       return;
     }
+    const res = await createConversation({ title: null, workspaceId: null });
 
     setStatus('submitted');
 
@@ -113,10 +117,17 @@ const Example = () => {
     }
 
     setText('');
+    router.push(`/conversations/${res.id}`);
   };
 
-  const handleSuggestionClick = () => {
+  const handleSuggestionClick = async (text: string) => {
+    const res = await createConversation({ title: null, workspaceId: null });
+    if (!res?.id) throw new Error('No conversation ID returned');
+
     setStatus('submitted');
+    setText(text);
+
+    router.push(`/conversations/${res.id}`);
   };
 
   return (
@@ -126,7 +137,7 @@ const Example = () => {
           {suggestions.map((suggestion) => (
             <Suggestion
               key={suggestion}
-              onClick={() => handleSuggestionClick()}
+              onClick={() => handleSuggestionClick(suggestion)}
               suggestion={suggestion}
             />
           ))}

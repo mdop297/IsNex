@@ -29,7 +29,6 @@ import {
   useUpdateConversation,
 } from '@/api/conversation';
 import { useSidebarStore } from './useSidebarStore';
-import { Input } from './ui/input';
 import DropdownMenuSubItem from './DropdownSubItem';
 import {
   Dialog,
@@ -46,7 +45,6 @@ const CollapsibleNav = () => {
     isRename,
     isDeleting,
     currentItem,
-    currentValue,
     setIsDeleting,
     setCurrentItem,
     setIsRename,
@@ -118,6 +116,11 @@ const CollapsibleNav = () => {
     toast.success('Chat deleted successfully');
   };
 
+  const doubleClickItem = (id: string) => {
+    setCurrentItem(id);
+    setIsRename(true);
+  };
+
   return (
     <>
       {items.map((item, index) => {
@@ -155,30 +158,33 @@ const CollapsibleNav = () => {
                       <React.Fragment key={subitem.id}>
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton asChild>
-                            {currentItem === subitem.id && isRename ? (
-                              <Input
-                                autoFocus
-                                value={currentValue!}
-                                onChange={(e) =>
-                                  setCurrentValue(e.target.value)
+                            {
+                              <Link
+                                href={subitem.url}
+                                contentEditable={
+                                  currentItem === subitem.id && isRename
+                                }
+                                onDoubleClick={() =>
+                                  doubleClickItem(subitem.id)
+                                }
+                                onBlur={(e) =>
+                                  handleRename(
+                                    subitem.id,
+                                    e.currentTarget.textContent || '',
+                                  )
                                 }
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter') {
-                                    handleRename(subitem.id, currentValue!);
-                                  }
-                                  if (e.key === 'Escape') {
-                                    setCurrentItem(null);
+                                    handleRename(
+                                      subitem.id,
+                                      e.currentTarget.textContent || '',
+                                    );
                                   }
                                 }}
-                                onBlur={() => {
-                                  handleRename(subitem.id, currentValue!);
-                                }}
-                              />
-                            ) : (
-                              <Link href={subitem.url}>
+                              >
                                 <span>{subitem.label}</span>
                               </Link>
-                            )}
+                            }
                           </SidebarMenuSubButton>
                           {item.subAction && (
                             <DropdownMenuSubItem

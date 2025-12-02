@@ -31,8 +31,8 @@ export default function DropdownMenuSubItem({
   const onRenameClicked = () => {
     setIsRename(true);
     setCurrentItem(itemId);
-    setCurrentValue(itemLabel);
-    setCurrentObject(section);
+    // setCurrentValue(itemLabel);
+    // setCurrentObject(section);
   };
 
   const onDeleteClicked = () => {
