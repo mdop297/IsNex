@@ -24,7 +24,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SetupInstructionsModal from '@/components/workspace/InstructionsModal';
-import type { Conversation as ConversationType, Document } from '@/types';
+import type { Conversation as ConversationType, Document } from '@/lib/types';
 import {
   ExternalLink,
   FileText,

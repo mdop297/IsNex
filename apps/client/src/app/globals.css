@@ -54,6 +54,11 @@
   --color-item-selected: var(--item-selected);
   --color-item-selected-border: var(--item-selected-border);
   --color-item-selected-indicator: var(--item-selected-indicator);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
 }
 
 :root {
@@ -104,6 +109,12 @@
   --gradient-primary: 99, 102, 241;
   --gradient-accent: 20, 184, 166;
   --gradient-secondary: 168, 85, 247;
+
+  /* <CHANGE> Added color tokens for success and info states */
+  --success: oklch(0.628 0.24 142.495);
+  --success-foreground: oklch(0.145 0 0);
+  --info: oklch(0.549 0.187 252.894);
+  --info-foreground: oklch(0.145 0 0);
 }
 
 .dark {
@@ -153,6 +164,12 @@
   --gradient-primary: 129, 140, 248;
   --gradient-accent: 45, 212, 191;
   --gradient-secondary: 192, 132, 252;
+
+  /* <CHANGE> Added dark mode colors for success and info */
+  --success: oklch(0.628 0.24 142.495);
+  --success-foreground: oklch(1 0 0);
+  --info: oklch(0.549 0.187 252.894);
+  --info-foreground: oklch(1 0 0);
 }
 
 /* Keyframe animations for landing page hero */
@@ -398,6 +415,36 @@
     border-radius: 4px;
     padding: 1px;
     margin: 1px;
+  }
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-out;
   }
 }
 

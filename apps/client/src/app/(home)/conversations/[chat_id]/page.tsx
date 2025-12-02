@@ -349,9 +349,13 @@ const Example = () => {
     <div className="relative flex size-full flex-col items-center divide-y overflow-hidden w-full minimal-scrollbar">
       <Conversation className="w-full">
         <ConversationContent className="flex justify-center items-center">
-          <div className="max-w-3xl w-full space-y-8">
+          <div className="max-w-3xl w-full px-4 space-y-8">
             {messages.map(({ versions, ...message }) => (
-              <MessageBranch defaultBranch={0} key={message.key}>
+              <MessageBranch
+                defaultBranch={0}
+                key={message.key}
+                className="mr-1"
+              >
                 <MessageBranchContent>
                   {versions.map((version) => (
                     <Message
@@ -401,7 +405,7 @@ const Example = () => {
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
-      <div className="flex flex-col items-center gap-2 pt-2 pb-4 w-full max-w-196">
+      <div className="flex flex-col items-center gap-2 pt-2 pb-4 px-4 w-full max-w-196">
         <div className="w-full mx-4 ">
           <ChatInput />
         </div>
