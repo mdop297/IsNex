@@ -1,8 +1,8 @@
-import { useDragDropStore } from './useDnDStore';
-import { useFolderStore } from './useFolderStore';
-import { useFolders } from './useFolders';
-import { useUpdateDocuments } from './useUpdateDocuments'; // Assume you have mutation hooks
-import { useUpdateFolder } from './useFolders';
+import { useDragDropStore } from './dnd';
+import { useFolderStore } from './folder';
+import { useFolders } from '../api/folder/useFolders';
+import { useUpdateDocuments } from '../api/document/useUpdateDocuments'; // Assume you have mutation hooks
+import { useUpdateFolder } from '../api/folder/useFolders';
 import {
   DocumentResponse,
   FolderResponse,

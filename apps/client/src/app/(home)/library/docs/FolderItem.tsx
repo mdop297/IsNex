@@ -16,7 +16,10 @@ import { FolderResponse } from '@/lib/generated/core/data-contracts';
 import { formatDateTime } from '@/lib/utils';
 import React, { forwardRef, useRef, useState } from 'react';
 import RenameModal from './UpdateNameModal';
-import { useDeleteFolder, useUpdateFolder } from './useFolders';
+import {
+  useDeleteFolder,
+  useUpdateFolder,
+} from '../../../../api/folder/useFolders';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { DialogDescription } from '@radix-ui/react-dialog';
@@ -29,7 +32,7 @@ import {
   Plus,
   Upload,
 } from 'lucide-react';
-import { useFolderStore } from './useFolderStore';
+import { useFolderStore } from '../../../../stores/folder';
 import { useUploadFileStore } from '@/components/file-upload/useUploadFileStore';
 
 interface FolderItemProps extends React.HTMLAttributes<HTMLDivElement> {

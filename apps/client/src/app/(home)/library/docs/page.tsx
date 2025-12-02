@@ -5,18 +5,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Upload } from 'lucide-react';
 import SelectedFilesPanel from './SelectedFilesPanel';
-import { useDocumentStore } from './useDocumentStore';
+import { useDocumentStore } from '@/stores/document';
 import PreviewPanel from './PreviewPanel';
-import { useDocuments } from './useDocuments';
+import { useDocuments } from '@/api/document/useDocuments';
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
-import { useFolders } from './useFolders';
+import { useFolders } from '@/api/folder/useFolders';
 import FolderItem from './FolderItem';
-import { useFolderStore } from './useFolderStore';
+import { useFolderStore } from '@/stores/folder';
 import CreateFolder from './CreateFolder';
 import {
   DocumentResponse,
@@ -134,7 +134,7 @@ const DocumentPage = () => {
         <div className="flex flex-1 h-full w-full p-4 gap-2 min-w-0 overflow-hidden">
           {/* Left Panel */}
           <div
-            className={`flex flex-1 flex-col gap-4 min-w-0 duration-300 transition-all`}
+            className={`flex flex-1 flex-col gap-2 min-w-0 duration-300 transition-all`}
           >
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />

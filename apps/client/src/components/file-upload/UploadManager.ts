@@ -1,4 +1,4 @@
-import { useFolderStore } from '@/app/(home)/library/docs/useFolderStore';
+import { useFolderStore } from '@/stores/folder';
 import {
   BodyUploadFile,
   DocumentResponse,

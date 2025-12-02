@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDocumentStore } from './useDocumentStore';
+import { useDocumentStore } from '../../../../stores/document';
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
 

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { DocumentResponse } from '@/lib/generated/core/data-contracts';
 import { formatDateTime } from '@/lib/utils';
 import React, { forwardRef, useState } from 'react';
-import { useDocumentStore } from './useDocumentStore';
+import { useDocumentStore } from '../../../../stores/document';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -17,10 +17,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useDeleteDocument } from './useDeleteDocument';
+import { useDeleteDocument } from '../../../../api/document/useDeleteDocument';
 import { toast } from 'sonner';
 import RenameModal from './UpdateNameModal';
-import { useUpdateDocuments } from './useUpdateDocuments';
+import { useUpdateDocuments } from '../../../../api/document/useUpdateDocuments';
 import { Edit2, Eye, FileText } from 'lucide-react';
 
 interface DocumentItemProps extends React.HTMLAttributes<HTMLDivElement> {

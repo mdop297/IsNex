@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button';
 import React from 'react';
-import { useDocumentStore } from './useDocumentStore';
+import { useDocumentStore } from '../../../../stores/document';
 import PDFPreview from '@/components/pdf/PDFViewer/PDFPreview';
-import { useDocument } from './useDocuments';
+import { useDocument } from '../../../../api/document/useDocuments';
 
 const PreviewPanel = ({
   fileId,
