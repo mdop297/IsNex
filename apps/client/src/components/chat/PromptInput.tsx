@@ -126,6 +126,8 @@ const STREAMING_TIMEOUT = 2000;
 const ChatInput = () => {
   const [model, setModel] = useState<string>(models[0].id);
   const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
+  const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
+
   const [status, setStatus] = useState<
     'submitted' | 'streaming' | 'ready' | 'error'
   >('ready');
@@ -182,7 +184,10 @@ const ChatInput = () => {
                 </PromptInputActionMenuContent>
               </PromptInputActionMenu>
               <PromptInputSpeechButton textareaRef={textareaRef} />
-              <PromptInputButton>
+              <PromptInputButton
+                onClick={() => setUseWebSearch(!useWebSearch)}
+                variant={useWebSearch ? 'default' : 'ghost'}
+              >
                 <GlobeIcon size={16} />
                 <span>Search</span>
               </PromptInputButton>
