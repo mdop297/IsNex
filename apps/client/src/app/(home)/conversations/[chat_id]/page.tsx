@@ -1,6 +1,8 @@
 'use client';
 
 import {
+  MessageAction,
+  MessageActions,
   MessageBranch,
   MessageBranchContent,
   MessageBranchNext,
@@ -31,6 +33,13 @@ import type { ToolUIPart } from 'ai';
 import { nanoid } from 'nanoid';
 import { useState } from 'react';
 import ChatInput from '@/components/chat/PromptInput';
+import {
+  CopyIcon,
+  RefreshCcwIcon,
+  ShareIcon,
+  ThumbsDown,
+  ThumbsUp,
+} from 'lucide-react';
 
 type MessageType = {
   key: string;
@@ -285,6 +294,25 @@ const Example = () => {
                         <MessageContent>
                           <MessageResponse>{version.content}</MessageResponse>
                         </MessageContent>
+                        {message.from === 'assistant' && (
+                          <MessageActions>
+                            <MessageAction label="Copy">
+                              <CopyIcon className="size-3" />
+                            </MessageAction>
+                            <MessageAction label="Like">
+                              <ThumbsUp className="size-3" />
+                            </MessageAction>
+                            <MessageAction label="Dislike">
+                              <ThumbsDown className="size-3" />
+                            </MessageAction>
+                            <MessageAction label="Retry">
+                              <RefreshCcwIcon className="size-3" />
+                            </MessageAction>
+                            <MessageAction label="Share">
+                              <ShareIcon className="size-3" />
+                            </MessageAction>
+                          </MessageActions>
+                        )}
                       </div>
                     </Message>
                   ))}
