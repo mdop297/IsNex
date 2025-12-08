@@ -92,9 +92,9 @@ def setup_logger(
     logger.propagate = False
 
     # Test log
-    logger.info(f"Logger '{name}' initialized - Level: {level}")
-    logger.debug(f"Log file: {log_file}")
-    logger.debug(f"Error log file: {error_file}")
+    # logger.info(f"Logger '{name}' initialized - Level: {level}")
+    # logger.debug(f"Log file: {log_file}")
+    # logger.debug(f"Error log file: {error_file}")
 
     return logger
 

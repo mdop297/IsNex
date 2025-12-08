@@ -62,6 +62,7 @@ services:
     env_file:
       - ../../envs/.env.dev
       - ../../apps/documents/.env.dev
+      - ../../apps/documents/.env.local
 
   notification-svc:
     container_name: notification-svc

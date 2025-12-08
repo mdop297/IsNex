@@ -6,7 +6,6 @@ from src.modules.noteblock.model import NoteBlock
 from src.modules.noteblock.dtos.request_dtos import NoteBlockCreate, NoteBlockUpdate
 
 
-logger = get_logger(__name__)
 
 
 class NoteBlockRepository(BaseRepository[NoteBlock, NoteBlockCreate, NoteBlockUpdate]):

@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         () => {
           refreshToken();
         },
-        1000 * 60 * 60 * 5,
+        1000 * 60 * 60 * 50,
       );
     } else if (refreshIntervalRef.current) {
       clearInterval(refreshIntervalRef.current);

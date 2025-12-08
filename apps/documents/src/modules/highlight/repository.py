@@ -10,7 +10,6 @@ from src.modules.highlight.model import Highlight
 from src.modules.highlight.dtos.request_dtos import HighlightCreate, HighlightUpdate
 
 
-logger = get_logger(__name__)
 
 
 class HighlightRepository(BaseRepository[Highlight, HighlightCreate, HighlightUpdate]):

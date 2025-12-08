@@ -9,7 +9,6 @@ from src.modules.folder.model import Folder
 from src.modules.folder.dtos.request_dtos import FolderCreate, FolderUpdate
 
 
-logger = get_logger(__name__)
 
 
 class FolderRepository(BaseRepository[Folder, FolderCreate, FolderUpdate]):

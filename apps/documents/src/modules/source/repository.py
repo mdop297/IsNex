@@ -6,7 +6,6 @@ from src.modules.source.model import Source
 from src.modules.source.dtos.request_dtos import SourceCreate, SourceUpdate
 
 
-logger = get_logger(__name__)
 
 
 class SourceRepository(BaseRepository[Source, SourceCreate, SourceUpdate]):

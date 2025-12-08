@@ -9,7 +9,6 @@ from src.modules.workspace.model import DocumentWorkspaceLink, Workspace
 from src.modules.workspace.dtos.request_dtos import WorkspaceCreate, WorkspaceUpdate
 
 
-logger = get_logger(__name__)
 
 
 class WorkspaceRepository(BaseRepository[Workspace, WorkspaceCreate, WorkspaceUpdate]):

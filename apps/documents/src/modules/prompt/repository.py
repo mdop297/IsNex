@@ -6,7 +6,6 @@ from src.modules.prompt.model import Prompt
 from src.modules.prompt.dtos.request_dtos import PromptCreate, PromptUpdate
 
 
-logger = get_logger(__name__)
 
 
 class PromptRepository(BaseRepository[Prompt, PromptCreate, PromptUpdate]):
