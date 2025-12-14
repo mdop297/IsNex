@@ -57,6 +57,46 @@ export enum FileType {
   Image = 'image',
 }
 
+/**
+ * AIMessage
+ * Message from an AI.
+ *
+ * An `AIMessage` is returned from a chat model as a response to a prompt.
+ *
+ * This message represents the output of the model and consists of both
+ * the raw output as returned by the model and standardized fields
+ * (e.g., tool calls, usage metadata) added by the LangChain framework.
+ */
+export interface AIMessage {
+  /** Content */
+  content: string | (string | Record<string, any>)[];
+  /** Additional Kwargs */
+  additional_kwargs?: Record<string, any>;
+  /** Response Metadata */
+  response_metadata?: Record<string, any>;
+  /**
+   * Type
+   * @default "ai"
+   */
+  type?: 'ai';
+  /** Name */
+  name?: string | null;
+  /** Id */
+  id?: string | null;
+  /**
+   * Tool Calls
+   * @default []
+   */
+  tool_calls?: ToolCall[];
+  /**
+   * Invalid Tool Calls
+   * @default []
+   */
+  invalid_tool_calls?: InvalidToolCall[];
+  usage_metadata?: UsageMetadata | null;
+  [key: string]: any;
+}
+
 /** Body_upload_file */
 export interface BodyUploadFile {
   /** Metadata */
@@ -282,6 +322,60 @@ export interface HighlightUpdate {
   comment?: string | null;
 }
 
+/**
+ * InputTokenDetails
+ * Breakdown of input token counts.
+ *
+ * Does *not* need to sum to full input token count. Does *not* need to have all keys.
+ *
+ * Example:
+ *     ```python
+ *     {
+ *         "audio": 10,
+ *         "cache_creation": 200,
+ *         "cache_read": 100,
+ *     }
+ *     ```
+ *
+ * May also hold extra provider-specific keys.
+ *
+ * !!! version-added "Added in `langchain-core` 0.3.9"
+ */
+export interface InputTokenDetails {
+  /** Audio */
+  audio?: number;
+  /** Cache Creation */
+  cache_creation?: number;
+  /** Cache Read */
+  cache_read?: number;
+  [key: string]: any;
+}
+
+/**
+ * InvalidToolCall
+ * Allowance for errors made by LLM.
+ *
+ * Here we add an `error` key to surface errors made during generation
+ * (e.g., invalid JSON arguments.)
+ */
+export interface InvalidToolCall {
+  /** Type */
+  type: 'invalid_tool_call';
+  /** Id */
+  id: string | null;
+  /** Name */
+  name: string | null;
+  /** Args */
+  args: string | null;
+  /** Error */
+  error: string | null;
+  /** Index */
+  index?: number | string;
+  /** Extras */
+  extras?: Record<string, any>;
+  [key: string]: any;
+}
+
 /** MessageCreate */
 export interface MessageCreate {
   /** User Id */
@@ -480,6 +574,32 @@ export interface NoteUpdate {
   deleted_at?: string | null;
 }
 
+/**
+ * OutputTokenDetails
+ * Breakdown of output token counts.
+ *
+ * Does *not* need to sum to full output token count. Does *not* need to have all keys.
+ *
+ * Example:
+ *     ```python
+ *     {
+ *         "audio": 10,
+ *         "reasoning": 200,
+ *     }
+ *     ```
+ *
+ * May also hold extra provider-specific keys.
+ *
+ * !!! version-added "Added in `langchain-core` 0.3.9"
+ */
+export interface OutputTokenDetails {
+  /** Audio */
+  audio?: number;
+  /** Reasoning */
+  reasoning?: number;
+  [key: string]: any;
+}
+
 /** PaginatedConversationResponse */
 export interface PaginatedConversationResponse {
   /** Items */
@@ -582,6 +702,111 @@ export interface PromptUpdate {
   type?: PromptType | null;
   /** Workspace Id */
   workspace_id?: string | null;
+}
+
+/**
+ * ToolCall
+ * Represents an AI's request to call a tool.
+ *
+ * Example:
+ *     ```python
+ *     {"name": "foo", "args": {"a": 1}, "id": "123"}
+ *     ```
+ *
+ *     This represents a request to call the tool named `'foo'` with arguments
+ *     `{"a": 1}` and an identifier of `'123'`.
+ */
+export interface ToolCall {
+  /** Name */
+  name: string;
+  /** Args */
+  args: Record<string, any>;
+  /** Id */
+  id: string | null;
+  /** Type */
+  type?: 'tool_call';
+  [key: string]: any;
+}
+
+/**
+ * UsageMetadata
+ * Usage metadata for a message, such as token counts.
+ *
+ * This is a standard representation of token usage that is consistent across models.
+ *
+ * Example:
+ *     ```python
+ *     {
+ *         "input_tokens": 350,
+ *         "output_tokens": 240,
+ *         "total_tokens": 590,
+ *         "input_token_details": {
+ *             "audio": 10,
+ *             "cache_creation": 200,
+ *             "cache_read": 100,
+ *         },
+ *         "output_token_details": {
+ *             "audio": 10,
+ *             "reasoning": 200,
+ *         },
+ *     }
+ *     ```
+ *
+ * !!! warning "Behavior changed in `langchain-core` 0.3.9"
+ *
+ *     Added `input_token_details` and `output_token_details`.
+ *
+ * !!! note "LangSmith SDK"
+ *
+ *     The LangSmith SDK also has a `UsageMetadata` class. While the two share fields,
+ *     LangSmith's `UsageMetadata` has additional fields to capture cost information
+ *     used by the LangSmith platform.
+ */
+export interface UsageMetadata {
+  /** Input Tokens */
+  input_tokens: number;
+  /** Output Tokens */
+  output_tokens: number;
+  /** Total Tokens */
+  total_tokens: number;
+  /**
+   * Breakdown of input token counts.
+   *
+   * Does *not* need to sum to full input token count. Does *not* need to have all keys.
+   *
+   * Example:
+   *     ```python
+   *     {
+   *         "audio": 10,
+   *         "cache_creation": 200,
+   *         "cache_read": 100,
+   *     }
+   *     ```
+   *
+   * May also hold extra provider-specific keys.
+   *
+   * !!! version-added "Added in `langchain-core` 0.3.9"
+   */
+  input_token_details?: InputTokenDetails;
+  /**
+   * Breakdown of output token counts.
+   *
+   * Does *not* need to sum to full output token count. Does *not* need to have all keys.
+   *
+   * Example:
+   *     ```python
+   *     {
+   *         "audio": 10,
+   *         "reasoning": 200,
+   *     }
+   *     ```
+   *
+   * May also hold extra provider-specific keys.
+   *
+   * !!! version-added "Added in `langchain-core` 0.3.9"
+   */
+  output_token_details?: OutputTokenDetails;
+  [key: string]: any;
 }
 
 /** ValidationError */

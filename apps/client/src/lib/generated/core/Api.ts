@@ -11,6 +11,7 @@
  */
 
 import {
+  AIMessage,
   BodyUploadFile,
   ConversationCreate,
   ConversationResponse,
@@ -49,6 +50,38 @@ import { ContentType, HttpClient, RequestParams } from './http-client';
 export class Api<
   SecurityDataType = unknown,
 > extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags agent
+   * @name Index
+   * @summary Index
+   * @request GET:/api/v1/agent/
+   */
+  index = (params: RequestParams = {}) =>
+    this.request<any, any>({
+      path: `/api/v1/agent/`,
+      method: 'GET',
+      format: 'json',
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags agent
+   * @name Chat
+   * @summary Chat
+   * @request POST:/api/v1/agent/chat
+   */
+  chat = (data: Record<string, any>, params: RequestParams = {}) =>
+    this.request<AIMessage, HTTPValidationError>({
+      path: `/api/v1/agent/chat`,
+      method: 'POST',
+      body: data,
+      type: ContentType.Json,
+      format: 'json',
+      ...params,
+    });
   /**
    * No description
    *

@@ -364,3 +364,5 @@ minio/data/*
 todo.md
 zquicknotes.md
 **/*secrets.txt
+mlruns
+mlflow.db

@@ -8,9 +8,11 @@ from src.modules.note.api.v1 import note_router
 from src.modules.noteblock.api.v1 import noteblock_router
 from src.modules.prompt.api.v1 import prompt_router
 from src.modules.workspace.api.v1 import ws_router
+from src.agent.endpoint import agent_router
 
 v1_router = APIRouter(prefix="/v1")
 
+v1_router.include_router(agent_router)
 v1_router.include_router(document_router)
 v1_router.include_router(folder_router)
 v1_router.include_router(highlight_router)
