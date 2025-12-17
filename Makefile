@@ -43,7 +43,7 @@ up-kafka: up-network
 
 up-db: up-network 
 	@echo "🚀 Starting DB service..."
-	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) up -d isnex-db
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) up -d isnex-db data-lake
 
 # Start auth service in development mode
 up-auth : up-kafka
@@ -67,8 +67,10 @@ up-api-gateway:
 	docker compose -f $(COMPOSE_API_GATEWAY) up -d
 
 up-core: up-db up-api-gateway
-	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE)  up -d documents-svc data-lake
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE)  up -d documents-svc
 
+start-core-dev: up-db
+	cd apps/documents && uv run --env-file .env --env-file .env.local --env-file ../../envs/.env.dev  dev
 
 documents-revision:
 # how to use: make documents-revision m="message"
