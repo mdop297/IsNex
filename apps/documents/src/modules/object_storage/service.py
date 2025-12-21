@@ -18,7 +18,7 @@ Thread-safe vì lru_cache có lock
 @lru_cache(maxsize=1)
 def get_minio_client() -> Minio:
     return Minio(
-        "data-lake:9000",
+        settings.DATA_LAKE_DOMAIN,
         access_key="minioadmin",
         secret_key="minioadmin",
         secure=False,

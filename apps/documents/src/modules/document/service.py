@@ -116,7 +116,7 @@ class DocumentService(
         try:
             url = self.minio_service.generate_presigned_url(file_name=document.file_url)
             if settings.DATA_LAKE_DOMAIN in url:
-                return url.replace(settings.DATA_LAKE_DOMAIN, settings.APP_DOMAIN)
+                return url.replace(settings.DATA_LAKE_DOMAIN, settings.API_GATEWAY_DOMAIN)
             
             return url
         except S3Error as e:

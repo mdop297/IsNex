@@ -13,6 +13,11 @@ from src.api import router
 from src.core.middleware.logging import LoggingMiddleware
 from src.core.utils.logger import setup_logger
 
+import mlflow
+
+mlflow.set_experiment("Agent output schema")
+
+
 setup_logger()
 
 
@@ -32,7 +37,7 @@ app.add_middleware(AuthMiddleware, backend=AuthBackend(), on_error=on_auth_error
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,10 +47,3 @@ app.add_middleware(LoggingMiddleware)
 
 app.include_router(router=router)
 
-
-@app.get("/testapi", include_in_schema=False)
-def get_scarlar_docs():
-    return get_scalar_api_reference(
-        openapi_url=app.openapi_url,
-        title="Scalar API Reference",
-    )
