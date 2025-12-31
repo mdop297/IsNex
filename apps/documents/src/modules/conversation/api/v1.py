@@ -35,18 +35,22 @@ async def update_conversation(
     result = await conv_service.update(request.user.id, id, data)
     return result
 
+
 # we will get user_id from token, not from request param
 @conv_router.get("/user", response_model=PaginatedConversationResponse)
 async def get_all_conversations(request: Request, conv_service: ConversationServiceDep):
-    result = await conv_service.get_by_user_id(user_id=request.user.id, skip=0, limit=20)
+    result = await conv_service.get_by_user_id(
+        user_id=request.user.id, skip=0, limit=20
+    )
     return result
+
 
 @conv_router.get("/{id}", response_model=ConversationResponse)
-async def get_conversation(request: Request, id: UUID, conv_service: ConversationServiceDep):
+async def get_conversation(
+    request: Request, id: UUID, conv_service: ConversationServiceDep
+):
     result = await conv_service.get_by_id(user_id=request.user.id, id=id)
     return result
-
-
 
 
 @conv_router.get(

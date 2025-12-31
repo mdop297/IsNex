@@ -6,7 +6,11 @@ from minio import S3Error
 from src.core.service.base import BaseService
 from src.core.utils.logger import get_logger
 from src.core.utils.utils import format_file_size
-from src.modules.document.exeptions import DocumentError, DuplicateDocumentError, StorageError
+from src.modules.document.exeptions import (
+    DocumentError,
+    DuplicateDocumentError,
+    StorageError,
+)
 from src.modules.document.model import Document
 from src.modules.document.repository import DocumentRepository
 from src.modules.document.dtos.request_dtos import DocumentCreate, DocumentUpdate
@@ -25,7 +29,12 @@ class DocumentService(
         Document, DocumentCreate, DocumentUpdate, DocumentResponse, DocumentRepository
     ]
 ):
-    def __init__(self, repository: DocumentRepository, folder_repository: FolderRepository, minio_service: MinioService):
+    def __init__(
+        self,
+        repository: DocumentRepository,
+        folder_repository: FolderRepository,
+        minio_service: MinioService,
+    ):
         super().__init__(Document, repository)
         self.minio_service = minio_service
         self.folder_repository = folder_repository
@@ -107,17 +116,17 @@ class DocumentService(
         document = await self.__validate_document_ownership(id, user_id)
         return DocumentResponse.model_validate(document)
 
-    async def get_presigned_url(
-        self, user_id: UUID, document_id: UUID
-    ) -> str:
+    async def get_presigned_url(self, user_id: UUID, document_id: UUID) -> str:
         document = await self.__validate_document_ownership(
             document_id=document_id, user_id=user_id
         )
         try:
             url = self.minio_service.generate_presigned_url(file_name=document.file_url)
             if settings.DATA_LAKE_DOMAIN in url:
-                return url.replace(settings.DATA_LAKE_DOMAIN, settings.API_GATEWAY_DOMAIN)
-            
+                return url.replace(
+                    settings.DATA_LAKE_DOMAIN, settings.API_GATEWAY_DOMAIN
+                )
+
             return url
         except S3Error as e:
             logger.error(
@@ -129,29 +138,33 @@ class DocumentService(
             raise DocumentError(f"Failed to generate download URL: {str(e)}") from e
 
     async def get_all(
-        self, user_id: UUID, skip: int|None=None, limit: int|None=None
+        self, user_id: UUID, skip: int | None = None, limit: int | None = None
     ) -> Sequence[DocumentResponse]:
         try:
-            documents = await self.repository.get_by(field="user_id",value=user_id, skip = skip, limit=limit)
+            documents = await self.repository.get_by(
+                field="user_id", value=user_id, skip=skip, limit=limit
+            )
             results = [DocumentResponse.model_validate(doc) for doc in documents]
             logger.info(f"Retrieved {len(results)} documents for user {user_id}")
             return results
-        except Exception as e: 
+        except Exception as e:
             logger.error(f"Failed to get all documents for: {str(e)}")
             raise DocumentError(f"Failed to get all documents: {str(e)}")
 
-    async def get_by_folder_id(self, user_id: UUID, folder_id: UUID)-> Sequence[DocumentResponse]:
-        try: 
+    async def get_by_folder_id(
+        self, user_id: UUID, folder_id: UUID
+    ) -> Sequence[DocumentResponse]:
+        try:
             await self.__validate_folder_ownership(folder_id, user_id)
-            documents = await self.repository.get_by(field="folder_id",value=folder_id)
+            documents = await self.repository.get_by(field="folder_id", value=folder_id)
             results = [DocumentResponse.model_validate(doc) for doc in documents]
             logger.info(f"Retrieved {len(results)} documents for folder {folder_id}")
             return results
-        except Exception as e: 
+        except Exception as e:
             logger.error(f"Failed to get documents for: {str(e)}")
             raise DocumentError(f"Failed to get documents: {str(e)}")
 
-    async def get_docs_at_root(self, user_id: UUID)-> Sequence[DocumentResponse]:
+    async def get_docs_at_root(self, user_id: UUID) -> Sequence[DocumentResponse]:
         try:
             documents = await self.repository.get_documents_at_root_by_user(user_id)
             results = [DocumentResponse.model_validate(doc) for doc in documents]

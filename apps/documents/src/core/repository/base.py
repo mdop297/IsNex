@@ -104,11 +104,11 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
         skip: int | None = None,
         limit: int | None = None,
         order_by: str | None = None,
-        order_desc: bool = True,       
+        order_desc: bool = True,
     ) -> Sequence[ModelType]:
         """
         Returns the model instances matching the field and value.
-        
+
         :param field: The field to match.
         :param value: The value to match.
         :param skip: Number of records to skip.
@@ -117,19 +117,19 @@ class BaseRepository(Generic[ModelType, ModelCreated, ModelUpdated], ABC):
         :param order_desc: If True, order descending (newest first).
         :return: The model instances.
         """
-        stmt = select(self.model_class).where(
-            getattr(self.model_class, field) == value
-        )
-        
+        stmt = select(self.model_class).where(getattr(self.model_class, field) == value)
+
         if order_by:
             order_column = getattr(self.model_class, order_by)
-            stmt = stmt.order_by(order_column.desc() if order_desc else order_column.asc())
-        
+            stmt = stmt.order_by(
+                order_column.desc() if order_desc else order_column.asc()
+            )
+
         if skip is not None:
             stmt = stmt.offset(skip)
         if limit is not None:
             stmt = stmt.limit(limit)
-        
+
         results = await self.session.exec(stmt)
         return results.all()
 

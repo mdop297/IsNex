@@ -22,7 +22,6 @@ PUBLIC_PREFIXES = [
     "/docs",
     "/redoc",
     "/openapi.json",
-    "/testapi",
     "/api/public",
     "/api/health",
 ]

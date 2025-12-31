@@ -63,3 +63,24 @@ def render_items(folder_tree, documents_tree, parent_id=none, level=0):
     render_items(tree, parent_id=folder.id, level=level+1)
 
 ```
+
+- object/components
+  core database,
+  vector database,
+  uploaded documents,
+  retriever,
+
+- flow:
+
+  - user upload document to isnex
+  - core service
+    - store file in object storage
+    - store metadata in core database
+  - data processing service get document object and process it
+  - process document by ... -> store chunks and embedding vectors in vector database
+
+  - user ask question
+  - send question to chat route (but which service is responsible for this route? let's call X)
+  - X service will decide which tools to use, if the model think it should use retriever tool to get information in vector database.
+  - Y service retrieve vectors from vector db to fetch into llm prompt (how?)
+  - after fetching vector, how to send back to X or send to llm-provider/llm-inference service to fetch event

@@ -10,8 +10,6 @@ from src.modules.conversation.dtos.request_dtos import (
 )
 
 
-
-
 class ConversationRepository(
     BaseRepository[Conversation, ConversationCreate, ConversationUpdate]
 ):

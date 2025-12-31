@@ -29,7 +29,9 @@ async def get_all_folders_by_user(request: Request, folder_service: FolderServic
 
 
 @folder_router.get("/{id}", response_model=FolderResponse)
-async def get_folder_by_id(request: Request, id: UUID, folder_service: FolderServiceDep):
+async def get_folder_by_id(
+    request: Request, id: UUID, folder_service: FolderServiceDep
+):
     result = await folder_service.get_by_id(request.user.id, id)
     return result
 

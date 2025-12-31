@@ -9,8 +9,6 @@ from src.modules.folder.model import Folder
 from src.modules.folder.dtos.request_dtos import FolderCreate, FolderUpdate
 
 
-
-
 class FolderRepository(BaseRepository[Folder, FolderCreate, FolderUpdate]):
     def __init__(self, session: AsyncSession):
         super().__init__(Folder, session)

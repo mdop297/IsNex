@@ -2,6 +2,7 @@
 
 Project description here.
 
+```mermaid
 notation crows-foot
 colorMode pastel
 typeface mono
@@ -92,8 +93,8 @@ blockId NoteBlock [ref, required]
 Source [color: Blue] {
 id UUID pk
 type enum('highlight', 'web', 'note')
-highlightId Highlight [ref, optional]  
- noteId NoteBlock [ref, optional]  
+highlightId Highlight [ref, optional]
+ noteId NoteBlock [ref, optional]
  url string optional
 contentPreview text optional
 createdAt datetime
@@ -146,7 +147,7 @@ updatedAt datetime
 PersonalContext [color: Purple] {
 id UUID pk
 userId User [ref, required]
-content string  
+content string
 }
 
 User.id < Document.ownerId
@@ -181,3 +182,4 @@ Document.id - Workspace.activeDoc
 Conversation.id < Message.convId
 Conversation.workspaceId > Workspace.id
 Conversation.id - Workspace.activeConv
+```

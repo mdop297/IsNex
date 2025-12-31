@@ -1,6 +1,5 @@
 class DocumentError(Exception):
     status_code = 500
-    
 
 
 class DocumentNotFoundError(DocumentError):

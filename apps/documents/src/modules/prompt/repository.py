@@ -6,8 +6,6 @@ from src.modules.prompt.model import Prompt
 from src.modules.prompt.dtos.request_dtos import PromptCreate, PromptUpdate
 
 
-
-
 class PromptRepository(BaseRepository[Prompt, PromptCreate, PromptUpdate]):
     def __init__(self, session: AsyncSession):
         self.session = session

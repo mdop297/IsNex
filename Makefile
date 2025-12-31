@@ -54,7 +54,7 @@ up-auth : up-kafka
 # Start notification service 
 up-notification:
 	@echo "🚀 Starting notification service ..."
-	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE)  up -d notification
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE)  up -d notification-svc
 	@echo "✅ Notification service started successfully!"
 
 # Start client service

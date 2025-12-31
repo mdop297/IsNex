@@ -85,6 +85,23 @@ export class Api<
   /**
    * No description
    *
+   * @tags agent
+   * @name StreamChat
+   * @summary Stream Chat
+   * @request POST:/api/v1/agent/stream_chat
+   */
+  streamChat = (data: Record<string, any>, params: RequestParams = {}) =>
+    this.request<AIMessage, HTTPValidationError>({
+      path: `/api/v1/agent/stream_chat`,
+      method: 'POST',
+      body: data,
+      type: ContentType.Json,
+      format: 'json',
+      ...params,
+    });
+  /**
+   * No description
+   *
    * @tags documents
    * @name UploadFile
    * @summary Upload File

@@ -6,8 +6,6 @@ from src.modules.noteblock.model import NoteBlock
 from src.modules.noteblock.dtos.request_dtos import NoteBlockCreate, NoteBlockUpdate
 
 
-
-
 class NoteBlockRepository(BaseRepository[NoteBlock, NoteBlockCreate, NoteBlockUpdate]):
     def __init__(self, session: AsyncSession):
         self.session = session

@@ -11,14 +11,10 @@ from src.core.middleware.authentication import (
 from src.core.config import settings
 from src.api import router
 from src.core.middleware.logging import LoggingMiddleware
-from src.core.utils.logger import setup_logger
 
 import mlflow
 
 mlflow.set_experiment("Agent output schema")
-
-
-setup_logger()
 
 
 def custom_generate_unique_id_function(route: APIRoute) -> str:
@@ -46,4 +42,3 @@ app.add_middleware(LoggingMiddleware)
 
 
 app.include_router(router=router)
-

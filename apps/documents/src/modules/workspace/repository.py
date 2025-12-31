@@ -9,8 +9,6 @@ from src.modules.workspace.model import DocumentWorkspaceLink, Workspace
 from src.modules.workspace.dtos.request_dtos import WorkspaceCreate, WorkspaceUpdate
 
 
-
-
 class WorkspaceRepository(BaseRepository[Workspace, WorkspaceCreate, WorkspaceUpdate]):
     def __init__(self, session: AsyncSession):
         self.session = session

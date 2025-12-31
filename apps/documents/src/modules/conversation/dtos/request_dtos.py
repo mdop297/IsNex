@@ -7,11 +7,12 @@ from pydantic.json_schema import SkipJsonSchema
 class ConversationCreate(BaseModel):
     user_id: SkipJsonSchema[Optional[UUID]] = Field(default=None)
 
-
     workspace_id: Optional[UUID] = Field(
         default=None, description="Associated workspace ID"
     )
-    title: Optional[str] = Field(default='New Conversation', description="Title of the conversation")
+    title: Optional[str] = Field(
+        default="New Conversation", description="Title of the conversation"
+    )
 
 
 class ConversationUpdate(BaseModel):

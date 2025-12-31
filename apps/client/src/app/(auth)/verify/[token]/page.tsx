@@ -1,6 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { authApi } from '@/lib/api/auth';
+import { authApi } from '@/lib/api';
 import { routes } from '@/lib/constants';
 import { CheckCircleIcon, XCircleIcon } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -19,7 +19,7 @@ const VerifyPage = () => {
 
     const verifyEmail = async () => {
       try {
-        const result = await authApi.verify(token as string);
+        const result = await authApi.verifyEmail(token as string);
         status = result.status;
         if (result.status === 200) {
           setState('success');

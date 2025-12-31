@@ -10,8 +10,6 @@ from src.modules.highlight.model import Highlight
 from src.modules.highlight.dtos.request_dtos import HighlightCreate, HighlightUpdate
 
 
-
-
 class HighlightRepository(BaseRepository[Highlight, HighlightCreate, HighlightUpdate]):
     def __init__(self, session: AsyncSession):
         self.session = session

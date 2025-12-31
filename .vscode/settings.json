@@ -16,5 +16,8 @@
     "**/.next": true,
     "**/.venv": true,
     "**/dist": true
-  }
+  },
+
+  "python.analysis.diagnosticMode": "openFilesOnly",
+  "editor.formatOnSave": true
 }

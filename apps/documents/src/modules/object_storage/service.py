@@ -7,7 +7,7 @@ from uuid import UUID
 from minio import Minio, S3Error
 from fastapi import UploadFile
 from src.core.config import settings
- 
+
 
 """
 Singleton Minio client - chỉ tạo 1 lần duy nhất
