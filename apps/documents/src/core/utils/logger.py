@@ -218,10 +218,10 @@ def setup_logger(
     logger = structlog.get_logger()
 
     # Format cho console (có màu + location)
-    console_formatter = ColoredFormatter(
-        "%(asctime)s | %(levelname)s | %(name)s | %(filename)s:%(lineno)d | %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
+    # console_formatter = ColoredFormatter(
+    #     "%(asctime)s | %(levelname)s | %(name)s | %(filename)s:%(lineno)d | %(message)s",
+    #     datefmt="%Y-%m-%d %H:%M:%S",
+    # )
 
     # Determine log level based on DEBUG setting
     log_level = logging.DEBUG if settings.DEBUG else logging.INFO
@@ -232,7 +232,7 @@ def setup_logger(
 
     # Create console handler
     console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(console_formatter)
+    # console_handler.setFormatter(console_formatter)
     console_handler.setLevel(log_level)
 
     # Get shared processors

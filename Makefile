@@ -51,6 +51,13 @@ up-auth : up-kafka
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE) up -d auth-svc isnex-db
 	@echo "✅ Auth service started successfully!"
 
+auth-migrate-dev:
+	docker exec auth-svc npx prisma migrate dev --name "$(m)"
+# we dont need to run generate after this command
+
+auth-generate: 
+	docker exec auth-svc npx prisma generate
+
 # Start notification service 
 up-notification:
 	@echo "🚀 Starting notification service ..."
@@ -69,8 +76,8 @@ up-api-gateway:
 up-core: up-db up-api-gateway
 	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_DEV_FILE)  up -d documents-svc
 
-start-core-dev: up-db
-	cd apps/documents && uv run --env-file .env --env-file .env.local --env-file ../../envs/.env.dev  dev
+up-core-local: up-db
+	cd apps/documents && uv run --env-file .env --env-file .env.local --env-file ../../envs/.env.local  dev
 
 documents-revision:
 # how to use: make documents-revision m="message"
@@ -78,13 +85,6 @@ documents-revision:
 
 documents-upgrade:
 	docker exec documents-svc uv run upgrade
-
-auth-migrate-dev:
-	docker exec auth-svc npx prisma migrate dev --name "$(m)"
-# we dont need to run generate after this command
-
-auth-generate: 
-	docker exec auth-svc npx prisma generate
 
 
 # Start services in development mode with code sync

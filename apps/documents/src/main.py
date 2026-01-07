@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
-from scalar_fastapi import get_scalar_api_reference
 
 from src.core.middleware.authentication import (
     AuthMiddleware,
