@@ -50,7 +50,7 @@ const PdfViewer = ({ fileUrl }: PdfViewerProps) => {
   const [highlights, setHighlights] = useState<Array<CommentedHighlight>>([]);
   const [contextMenu, setContextMenu] = useState<ContextMenuProps | null>(null);
   const [pdfScaleValue, setPdfScaleValue] = useState<PdfScaleValue | undefined>(
-    'page-width',
+    'page-fit',
   );
   const [highlightPen, setHighlightPen] = useState<boolean>(false);
   // Refs for PdfHighlighter utilities

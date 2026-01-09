@@ -1,0 +1,128 @@
+# factory.py
+from typing import Annotated
+from fastapi import Depends
+
+from src.core.database.session import get_session
+from src.modules.conversation.repository import ConversationRepository
+from src.modules.document.repository import DocumentRepository
+from src.modules.folder.repository import FolderRepository
+from src.modules.highlight.repository import HighlightRepository
+from src.modules.message.repository import MessageRepository
+from src.modules.message.service import MessageService
+from src.modules.note.repository import NoteRepository
+from src.modules.note.service import NoteService
+from src.modules.noteblock.repository import NoteBlockRepository
+from src.modules.noteblock.service import NoteBlockService
+from src.modules.prompt.repository import PromptRepository
+from src.modules.prompt.service import PromptService
+from src.modules.workspace.repository import WorkspaceRepository
+from src.modules.conversation.service import ConversationService
+from src.modules.document.service import DocumentService
+from src.modules.folder.service import FolderService
+from src.modules.highlight.service import HighlightService
+from src.modules.object_storage.service import (
+    MinioService,
+    get_minio_session,
+    MinioSession,
+)
+from src.modules.workspace.service import WorkspaceService
+
+
+class Factory:
+    """Factory with proper dependency injection"""
+
+    def get_document_service(
+        self, db_session=Depends(get_session), minio_session=Depends(get_minio_session)
+    ) -> DocumentService:
+        return DocumentService(
+            DocumentRepository(db_session),
+            FolderRepository(db_session),
+            MinioService(minio_session),
+        )
+
+    def get_storage_service(
+        self, minio_session: MinioSession = Depends(get_minio_session)
+    ) -> MinioService:
+        """Fixed type hint"""
+        return MinioService(minio_session)
+
+    def get_folder_service(self, db_session=Depends(get_session)) -> FolderService:
+        return FolderService(repository=FolderRepository(db_session))
+
+    def get_highlight_service(
+        self, db_session=Depends(get_session)
+    ) -> HighlightService:
+        return HighlightService(
+            repository=HighlightRepository(db_session),
+            document_repository=DocumentRepository(db_session),
+        )
+
+    def get_conversation_service(
+        self, db_session=Depends(get_session)
+    ) -> ConversationService:
+        return ConversationService(
+            repository=ConversationRepository(db_session),
+            workspace_repository=WorkspaceRepository(db_session),
+        )
+
+    def get_message_service(self, db_session=Depends(get_session)) -> MessageService:
+        return MessageService(
+            repository=MessageRepository(db_session),
+            conversation_repository=ConversationRepository(db_session),
+        )
+
+    def get_note_service(self, db_session=Depends(get_session)) -> NoteService:
+        return NoteService(repository=NoteRepository(db_session))
+
+    def get_noteblock_service(
+        self, db_session=Depends(get_session)
+    ) -> NoteBlockService:
+        return NoteBlockService(
+            repository=NoteBlockRepository(db_session),
+            note_repository=NoteRepository(db_session),
+        )
+
+    def get_prompt_service(self, db_session=Depends(get_session)) -> PromptService:
+        return PromptService(
+            repository=PromptRepository(db_session),
+            workspace_repository=WorkspaceRepository(db_session),
+        )
+
+    def get_workspace_service(
+        self, db_session=Depends(get_session)
+    ) -> WorkspaceService:
+        return WorkspaceService(
+            repository=WorkspaceRepository(db_session),
+            document_repo=DocumentRepository(db_session),
+            conversation_repository=ConversationRepository(db_session),
+            note_repository=NoteRepository(db_session),
+        )
+
+
+factory = Factory()
+
+FolderServiceDep = Annotated[FolderService, Depends(factory.get_folder_service)]
+
+DocumentServiceDep = Annotated[DocumentService, Depends(factory.get_document_service)]
+
+HighlightServiceDep = Annotated[
+    HighlightService, Depends(factory.get_highlight_service)
+]
+
+ConversationServiceDep = Annotated[
+    ConversationService, Depends(factory.get_conversation_service)
+]
+
+MessageServiceDep = Annotated[MessageService, Depends(factory.get_message_service)]
+
+NoteServiceDep = Annotated[NoteService, Depends(factory.get_note_service)]
+
+NoteBlockServiceDep = Annotated[
+    NoteBlockService, Depends(factory.get_noteblock_service)
+]
+
+PromptServiceDep = Annotated[PromptService, Depends(factory.get_prompt_service)]
+
+WorkspaceServiceDep = Annotated[
+    WorkspaceService, Depends(factory.get_workspace_service)
+]

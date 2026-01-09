@@ -360,3 +360,9 @@ proj_docs/
 next-env.d.ts
 proj_docs/
 **/temp/*
+minio/data/*
+todo.md
+zquicknotes.md
+**/*secrets.txt
+mlruns
+mlflow.db

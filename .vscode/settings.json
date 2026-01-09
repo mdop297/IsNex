@@ -1,5 +1,23 @@
 {
   "cSpell.words": ["autoincrement"],
   "postman.settings.dotenv-detection-notification-visibility": false,
-  "nxConsole.nxWorkspacePath": ""
+  "nxConsole.nxWorkspacePath": "",
+  "python.analysis.autoImportCompletions": true,
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.mypy_cache": true,
+    "**/.next": true,
+    "**/.venv": true,
+    "**/dist": true,
+    "**/node_modules": true
+  },
+  "search.exclude": {
+    "**/__pycache__": true,
+    "**/.next": true,
+    "**/.venv": true,
+    "**/dist": true
+  },
+
+  "python.analysis.diagnosticMode": "openFilesOnly",
+  "editor.formatOnSave": true
 }

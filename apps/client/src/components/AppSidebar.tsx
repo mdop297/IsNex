@@ -9,6 +9,9 @@ import {
   ChevronsLeft,
   ChevronsRight,
   ChevronsUpDown,
+  LayoutDashboard,
+  ChartArea,
+  FlaskConical,
 } from 'lucide-react';
 
 import {
@@ -36,147 +39,200 @@ import { useState } from 'react';
 import ChatSearch from './SearchModal';
 
 import CollapsibleNav from '@/components/CollapsibleNav';
+import { useAuth } from '@/context/AuthContext';
+import FileUploadButton from './file-upload/FileUploadButton';
+import { ProfileModal } from './modals/ProfileModal';
+import { SettingsModal } from './modals/SettingsModal';
 
 // Menu items.
 const items = [
   {
     title: 'Ask AI',
-    url: '/chats',
+    url: '/home',
     icon: SquarePen,
     cn: '',
   },
-
+  { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard, cn: '' },
+  { title: 'Analytics', url: '/analytics', icon: ChartArea, cn: '' },
   { title: 'Summarizer', url: '/summarizer', icon: Text, cn: '' },
-  // { title: 'Scanner', url: '/home/scanner', icon: ScanText },
-  // { title: 'Tasks', url: '/home/tasks', icon: ClipboardCheck },
-];
-
-const user = {
-  avatar: '...',
-  username: 'Le Nhat Minh',
-  email: 'lenhatminh297@gmail.com',
-};
-
-const menuItems = [
-  { icon: CircleUserRound, label: 'Profile' },
-  { icon: Settings, label: 'Setting' },
-  { icon: LogOut, label: 'Logout', destructive: true },
+  { title: 'Sample', url: '/sample', icon: FlaskConical, cn: '' },
 ];
 
 export default function AppSidebar() {
+  const { user, signOut } = useAuth();
   const { state, isMobile, toggleSidebar } = useSidebar();
   const [hovered, setHovered] = useState(false);
-  return (
-    <Sidebar
-      collapsible="icon"
-      className="hover:cursor-e-resize "
-      onClick={toggleSidebar}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <SidebarHeader>
-        <div className=" flex flex-row justify-between items-center">
-          <Avatar
-            className={cn(
-              'rounded-md items-center justify-center',
-              'hover:bg-sidebar-accent hover:ring-3 ring-accent cursor-pointer',
-            )}
-            onClick={(e) => {
-              if (state === 'expanded') {
-                e.stopPropagation();
-              }
-            }}
-          >
-            {state === 'collapsed' ? (
-              hovered ? (
-                <ChevronsRight />
-              ) : (
-                <AvatarImage src="/logo.svg" />
-              )
-            ) : (
-              <AvatarImage src="/logo.svg" />
-            )}
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-          <ChevronsLeft
-            className="hover:cursor-pointer hover:bg-muted-foreground/30 rounded-md"
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleSidebar();
-            }}
-          />
-        </div>
-        {/* SEARCH AREA */}
-        <SidebarMenuItem
-          className="list-none"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <ChatSearch />
-        </SidebarMenuItem>
-      </SidebarHeader>
-      {/* SIDEBAR CONTENT */}
-      <SidebarContent className="hide-scrollbar">
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu onClick={(e) => e.stopPropagation()}>
-              {/* MENU ITEMS */}
 
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    tooltip={item.title}
-                    asChild
-                    className={item.cn}
-                  >
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              {/* COLLAPSIBLE ITEMS */}
-              <CollapsibleNav />
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      {/* FOOTER */}
-      <SidebarFooter onClick={(e) => e.stopPropagation()}>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton size={'lg'} className="cursor-pointer">
-              <Avatar className={cn('h-8 w-8')}>
-                <AvatarImage src="https://github.com/shadcn.png" />
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+
+  const menuItems = [
+    {
+      icon: CircleUserRound,
+      label: 'Profile',
+      onClick: () => setProfileModalOpen(true),
+    },
+    {
+      icon: Settings,
+      label: 'Setting',
+      onClick: () => setSettingsModalOpen(true),
+    },
+    {
+      icon: LogOut,
+      label: 'SignOut',
+      destructive: true,
+      onClick: () => {
+        handleSignOut();
+      },
+    },
+  ];
+
+  const handleSignOut = () => {
+    signOut();
+  };
+
+  return (
+    user && (
+      <>
+        <Sidebar
+          collapsible="icon"
+          className="hover:cursor-e-resize "
+          onClick={toggleSidebar}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+        >
+          <SidebarHeader>
+            <div className=" flex flex-row justify-between items-center">
+              <Avatar
+                className={cn(
+                  'rounded-md items-center justify-center',
+                  'hover:bg-sidebar-accent hover:ring-3 ring-accent cursor-pointer',
+                )}
+                onClick={(e) => {
+                  if (state === 'expanded') {
+                    e.stopPropagation();
+                  }
+                }}
+              >
+                {state === 'collapsed' ? (
+                  hovered ? (
+                    <ChevronsRight />
+                  ) : (
+                    <AvatarImage src="/logo.svg" />
+                  )
+                ) : (
+                  <AvatarImage src="/logo.svg" />
+                )}
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight ">
-                <span className="truncate font-medium">{user.username}</span>
-                <span className="truncate text-xs">{user.email}</span>
-              </div>
-              <ChevronsUpDown className="ml-auto size-4" />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? 'bottom' : 'top'}
-            align="end"
-            sideOffset={4}
-          >
-            {menuItems.map(({ icon: Icon, label, destructive }) => (
-              <DropdownMenuItem
-                key={label}
-                variant={destructive ? 'destructive' : undefined}
+              <ChevronsLeft
+                className="hover:cursor-pointer hover:bg-muted-foreground/30 rounded-md"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleSidebar();
+                }}
+              />
+            </div>
+            {/* SEARCH AREA */}
+            <SidebarMenuItem
+              className="list-none"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <ChatSearch />
+            </SidebarMenuItem>
+          </SidebarHeader>
+          {/* SIDEBAR CONTENT */}
+          <SidebarContent className="hide-scrollbar">
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu onClick={(e) => e.stopPropagation()}>
+                  {/* MENU ITEMS */}
+
+                  {items.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        tooltip={item.title}
+                        asChild
+                        className={item.cn}
+                      >
+                        <Link href={item.url}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                  {/* COLLAPSIBLE ITEMS */}
+                  <CollapsibleNav />
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+          {/* FOOTER */}
+          <SidebarFooter onClick={(e) => e.stopPropagation()}>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <FileUploadButton />
+              </SidebarMenuItem>
+            </SidebarMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton size={'lg'} className="cursor-pointer">
+                  <Avatar className={cn('h-8 w-8')}>
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-left text-sm leading-tight ">
+                    <span className="truncate font-medium">
+                      {user.username}
+                    </span>
+                    <span className="truncate text-xs">{user.email}</span>
+                  </div>
+                  <ChevronsUpDown className="ml-auto size-4" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                side={isMobile ? 'bottom' : 'top'}
+                align="end"
+                sideOffset={4}
               >
-                <Icon className="h-4 w-4" />
-                <span className={label === 'Logout' ? 'ml-1' : 'ml-2'}>
-                  {label}
-                </span>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarFooter>
-    </Sidebar>
+                {menuItems.map((item) => (
+                  <DropdownMenuItem
+                    key={item.label}
+                    variant={item.destructive ? 'destructive' : undefined}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      item.onClick();
+                    }}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    <span
+                      className={item.label === 'SignOut' ? 'ml-1' : 'ml-2'}
+                    >
+                      {item.label}
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarFooter>
+        </Sidebar>
+
+        <ProfileModal
+          open={profileModalOpen}
+          onOpenChange={setProfileModalOpen}
+          user={{
+            username: user.username,
+            email: user.email,
+          }}
+        />
+        <SettingsModal
+          open={settingsModalOpen}
+          onOpenChange={setSettingsModalOpen}
+        />
+      </>
+    )
   );
 }

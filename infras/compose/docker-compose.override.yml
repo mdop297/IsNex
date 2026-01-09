@@ -1,0 +1,91 @@
+services:
+  auth-svc:
+    container_name: auth-svc
+    build:
+      context: ../..
+      dockerfile: apps/auth-svc/Dockerfile.dev
+    volumes:
+      - ../../apps/auth-svc/src:/isnex/apps/auth-svc/src
+      - ../../apps/auth-svc/prisma:/isnex/apps/auth-svc/prisma
+      # - ./envs/auth.env:/isnex/envs/auth.env:ro
+    ports:
+      - 3001:3000
+      - 4211:4211
+    depends_on:
+      isnex-db:
+        condition: service_healthy
+    env_file:
+      - ../../envs/.env.dev
+      - ../../apps/auth-svc/.env.dev
+
+  client:
+    container_name: client-ui
+    build:
+      context: ../../
+      dockerfile: apps/client/Dockerfile.dev
+    ports:
+      - 5000:5000
+    volumes:
+      - ../../apps/client:/isnex/apps/client
+      - ../../apps/client/node_modules:/isnex/apps/client/node_modules
+    env_file:
+      - ../../apps/client/.env.dev
+
+  documents-svc:
+    container_name: documents-svc
+    build:
+      context: ../../apps/documents
+      dockerfile: Dockerfile.dev
+    depends_on:
+      isnex-db:
+        condition: service_healthy
+    ports:
+      - "4000:8000"
+    volumes:
+      - ../../apps/documents/src:/app/src
+      - ../../apps/documents/migrations:/app/migrations
+      - ../../apps/documents/alembic.ini:/app/alembic.ini
+      - ../../apps/documents/pyproject.toml:/app/pyproject.toml
+      - ../../apps/documents/uv.lock:/app/uv.lock
+      - ../../apps/documents/scripts:/app/scripts
+      - ../../apps/documents/logs:/app/logs
+    develop:
+      watch:
+        - action: sync
+          path: ../../apps/documents
+          target: /app
+          ignore:
+            - .venv/
+
+        - action: rebuild
+          path: ../../apps/documents/uv.lock
+    env_file:
+      - ../../envs/.env.dev
+      - ../../apps/documents/.env
+      - ../../apps/documents/.env.dev
+
+  notification-svc:
+    container_name: notification-svc
+    build:
+      context: ../../apps/notification-svc
+      dockerfile: Dockerfile
+    ports:
+      - "4001:8001"
+    volumes:
+      - ../../apps/notification-svc/src:/app/src
+      - ../../apps/notification-svc/pyproject.toml:/app/pyproject.toml
+      - ../../apps/notification-svc/uv.lock:/app/uv.lock
+    develop:
+      watch:
+        - action: sync
+          path: ../../apps/notification-svc
+          target: /app
+          ignore:
+            - .venv/
+        - action: rebuild
+          path: ../../apps/notification-svc/uv.lock
+
+networks:
+  default:
+    name: isnex-net
+    external: true

@@ -1,9 +1,10 @@
+'use client';
 import React from 'react';
 
-import NoteEditor from '@/components/notes/Editor';
+import Editor from '@/components/notes/Editor';
 
-const page = () => {
-  return <NoteEditor />;
+const NotesPage = () => {
+  return <Editor />;
 };
 
-export default page;
+export default NotesPage;

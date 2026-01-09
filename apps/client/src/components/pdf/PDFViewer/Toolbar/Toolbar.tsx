@@ -111,17 +111,18 @@ const Toolbar = ({
   };
 
   return (
-    <div className="px-1 py-1.5 border-b bg-neutral-700 rounded-xs flex flex-row text-neutral-200">
+    <div className="h-10 px-3 py-0.5  bg-secondary rounded-xs flex flex-row text-neutral-200 shrink-0">
       <div className="w-full flex items-center justify-between">
         {/* Left section */}
         <div className="flex items-center space-x-3 text-sm">
-          <div
-            className="toolbar-button"
+          <Button
+            className="bg-secondary hover:bg-input text-foreground"
             aria-label="Toggle sidebar"
             onClick={toggleSidebar}
+            size={'icon-sm'}
           >
-            <Menu className="size-4" />
-          </div>
+            <Menu />
+          </Button>
           <div className="flex gap-1 items-center justify-center">
             <Input
               type="number"
@@ -147,38 +148,42 @@ const Toolbar = ({
                   setPageInput(currentPage.toString());
                 }
               }}
-              className="w-12 h-fit py-0.5 rounded-xs px-2 text-sm border-0 bg-neutral-600 text-right hide-spinner"
+              className="w-12 h-fit py-0.5 rounded-xs px-2 text-sm border-0 bg-input text-foreground text-right hide-spinner"
             />
-            <span>/ {totalPages}</span>
+            <span className="text-foreground">/ {totalPages}</span>
           </div>
-          <div
-            className="toolbar-button"
+          <Button
+            className="bg-secondary hover:bg-input text-foreground"
             onClick={() => {
               toggleSearchBar();
               if (!isSidebarOpen) {
                 toggleSidebar();
               }
             }}
+            size={'icon-sm'}
           >
             <Search
               className={`size-4 ${searchTabOpen ? 'text-purple-500' : ''} `}
             />
-          </div>
+          </Button>
         </div>
         {/* Center section */}
 
-        <div className="flex items-center space-x-1 text-sm h-5">
+        <div className="flex items-center space-x-1 text-sm h-5 gap-1">
           <Button
-            className="toolbar-button"
-            variant={'ghost'}
+            className="bg-secondary hover:bg-input text-foreground"
+            size={'icon-sm'}
             title="Zoom in"
             onClick={zoomIn}
           >
             <Plus className="size-4 aspect-square" />
           </Button>
-          <Select defaultValue="page-width" onValueChange={zoomByOption}>
-            <SelectTrigger className="toolbar-button border-none">
-              <SelectValue placeholder="auto" className="text-sm" />
+          <Select defaultValue="page-fit" onValueChange={zoomByOption}>
+            <SelectTrigger className="border-none text-foreground" size={'sm'}>
+              <SelectValue
+                placeholder="auto"
+                className="text-sm text-foreground"
+              />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="auto">Auto</SelectItem>
@@ -193,8 +198,8 @@ const Toolbar = ({
             </SelectContent>
           </Select>
           <Button
-            className="toolbar-button"
-            variant={'ghost'}
+            className="bg-secondary hover:bg-input text-foreground"
+            size={'icon-sm'}
             title="Zoom out"
             onClick={zoomOut}
           >
@@ -203,7 +208,7 @@ const Toolbar = ({
 
           <Separator orientation="vertical" className="bg-foreground " />
           <Button
-            className={`toolbar-button HighlightButton font-normal ${isHighlightPen ? 'active' : ''}`}
+            className={`bg-secondary hover:bg-input! font-normal ${isHighlightPen ? 'text-purple-500' : 'text-foreground'}`}
             aria-label="zoom"
             variant="ghost"
             title="Highlight"
@@ -211,6 +216,7 @@ const Toolbar = ({
               toggleHighlightPen();
               setIsHighlightPen(!isHighlightPen);
             }}
+            size={'sm'}
           >
             <Highlighter className="size-4" />
             Highlight
@@ -228,13 +234,20 @@ const Toolbar = ({
         {/* Right section */}
 
         <div className="flex items-center space-x-1 text-sm h-5">
-          <div className="toolbar-button" onClick={downloadPDF}>
+          <Button
+            className="bg-secondary hover:bg-input text-foreground"
+            size={'icon-sm'}
+            onClick={downloadPDF}
+          >
             <ArrowDownToLine className="size-4" />
-          </div>
+          </Button>
 
-          <div className="toolbar-button">
+          <Button
+            className="bg-secondary hover:bg-input text-foreground"
+            size={'icon-sm'}
+          >
             <EllipsisVertical className="size-4" />
-          </div>
+          </Button>
         </div>
       </div>
     </div>

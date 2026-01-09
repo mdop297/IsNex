@@ -1,8 +1,8 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Item from './Item';
 import { PageService } from './utils';
-import { Page } from './types';
+import type { Page } from './types';
 
 interface pageListProps {
   parentId?: string;
@@ -38,9 +38,9 @@ const PageList = ({
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-1">
       {pages.map((page) => (
-        <div key={page.id}>
+        <div key={page.id} className="flex flex-col gap-1">
           <Item
             id={page.id}
             level={level}
