@@ -16,6 +16,7 @@ import {
 
 import {
   ChevronRight,
+  FlaskConical,
   FolderOpenDot,
   HistoryIcon,
   LibraryBig,
@@ -81,7 +82,21 @@ const CollapsibleNav = () => {
     subAction: true,
   };
 
+  const SampleData = {
+    section: 'Sample',
+    url: '/sample',
+    icon: FlaskConical,
+    subitems: [
+      { id: '1', label: 'My Chat Page', url: '/sample/my_chatpage' },
+      { id: '2', label: 'AI SDK 1', url: '/sample/aisdk_1' },
+      { id: '3', label: 'AI SDK 2', url: '/sample/aisdk_2' },
+      { id: '4', label: 'Langchain js', url: '/sample/lcjs' },
+    ],
+    subAction: false,
+  };
+
   const items = [
+    SampleData,
     LibraryData,
     WorkspaceData,
     {

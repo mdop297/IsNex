@@ -11,7 +11,6 @@ import {
   ChevronsUpDown,
   LayoutDashboard,
   ChartArea,
-  FlaskConical,
 } from 'lucide-react';
 
 import {
@@ -55,7 +54,6 @@ const items = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard, cn: '' },
   { title: 'Analytics', url: '/analytics', icon: ChartArea, cn: '' },
   { title: 'Summarizer', url: '/summarizer', icon: Text, cn: '' },
-  { title: 'Sample', url: '/sample', icon: FlaskConical, cn: '' },
 ];
 
 export default function AppSidebar() {
